@@ -9,12 +9,12 @@ An Oculus-Based Tool for 3D Visualization & Manipulation of Tabular Data. This p
 - [@Matthew](https://www.github.com/matthew-buglass)
 - [@Aesha](https://www.github.com/Aesha7)
 - [@Quinn](https://www.github.com/qpb948)
-- [@](https://www.github.com/)
-- [@](https://www.github.com/)
-- [@](https://www.github.com/)
-- [@](https://www.github.com/)
-- [@](https://www.github.com/)
-- [@](https://www.github.com/)
+- [@Zander](https://www.github.com/Subzeero)
+- [@Jesse](https://www.github.com/Jesster2829)
+- [@Mitchell](https://www.github.com/MitchWag01)
+- [@Trang](https://www.github.com/trangnguyen3010)
+- [@Tony](https://www.github.com/LongQuanNguyen)
+- [@Joe](https://www.github.com/Joembonayo)
 
 
 ## Tech Stack
