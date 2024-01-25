@@ -62,6 +62,3 @@ export default function App() {
   )
 }
 
-// //@ts-ignore
-// const root = createRoot(document.getElementById('root'))
-// root.render(<App />)
