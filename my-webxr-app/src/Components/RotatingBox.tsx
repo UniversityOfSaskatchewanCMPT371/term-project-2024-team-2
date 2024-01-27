@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Interactive } from '@react-three/xr'
 import * as THREE from 'three'
@@ -10,7 +10,7 @@ export default function RotatingBox(props: JSX.IntrinsicElements['mesh']) {
     const ref = useRef<THREE.Mesh>(null!)
     const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
-    useFrame((state, delta) => (ref.current.rotation.x += 0.01))
+    useFrame(() => (ref.current.rotation.x += 0.01))
   
     return (
       <Interactive onSelect={() => click(!clicked)} onHover={()=>hover(!hovered)} >
