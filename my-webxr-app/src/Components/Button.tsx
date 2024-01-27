@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Interactive } from '@react-three/xr'
 import { Text } from '@react-three/drei'
 import Box from './Box'
