@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "oculus-3d-render"
-  }
+    "default": "oculus-3d-render-staging",
+    "Production": "oculus-3d-render",
+    "Staging": "oculus-3d-render-staging"
+  },
+  "targets": {},
+  "etags": {}
 }
