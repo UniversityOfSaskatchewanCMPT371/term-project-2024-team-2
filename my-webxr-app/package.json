@@ -14,9 +14,11 @@
     "@react-three/drei": "^9.96.1",
     "@react-three/fiber": "^8.15.14",
     "@react-three/xr": "^5.7.1",
+    "drei": "^0.0.45",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.160.0"
+    "react-three-fiber": "^6.0.13",
+    "three": "^0.160.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
