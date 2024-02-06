@@ -27,7 +27,7 @@ jobs:
           projectId: oculus-3d-render-staging
 
   build_and_deploy_to_production:
-    if: github.ref == 'refs/heads/master'
+    if: github.base_ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
