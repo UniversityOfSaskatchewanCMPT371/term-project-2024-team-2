@@ -53,8 +53,8 @@ describe('addFunction', () => {
 /**
  * Testing that a url loads using mocking
  */
-describe('LoadingURL', () => {
-    it('Should succesfully load firebase', () => {
-        expect()
-    })
-})
+// describe('LoadingURL', () => {
+//     it('Should succesfully load firebase', () => {
+//         expect()
+//     })
+// })
