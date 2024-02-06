@@ -1,33 +1,32 @@
+/**
+ * Configuration object for log4js.
+ *
+ * This configuration object specifies how log4js should handle log messages. It includes two appenders for writing to
+ * files ('everything' and 'errors') and two appenders for filtering log messages based on their level ('errorFilter'
+ * and 'infoFilter').
+ *
+ * The 'everything' appender writes log messages to the file '../logs/info-file-logger.log'.
+ * The 'errors' appender writes log messages to the file '../logs/error-file-logger.log'.
+ *
+ * The 'errorFilter' appender filters out any log messages below the 'error' level and sends them to the 'errors'
+ * appender.
+ * The 'infoFilter' appender filters out any log messages below the 'info' level and sends them to the 'everything'
+ * appender.
+ *
+ * The 'default' category is configured to use both of these logLevelFilter appenders, and its level is set to 'debug'
+ * to ensure that all log messages (including 'debug', 'info', 'warn', 'error', and 'fatal') are processed.
+ *
+ * Refer log config test files in src/tests to see logging example usage.
+ */
+
 export const logConfig = {
     appenders: {
         everything: { type: 'file', filename: '../logs/info-file-logger.log' },
-        errors: { type: 'file', filename: '../logs/error-file-logger.log' }
+        errors: { type: 'file', filename: '../logs/error-file-logger.log' },
+        errorFilter: { type: 'logLevelFilter', appender: 'errors', level: 'error' },
+        infoFilter: { type: 'logLevelFilter', appender: 'everything', level: 'info' }
     },
     categories: {
-        default: { appenders: [ 'everything' ], level: 'info' },
-        error: { appenders: ['errors'], level: 'error'}
+        default: { appenders: [ 'infoFilter', 'errorFilter' ], level: 'debug' }
     }
 };
-
-/*
-Note: Must specify categories (default/errors) for logger so that the logs are 
-    written to the correct log file. i.e, try to log info and/or warn with 
-    errorLogger will get the logs written to none of two .log files.
-
-Example use of logger:
-
-    let defaultLogger = log4js.getLogger('default');
-    let errorLogger = log4js.getLogger('errors');
-
-
-    defaultLogger.info(' info message ');
-    defaultLogger.warn(' warn message' );
-    defaultLogger.error(' error message ');
-    defaultLogger.fatal(' fatal message ');
-
-    errorLogger.error(' error message ');
-    errorLogger.fatal(' fatal message ');
-
-The snipet above make sure error and fatal messages are in both log files,
-while info and warn only appear in info-file-logger.log
-*/
