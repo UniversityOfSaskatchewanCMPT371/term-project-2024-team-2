@@ -3,6 +3,7 @@
 const config = {
     preset: 'ts-jest',
     testEnvironment: 'node',
+    // esModuleInterop: true,
 };
 
 export default config;
