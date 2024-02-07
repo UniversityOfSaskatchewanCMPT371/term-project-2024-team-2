@@ -5,7 +5,7 @@ name: Deploy to Firebase Hosting on PR
 
 on:
   pull_request:
-    branches: ["master", "release/**"]
+    branches: [ "master", "release/**" ]
 
 defaults:
   run:
@@ -36,4 +36,32 @@ jobs:
           entrypoint: ./my-webxr-app
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OCULUS_3D_RENDER }}'
+          projectId: oculus-3d-render
+
+  build_and_deploy_to_staging:
+    if: startsWith(github.base_ref, 'release/') && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          entrypoint: ./my-webxr-app
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OCULUS_3D_RENDER_STAGING }}'
+          channelId: live
+          projectId: oculus-3d-render-staging
+
+  build_and_deploy_to_production:
+    if: github.base_ref == 'refs/heads/master' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          entrypoint: ./my-webxr-app
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OCULUS_3D_RENDER }}'
+          channelId: live
           projectId: oculus-3d-render
