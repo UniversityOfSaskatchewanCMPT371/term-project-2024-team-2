@@ -48,3 +48,7 @@ jobs:
 
       - name: Run Unit Tests
         run: npm test
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deployment.yml
