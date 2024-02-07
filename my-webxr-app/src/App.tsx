@@ -6,8 +6,6 @@ import { Canvas } from '@react-three/fiber'
 import Floor from './Components/Floor'
 import RotatingBox from './Components/RotatingBox'
 import Button from './Components/Button'
-import WebVRPolyfill from 'webvr-polyfill'
-const polyfill = new WebVRPolyfill();
 
 export default function App() {
   return (

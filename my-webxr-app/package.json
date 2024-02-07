@@ -37,6 +37,7 @@
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "webvr-polyfill": "latest"
   }
 }
