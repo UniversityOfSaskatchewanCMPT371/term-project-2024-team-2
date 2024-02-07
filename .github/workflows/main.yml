@@ -51,5 +51,7 @@ jobs:
 
   deploy:
     needs: build
+    permissions:
+      checks: write
     uses: ./.github/workflows/deployment.yml
     secrets: inherit
