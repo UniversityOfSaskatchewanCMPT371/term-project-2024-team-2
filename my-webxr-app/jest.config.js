@@ -1,9 +1,6 @@
-// jest.config.ts
-/** @type {import('jest').Config} */
-const config = {
+const jestConfig = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    // esModuleInterop: true,
 };
 
-export default config;
+export default jestConfig;
