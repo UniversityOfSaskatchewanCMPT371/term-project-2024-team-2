@@ -1,6 +1,6 @@
 import React from "react";
 import * as THREE from "three";
-import {Text} from "@react-three/drei";
+import {GenerateTicks} from "./createTicks";
 
 interface singleAxisProps {
     startX: number;
@@ -16,126 +16,95 @@ interface singleAxisProps {
     maxValue: number;
 }
 
-// this function will create an axis
-const SingleAxis: React.FC<singleAxisProps> = ({
-                                                   startX,
-                                                   startY,
-                                                   startZ,
-                                                   endX,
-                                                   endY,
-                                                   endZ,
-                                                   radius,
-                                                   labelOffset,
-                                                   scaleFactor,
-                                                   minValue,
-                                                   maxValue
-                                               }) => {
-    let axisGeometry;
-    let position;
-    let rotation;
-    // starting coordinates for the axis
-    const start = [startX, startY, startZ];
-    // axisLabels the labels for the ticks on the axis
-    const axisLabels = Array.from({length: maxValue - minValue + 1 + 20}, (_, i) => i + minValue - 10);
+// this function will create an axis and call GenerateTicks to put ticks and labels on the axis
+export const SingleAxis: React.FC<singleAxisProps> = ({
+                                                          startX,
+                                                          startY,
+                                                          startZ,
+                                                          endX,
+                                                          endY,
+                                                          endZ,
+                                                          radius,
+                                                          labelOffset,
+                                                          scaleFactor,
+                                                          minValue,
+                                                          maxValue
+                                                      }) => {
 
-    let color: string = "";
+    // Calculate the range in positive and negative directions
+    const maxNum: number = Math.abs(maxValue);
+    const minNum: number = Math.abs(minValue);
 
+    // Determine the label increment based on the ranges
+    // adjust these to change increment of the labels that appear under the ticks
+    let labelIncrement: number = 0;
+    if (maxNum <= 10 && minNum <= 10) {
+        labelIncrement = 1;
+    } else if (maxNum <= 20 && minNum <= 20) {
+        labelIncrement = 2;
+    } else if (maxNum <= 50 && minNum <= 50) {
+        labelIncrement = 5;
+    } else if (maxNum <= 100 && minNum <= 100) {
+        labelIncrement = 10;
+    } else if (maxNum <= 500 && minNum <= 500) {
+        labelIncrement = 50;
+    } else if (maxNum <= 1000 && minNum <= 1000) {
+        labelIncrement = 100;
+    } else if (maxNum <= 5000 && minNum <= 5000) {
+        labelIncrement = 500;
+    } else if (maxNum <= 10000 && minNum <= 10000) {
+        labelIncrement = 1000;
+    } else {
+        labelIncrement = 10000;
+    }
+
+    // create list to hold
+    const axisTicks: number[] = [];
+    // The number of labels on each side of the axis
+    const numLabels: number = 10;
+    // fill axisTicks with the range of tick labels
+    for (let i = -numLabels; i <= numLabels; i++) {
+        axisTicks.push(i);
+    }
+
+    // axisGeometry will be the shape of the axis, decided in conditional
+    let axisGeometry: THREE.CylinderGeometry | undefined;
+    // the starting position of the axis, same for all axes
+    const position: THREE.Vector3 = new THREE.Vector3(startX, startY, startZ);
+    // rotation is adjusted to give us the correct rotation for x, y, z axes, decided in conditional
+    let rotation: THREE.Euler | undefined;
+    // color of the axis decided in conditional
+    let color: string | undefined;
+
+    // the conditional checks to see which axis is being created,
+    // if the start and end are equal then the length is 0, we are not creating that axis
     if (startX !== endX) {
+        // color for the axis
         color = "red";
+        // creating the cylinder, with correct position and rotation for x-axis
         axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
-        position = new THREE.Vector3(startX, startY, startZ);
         rotation = new THREE.Euler(0, 0, Math.PI / 2);
     } else if (startY !== endY) {
         color = "forestgreen";
         axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
-        position = new THREE.Vector3(startX, startY, startZ);
         rotation = new THREE.Euler(0, 0, 0);
     } else if (startZ !== endZ) {
         color = "blue";
         axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
-        position = new THREE.Vector3(startX, startY, startZ);
         rotation = new THREE.Euler(Math.PI / 2, 0, 0);
     }
 
-    if (!axisGeometry) return null; // Return null if axisGeometry is not defined
-
-    const material = new THREE.MeshBasicMaterial({color});
+    // setting material to the color chosen from the conditional
+    const material: THREE.MeshBasicMaterial | undefined = new THREE.MeshBasicMaterial({color});
 
     return (
         <>
-            {/* Create the axis (tube) and color it*/}
+            {/* Create the axis and color it*/}
             <mesh geometry={axisGeometry} material={material} position={position} rotation={rotation}/>
-
-            {/* create the ticks and matching labels for the axis */}
-            {axisLabels.map(label => {
-                let positionNums: [number, number, number] = [0, 0, 0];
-                let positionTicks: [number, number, number] = [0, 0, 0];
-                let ticksShape: [number, number, number] = [0, 0, 0]
-                // if x-axis place ticks and numbers in on x-axis
-                if (startX != endX) {
-                    positionNums = [
-                        start[0] + labelOffset * label * scaleFactor / 2,
-                        start[1] - 0.015,
-                        start[2]
-                    ];
-                    positionTicks = [
-                        start[0] + labelOffset * label * scaleFactor / 2,
-                        start[1],
-                        start[2]
-                    ];
-                    ticksShape = [0.001, 0.01, 0]
-                }
-                // if y-axis place ticks and numbers in on y-axis
-                else if (startY !== endY) {
-                    positionNums = [
-                        start[0] - 0.015,
-                        start[1] + labelOffset * label * scaleFactor / 2,
-                        start[2]
-                    ];
-                    positionTicks = [
-                        start[0],
-                        start[1] + labelOffset * label * scaleFactor / 2,
-                        start[2]
-                    ];
-                    ticksShape = [0.01, 0.001, 0]
-                }
-                // if z-axis place ticks and numbers in on x-axis
-                else if (startZ !== endZ) {
-                    positionNums = [
-                        start[0],
-                        start[1] - 0.015,
-                        start[2] + labelOffset * label * scaleFactor / 2
-                    ];
-                    positionTicks = [
-                        start[0],
-                        start[1],
-                        start[2] + labelOffset * label * scaleFactor / 2
-                    ];
-                    ticksShape = [0, 0.01, 0.001]
-                }
-
-                return (
-                    <React.Fragment key={`label${label}`}>
-                        {/* numbers on axis */}
-                        <Text
-                            position={positionNums}
-                            fontSize={0.01}
-                            color={0}
-                        >
-                            {label}
-                        </Text>
-                        {/* ticks on axis */}
-                        <mesh
-                            position={positionTicks}
-                        >
-                            <boxGeometry args={ticksShape}/>
-                            <meshStandardMaterial color={0}/>
-                        </mesh>
-                    </React.Fragment>
-                );
-            })}
+            {/* call GenerateTicks for each axis */}
+            {axisTicks.map(label => GenerateTicks(startX, startY, startZ, labelOffset, scaleFactor, radius, label, labelIncrement, "x"))}
+            {axisTicks.map(label => GenerateTicks(startX, startY, startZ, labelOffset, scaleFactor, radius, label, labelIncrement, "y"))}
+            {axisTicks.map(label => GenerateTicks(startX, startY, startZ, labelOffset, scaleFactor, radius, label, labelIncrement, "z"))}
         </>
     );
 };
-
-export default SingleAxis;

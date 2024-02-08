@@ -8,19 +8,21 @@ import Floor from './Components/Floor'
 // import Button from './Components/Button'
 import Axis from "./Components/axis.tsx";
 
-// minNum and maxNum will be from the csv file
-const minNum = 0;
-const maxNum = 10;
+// minNum and maxNum will be from the csv file, just hardcoded for now
+const minNum: number = -10;
+const maxNum: number = 10;
 // scaleFactor adjusts the size of the 3D axis
-const scaleFactor = 0.5;
+const scaleFactor: number = 1;
 // labelOffset is the offset the axis ticks and labels will have
-const labelOffset = 0.1 * scaleFactor
-const startPointX = 0;
-const startPointY = 0.82;
-const startPointZ = 0;
+const labelOffset: number = 0.1;
+//starting point of the axis
+const startPointX: number = 0;
+const startPointY: number = 0.82;
+const startPointZ: number = -0.15;
 // endPoint is used to determine what axis is being calculated, should not need to change
-const endPoint = 1;
-const radius = 0.002;
+const endPoint: number = 1;
+// adjust the size of the tube, shouldn't need to change unless
+const radius: number = 0.002;
 
 export default function App() {
     return (

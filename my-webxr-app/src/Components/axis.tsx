@@ -1,7 +1,7 @@
 import React from "react";
 import {Interactive} from "@react-three/xr";
 import {OrbitControls} from "@react-three/drei";
-import SingleAxis from "./singleAxis";
+import {SingleAxis} from "./singleAxis";
 
 
 interface AxisProps {
@@ -16,8 +16,7 @@ interface AxisProps {
     radius: number
 }
 
-// this will create the 3d axis by calling single axis
-// still deciding if it will be 6 half axes or 3 full axes
+// this will create the 3d axis by calling single axis for each axis
 const Axis: React.FC<AxisProps> = ({
                                        minValue,
                                        maxValue,
@@ -31,13 +30,14 @@ const Axis: React.FC<AxisProps> = ({
                                    }) => {
     return (
         <Interactive>
-            {/* position of the whole axis */}
+            {/* adjust position of the whole axis */}
             <group position={[startX, startY, startZ]}>
                 {/* X-axis */}
                 <SingleAxis
                     startX={startX}
                     startY={startY}
                     startZ={startZ}
+                    // need this calculation to find full length of axis
                     endX={startX + endPoint}
                     endY={startY}
                     endZ={startZ}
