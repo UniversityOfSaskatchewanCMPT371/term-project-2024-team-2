@@ -8,6 +8,7 @@ import Floor from './Components/Floor'
 // import Button from './Components/Button'
 import DataPoint from "./Components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
+import DataPointMenu from "./Components/DataPointMenu.tsx";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
             <DataPoint id={0} meshProps={{ position: [0.25, 1.75, -0.75] }} />
             <DataPoint id={1} meshProps={{ position: [0, 1.75, -0.75] }} />
             <DataPoint id={2} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
+            <DataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
         </Canvas>
       </PointSelectionProvider>
