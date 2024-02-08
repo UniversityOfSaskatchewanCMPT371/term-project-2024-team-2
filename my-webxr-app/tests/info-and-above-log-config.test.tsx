@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { logConfig } from '../src/log-config';
 
 describe('Logger Configuration', () => {
-    let logger;
+    let logger: log4js.Logger;
 
     beforeAll(() => {
         // Apply the config from the config file
