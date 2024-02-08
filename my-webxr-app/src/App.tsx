@@ -8,15 +8,20 @@ import Floor from './Components/Floor'
 // import Button from './Components/Button'
 import Axis from "./Components/axis.tsx";
 
+// minNum and maxNum will be from the csv file
+const minNum = 0;
+const maxNum = 10;
+// scaleFactor adjusts the size of the 3D axis
+const scaleFactor = 0.5;
+// labelOffset is the offset the axis ticks and labels will have
+const labelOffset = 0.1 * scaleFactor
 const startPointX = 0;
-const startPointY = 0.70;
-const startPointZ = -0.30;
-const endPoint = 2;
-const startPoint: [number, number, number] = [startPointX, startPointY, startPointZ]
-const endPointX: [number, number, number] = [endPoint, startPointY, startPointZ];
-const endPointY: [number, number, number] = [startPointX, endPoint + startPointY, startPointZ];
-const endPointZ: [number, number, number] = [startPointX, startPointY, endPoint + startPointZ];
-const radius = 0.005;
+const startPointY = 0.82;
+const startPointZ = 0;
+// endPoint is used to determine what axis is being calculated, should not need to change
+const endPoint = 1;
+const radius = 0.002;
+
 export default function App() {
     return (
         <>
@@ -31,8 +36,9 @@ export default function App() {
                     {/*<Button position={[0, 1.5, -1]}/>*/}
                     {/*<RotatingBox position={[0.8, 1.5, -1]}/>*/}
                     {/*<RotatingBox position={[-0.8, 1.5, -1]}/>*/}
-                    <Axis start={startPoint} endX={endPointX} endY={endPointY} endZ={endPointZ} radius={radius}
-                          colorX={"red"} colorY={"yellow"} colorZ={"blue"} labelOffset={0.1}/>
+                    <Axis minValue={minNum} maxValue={maxNum} scaleFactor={scaleFactor} startX={startPointX}
+                          startY={startPointY} startZ={startPointZ} endPoint={endPoint} radius={radius}
+                          labelOffset={labelOffset}/>
                 </XR>
             </Canvas>
         </>
