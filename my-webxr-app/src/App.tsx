@@ -4,10 +4,10 @@ import '@react-three/fiber'
 import './styles.css'
 import { Canvas } from '@react-three/fiber'
 
-import Floor from './Components/Floor'
-import DataPoint from "./Components/DataPoint.tsx";
+import Floor from "./components/Floor";
+import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
-import DataPointMenu from "./Components/DataPointMenu.tsx";
+import DataPointMenu from "./components/DataPointMenu.tsx";
 
 export default function App() {
   return (
