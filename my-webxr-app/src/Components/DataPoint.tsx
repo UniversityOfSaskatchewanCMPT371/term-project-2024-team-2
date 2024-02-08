@@ -1,15 +1,29 @@
-import { useState } from "react";
 import { Interactive } from "@react-three/xr";
+import { useState } from "react";
 import { BackSide } from "three";
+import { usePointSelectionContext } from "../contexts/PointSelectionContext.tsx";
 
-export default function DataPoint(meshProps: JSX.IntrinsicElements["mesh"]) {
+interface DataPointProps {
+  id: number;
+  meshProps?: JSX.IntrinsicElements["mesh"];
+}
+
+export default function DataPoint({ id, meshProps }: DataPointProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
+  const { selectedDataPoint, setSelectedDataPoint } =
+    usePointSelectionContext();
+
+  const setIsSelected = () => {
+    selectedDataPoint === id
+      ? setSelectedDataPoint(null)
+      : setSelectedDataPoint(id);
+  };
+
   return (
     <Interactive
       onHover={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
-      onSelect={() => setIsSelected(!isSelected)}
+      onSelect={() => setIsSelected()}
     >
       <mesh {...meshProps}>
         {/* Low numbers to try to minimize the number of faces we need to render*/}
@@ -17,10 +31,14 @@ export default function DataPoint(meshProps: JSX.IntrinsicElements["mesh"]) {
         <sphereGeometry args={[0.1, 10, 10]} />
         <meshStandardMaterial />
       </mesh>
-      <mesh {...meshProps} scale={1.25} visible={isHovered || isSelected}>
+      <mesh
+        {...meshProps}
+        scale={1.25}
+        visible={isHovered || selectedDataPoint === id}
+      >
         <sphereGeometry args={[0.1, 10, 10]} />
         <meshStandardMaterial
-          color={isSelected ? "blue" : "aqua"}
+          color={selectedDataPoint === id ? "blue" : "aqua"}
           side={BackSide}
         />
       </mesh>
