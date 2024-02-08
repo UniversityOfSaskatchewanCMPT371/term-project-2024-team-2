@@ -60,7 +60,7 @@ jobs:
 
   deploy_to_production:
     name: Deploy to Production
-    if: github.base_ref == 'refs/heads/master'
+    if: github.base_ref == 'master'
     needs: build
     permissions:
       checks: write
