@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
-import * as log4js from "log4js";
+
+// import * as log4js from "log4js";
 
 /**
  * Create an interface for the return state values of the Context.
@@ -38,12 +39,12 @@ export const PointSelectionProvider = ({
   const setSelectedDataPoint = (
     newValue: React.SetStateAction<number | null>,
   ) => {
-    log4js
-      .getLogger()
-      .debug(
-        "PointSelectionContext: updating selectedDataPoint state to " +
-          newValue,
-      );
+    // log4js
+    //   .getLogger()
+    //   .debug(
+    //     "PointSelectionContext: updating selectedDataPoint state to " +
+    //       newValue,
+    //   );
     _setSelectedDataPoint(newValue);
   };
 

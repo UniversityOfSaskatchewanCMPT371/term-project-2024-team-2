@@ -1,7 +1,7 @@
 import { Interactive } from "@react-three/xr";
 import { useState } from "react";
 import { BackSide } from "three";
-import * as log4js from "log4js";
+// import * as log4js from "log4js";
 import { usePointSelectionContext } from "../contexts/PointSelectionContext.tsx";
 import { SphereGeometryProps } from "@react-three/fiber";
 
@@ -35,9 +35,9 @@ export default function DataPoint({
       );
     }
 
-    log4js
-      .getLogger()
-      .debug("DataPoint #" + id + ": setting hover count to " + amount);
+    // log4js
+    //   .getLogger()
+    //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
 
