@@ -7,8 +7,8 @@ jest.mock('idb', () => ({
 }));
 
 describe('UrlCsvReader functions', () => {
-    test('validateUrl throws an error when the URL does not point to a CSV file', () => {
-        expect(() => validateUrl('lmao@hehe.lol')).toThrow('URL must point to a CSV file');
+    test('validateUrl throws an error when the URL does not point to a CSV file or not empty', () => {
+        expect(() => validateUrl('lmao@hehe.lol')).toThrow('URL must point to a CSV file or not empty');
         expect(() => validateUrl('WillyMineyMole.csv')).not.toThrow();
     });
 
@@ -23,7 +23,7 @@ describe('UrlCsvReader functions', () => {
         await expect(validateDbAndStore('testDb', 'testStore')).rejects.toThrow(`Store "testStore" does not exist in database "testDb"`);
     });
 
-    
+
     test('does not throw an error when the store exists', async () => {
         (openDB as jest.Mock).mockResolvedValueOnce({
             objectStoreNames: {
