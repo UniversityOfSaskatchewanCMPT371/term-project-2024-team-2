@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/papaparse": "^5.3.14",
+    "idb": "^8.0.0"
+  }
+}
