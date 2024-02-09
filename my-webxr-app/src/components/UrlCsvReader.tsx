@@ -8,8 +8,8 @@ interface UrlCsvReaderProps {
 }
 
 /**
- * UrlCsvReader component provides an input field for a user to enter a URL to a CSV file.
- * When a URL is entered, it uses the Papa Parse library to download and parse the CSV file.
+ * UrlCsvReader is a React component that provides an input field and a button for the user to enter a URL to a CSV file.
+ * When the button is clicked, it uses the Papa Parse library to download and parse the CSV file.
  * The parsed data is then stored in an IndexedDB database.
  *
  * Props:
@@ -17,18 +17,27 @@ interface UrlCsvReaderProps {
  * - storeName: The name of the object store within the database where the parsed data will be stored.
  *
  * The component throws an error if:
- * - The URL is empty.
+ * - The URL does not point to a CSV file, this cover the empty case.
  * - The specified database does not exist.
  * - The specified store does not exist in the database.
  * - The parsed data is not an array.
+ *
+ * The component also provides a feedback popup that is displayed when the CSV data is successfully read and stored.
  */
 export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps) {
-    // Define a feedback pop up notify if url is read in successfully
+    // A feedback pop up to check if csv read in is sucesefully
     const [showPopup, setShowPopup] = useState(false);
+    
+    const [url, setUrl] = useState(''); 
+    const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUrl(event.target.value); 
+    };
 
-    const handleUrlChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const url = event.target.value;
-        if (!url) throw new Error('URL cannot be empty');
+    const handleButtonClick = async () => {
+        // Check if the URL ends with '.csv'
+        if (!url.endsWith('.csv')) {
+            throw new Error('URL must point to a CSV file');
+        }
 
         // Assert that the database is intialized
         const db = await openDB(dbName, 1);
@@ -75,6 +84,7 @@ export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps) {
     return (
         <div>
             <input type="text" placeholder="Enter CSV URL" onChange={handleUrlChange} />
+            <button onClick={handleButtonClick}>Load CSV</button>
             {showPopup && <div>Read in successfully</div>}
         </div>
     );
