@@ -1,4 +1,4 @@
-import { validateFile, validateDbAndStore, handleParsedData } from '../src/components/LocalCsvReader';
+import { validateDbAndStore, handleParsedData } from '../src/components/LocalCsvReader';
 import { openDB } from 'idb';
 
 // Mocking the indexDB component
