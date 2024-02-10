@@ -27,6 +27,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-typescript": "^7.23.3",
+    "@react-three/test-renderer": "^8.2.1",
     "@types/jest": "^29.5.11",
     "@types/papaparse": "^5.3.14",
     "@types/react": "^18.2.43",

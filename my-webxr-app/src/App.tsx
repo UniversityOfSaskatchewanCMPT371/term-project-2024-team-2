@@ -4,12 +4,17 @@ import '@react-three/fiber'
 import './styles.css'
 import Axis from "./Components/axis.tsx";
 import { Canvas } from '@react-three/fiber'
+
+
 import Floor from './components/Floor'
 import RotatingBox from './components/RotatingBox'
 import Button from './components/Button'
 import { useEffect } from 'react';
 import { openDB } from 'idb';
 import { LocalCsvReader } from './components/LocalCsvReader.tsx';
+import DataPoint from "./components/DataPoint.tsx";
+import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
+import DataPointMenu from "./components/DataPointMenu.tsx";
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -60,22 +65,30 @@ export default function App() {
             }}>Print Data to Console</button>
         </div>
       <VRButton />
-      <Canvas>
-        <XR>
-          <Sky sunPosition={[0, 1, 0]} />
-          <Floor />
-          <ambientLight />
-          <pointLight position={[10, 10, 10]} />
-          <Controllers />
-          <Button position={[0, 1.5, -1]} />
-          <RotatingBox position={[0.8, 1.5, -1]} />
-          <RotatingBox position={[-0.8, 1.5, -1]} />
-          <Axis minValue={minNum} maxValue={maxNum} scaleFactor={scaleFactor} startX={startPointX}
-          startY={startPointY} startZ={startPointZ} endPoint={endPoint} radius={radius}
-          labelOffset={labelOffset}/>
-        </XR>
-      </Canvas>
-    </>
-  )
-}
+      <PointSelectionProvider>
+        <Canvas>
+          <XR>
+            <Sky sunPosition={[0, 1, 0]} />
+            <Floor />
+            <ambientLight />
+            <pointLight position={[10, 10, 10]} />
+            <Controllers />
+            <Button position={[0, 1.5, -1]} />
+            <RotatingBox position={[0.8, 1.5, -1]} />
+            <RotatingBox position={[-0.8, 1.5, -1]} />
+            <Axis minValue={minNum} maxValue={maxNum} scaleFactor={scaleFactor} startX={startPointX}
+            startY={startPointY} startZ={startPointZ} endPoint={endPoint} radius={radius}
+            labelOffset={labelOffset}/>
 
+            {/* Temporary display/test of the data points.
+              These will eventually be created by the plot itself */}
+            <DataPoint id={0} meshProps={{ position: [0.25, 1.75, -0.75] }} />
+            <DataPoint id={1} meshProps={{ position: [0, 1.75, -0.75] }} />
+            <DataPoint id={2} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
+            <DataPointMenu position={[0, 2.2, -0.75]} />
+          </XR>
+        </Canvas>
+      </PointSelectionProvider>
+    </>
+  );
+}
