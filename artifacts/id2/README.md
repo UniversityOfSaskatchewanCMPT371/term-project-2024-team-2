@@ -187,6 +187,7 @@ On the Build side, we introduced:
 ### Wiki Documents
 - [Code Style](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Style-Sheet-for-Typescript-and-React)
 - [Logging Configuration Guidance](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Logging-framework-log4js)
+- [Sequence Diagram](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#3-sequence-diagram)
 
 #### Inspections
 - [Mitchell Wagner](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-mitchell-wagner)
