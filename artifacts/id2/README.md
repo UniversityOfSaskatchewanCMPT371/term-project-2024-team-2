@@ -182,7 +182,7 @@ On the Build side, we introduced:
 - Joe Mbonayo
 - Trang Nguyen (Ill. Delivered update on discord)
 - Aesha Patel (Ill. Delivered update on discord)
-- Matthew Buglass (Doctor's appointment. Delvierd update on discord)
+- Matthew Buglass (Doctor's appointment. Deliverd update on discord)
 
 ### Wiki Documents
 - [Code Style](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Style-Sheet-for-Typescript-and-React)
