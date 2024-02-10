@@ -1,7 +1,6 @@
 import React from "react";
 import {Interactive} from "@react-three/xr";
-import {OrbitControls} from "@react-three/drei";
-import {SingleAxis} from "./singleAxis";
+import SingleAxis from "./singleAxis";
 
 
 interface AxisProps {
@@ -46,6 +45,7 @@ const Axis: React.FC<AxisProps> = ({
                     scaleFactor={scaleFactor}
                     minValue={minValue}
                     maxValue={maxValue}
+                    labelIncrement={0}
                 />
                 {/* Y-axis */}
                 <SingleAxis
@@ -60,6 +60,7 @@ const Axis: React.FC<AxisProps> = ({
                     scaleFactor={scaleFactor}
                     minValue={minValue}
                     maxValue={maxValue}
+                    labelIncrement={0}
                 />
                 {/* Z-axis */}
                 <SingleAxis
@@ -74,9 +75,10 @@ const Axis: React.FC<AxisProps> = ({
                     scaleFactor={scaleFactor}
                     minValue={minValue}
                     maxValue={maxValue}
+                    labelIncrement={0}
+
                 />
             </group>
-            <OrbitControls/>
         </Interactive>
     );
 };

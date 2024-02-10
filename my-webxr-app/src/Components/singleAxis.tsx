@@ -14,10 +14,11 @@ interface singleAxisProps {
     labelOffset: number;
     minValue: number;
     maxValue: number;
+    labelIncrement: number;
 }
 
 // this function will create an axis and call GenerateTicks to put ticks and labels on the axis
-export const SingleAxis: React.FC<singleAxisProps> = ({
+const SingleAxis: React.FC<singleAxisProps> = ({
                                                           startX,
                                                           startY,
                                                           startZ,
@@ -28,7 +29,8 @@ export const SingleAxis: React.FC<singleAxisProps> = ({
                                                           labelOffset,
                                                           scaleFactor,
                                                           minValue,
-                                                          maxValue
+                                                          maxValue,
+                                                          labelIncrement
                                                       }) => {
 
     // Calculate the range in positive and negative directions
@@ -37,7 +39,7 @@ export const SingleAxis: React.FC<singleAxisProps> = ({
 
     // Determine the label increment based on the ranges
     // adjust these to change increment of the labels that appear under the ticks
-    let labelIncrement: number = 0;
+    labelIncrement = 0;
     if (maxNum <= 10 && minNum <= 10) {
         labelIncrement = 1;
     } else if (maxNum <= 20 && minNum <= 20) {
@@ -108,3 +110,5 @@ export const SingleAxis: React.FC<singleAxisProps> = ({
         </>
     );
 };
+
+export default SingleAxis;
