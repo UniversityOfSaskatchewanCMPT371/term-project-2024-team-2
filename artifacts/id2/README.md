@@ -24,7 +24,57 @@
 - [API Design]()
 
 ### Knowledge Sharing and Pairing Sessions:
+We have a group shared calendar to book meetings, standups, and pairing sessions.
 
+#### PM Pairing Session
+- Duration: 2.5hrs
+- Attended by: Trang, Matthew
+- Paried on tasks for backlog refinement, sprint planning and backlog grooming for ID2, and preparing the ID1 presentation.
+
+#### Code Inspection: Tony
+- Duration: 1hr
+- Attended by: Tony, Jesse, Quinn, Matthew
+- Inspected Tony's Logging configuration PR
+
+#### Code Inspection: Mitchell
+- Duration: 1hr
+- Attended by: Tony, Jesse, Quinn, Aesha, Mitchell, Matthew
+- Inspected Mitchell's fixes and configuiration to the Jest testing setup.
+
+#### Gherkin Pairing
+- Duration: 1hr
+- Attended by: Trang, Mitchell
+- Tuorial on current Gherkins and how to write new ones
+
+#### CI/CD Syncup
+- Duration: 0.5hrs
+- Attended by: Trang, Zander
+- Tuorial on current Gherkins and how to write new ones
+
+#### CI/CD Pairing
+- Duration: 0.5hrs
+- Attended by: Trang, Tony
+- Tuorial on current Gherkins and how to write new ones
+
+#### Dev Team group Pairing
+- Duration: 1hr
+- Attended by: Quinn, Zander, Jesse
+- Sync up on development progress and coordinating on merge conflicts
+
+#### Dev Team Unit Test Pairing
+- Duration: 3hrs
+- Attended by: Quinn, Zander, Jesse
+- Group pairing on testing style of React and ReactXR components
+
+#### Architecture design
+- Duration: 2hrs
+- Attended by: Jesse, Matthew
+- Pairing on designing the interaction diagrams and division of responsibility within the application
+
+#### Code Inspection: Matthew
+- Duration: 1hr
+- Attended by: Mitchell, Jesse, Quinn, Matthew
+- Inspected Matthew's Effective Code Review documentation
 
 ### Card and Work Summary
 This sprint focussed on creating and testing hte discrere components and functionality assiciated with building the 3D graph. The core functionalities introduced, from a development perspective, were:
