@@ -14,7 +14,8 @@
 | Long Quan (Tony) Nguyen 	| QA   	| Design Lead     	|
 
 ## Included PDF Documents
-- [ID 1 Review, Retro, and Planning Minutes]()
+- [ID 1 Review, Retro, and Planning Minutes](./Review%20and%20Retro%20-%20ID1.pdf)
+- [ID 1 Review, Retro, and Planning JamBoard](./ID1%20-%20Retro%20Jamboard.pdf)
 - [Requirement Specifications]()
 - [Smoke Testing Plan]()
 - [General Test Plan]()
