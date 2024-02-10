@@ -135,8 +135,8 @@ On the Build side, we introduced:
 - Matthew Buglass (Doctor's appointment. Delvierd update on discord)
 
 ### Wiki Documents
-- [Class Standup Attendance]()
 - [Code Style](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Style-Sheet-for-Typescript-and-React)
+- [Logging Configuration Guidance](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Logging-framework-log4js)
 
 #### Inspections
 - [Mitchell Wagner](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-mitchell-wagner)
