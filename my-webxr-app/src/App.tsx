@@ -8,7 +8,7 @@ import RotatingBox from './components/RotatingBox'
 import Button from './components/Button'
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import { UrlCsvReader } from './components/UrlCsvReader.tsx';
+import { LocalCsvReader } from './components/LocalCsvReader.tsx';
 
 
 
@@ -36,7 +36,7 @@ export default function App() {
     <>
         <div>
             {/* Sample URL box and button */}
-            <UrlCsvReader dbName={dbName} storeName={storeName} />
+            <LocalCsvReader dbName={dbName} storeName={storeName} />
             <button onClick={async () => {
                 const db = await openDB(dbName, 1);
                 const data = await db.getAll(storeName);
@@ -60,3 +60,4 @@ export default function App() {
     </>
   )
 }
+
