@@ -21,7 +21,6 @@
 - [Smoke Testing Plan]()
 - [General Test Plan]()
 - [Test Matrix]()
-- [Code Style]()
 - [API Design]()
 
 ### Knowledge Sharing and Pairing Sessions:
@@ -82,8 +81,62 @@ On the Build side, we introduced:
 |Cut ID2                                                              |https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/115|matthew-buglass, Subzeero, trangnguyen3010|In Progress|High Priority, ID2          |https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/pull/116                                                                                     |5             |            |
 
 
+### Class Standup Attendance
+#### January 30th, 2024
+##### In Attendance
+- Tony Nguyen
+- Jesse Haug
+- Mitchell Wagner
+- Matthew Buglass
+- Aesha Patel
+- Trang Nguyen
+- Quinn Brown
+- Joe Mbonayo
+##### Absent
+- Zander Rommelaere (CSPIP interviews)
+
+#### February 1st, 2024
+##### In Attendance
+- Tony Nguyen
+- Mitchell Wagner
+- Matthew Buglass
+- Aesha Patel
+- Trang Nguyen
+- Quinn Brown
+##### Absent
+- Zander Rommelaere (CSPIP interviews)
+- Jesse Haug
+- Joe Mbonayo
+
+#### February 6th, 2024
+##### In Attendance
+- Tony Nguyen
+- Jesse Haug
+- Mitchell Wagner
+- Matthew Buglass
+- Aesha Patel
+- Zander Rommelaere
+##### Absent
+- Trang Nguyen (Ill. Delivered update on discord)
+- Quinn Brown (Ill. Delivered update on discord)
+- Joe Mbonayo
+
+#### February 8th, 2024
+##### In Attendance
+- Tony Nguyen
+- Jesse Haug
+- Mitchell Wagner
+- Zander Rommelaere
+- Quinn Brown
+##### Absent
+- Joe Mbonayo
+- Trang Nguyen (Ill. Delivered update on discord)
+- Aesha Patel (Ill. Delivered update on discord)
+- Matthew Buglass (Doctor's appointment. Delvierd update on discord)
+
 ### Wiki Documents
 - [Class Standup Attendance]()
+- [Code Style](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Style-Sheet-for-Typescript-and-React)
 
 #### Inspections
 - [Mitchell Wagner](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-mitchell-wagner)
