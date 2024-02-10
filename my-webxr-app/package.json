@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-three/drei": "^9.96.1",
     "@react-three/fiber": "^8.15.14",
+    "@react-three/test-renderer": "^8.2.1",
     "@react-three/xr": "^5.7.1",
     "@types/log4js": "^2.3.5",
     "idb": "^8.0.0",
@@ -20,7 +21,8 @@
     "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.160.0"
+    "react-three-fiber": "^6.0.13",
+    "three": "^0.160.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.9",
