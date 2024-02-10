@@ -35,6 +35,8 @@ export default function DataPoint({
       );
     }
 
+    // Critical Failure: log4js accesses process.env() which vite removes.
+    // We will have to find a way around this.
     // log4js
     //   .getLogger()
     //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
