@@ -15,13 +15,19 @@
 | Long Quan (Tony) Nguyen 	| QA   	| Design Lead     	|
 
 ### Included PDF Documents
-- [ID 1 Review, Retro, and Planning Minutes](./Review%20and%20Retro%20-%20ID1.pdf)
-- [ID 1 Review, Retro, and Planning JamBoard](./ID1%20-%20Retro%20Jamboard.pdf)
-- [Requirement Specifications]()
-- [General Test Plan]()
-- [Test Matrix]()
-- [API Design]()
-- [Time Tracking and Activity Logs]()
+- [ID 1 Review, Retro, and Planning Minutes](./id1_retro_review_planning_minutes.pdf)
+- [ID 1 Review, Retro, and Planning JamBoard](./id1_retro_jamboard.pdf)
+- [Development Update](./id2_dev_team_update.pdf)
+- [Testing Update](./id2_test_team_update.pdf)
+- [Risk Analysi](./id2_risk_analysis.pdf)
+- [Requirement Specifications](./id2_requirements_specifications.pdf)
+- [Code Style Guide](./id2_code_template_report.pdf)
+- [Integration Test Results](./id2_test_list.pdf)
+- [Test Matrix](./id2_test_matrix.pdf)
+- [Class Diagram](./id2_class_diagram.pdf)
+- [Sequence Diagram](./id2_sequence_diagram.pdf)
+- [Componenet Diagram](./id2_component_diagram.pdf)
+- [Time Tracking and Activity Logs](./id2_activity_log.pdf)
 
 ### Knowledge Sharing and Pairing Sessions:
 We have a group shared calendar to book meetings, standups, and pairing sessions.
