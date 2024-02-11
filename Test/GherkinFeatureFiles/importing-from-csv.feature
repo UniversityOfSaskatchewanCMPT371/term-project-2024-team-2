@@ -14,7 +14,7 @@ Feature: Importing From a CSV
     And the Load csv from URL button should become visible
 
   Scenario Outline: Loading CSV from URL
-    Given the user has entered VR mode
+    Given the user has the option to select a URL
     When the user enters <CSVUrl>
     And they press the Load VSC button
     Then CSV should load into the app
@@ -25,7 +25,7 @@ Feature: Importing From a CSV
       | 2ndURL            |
 
   Scenario Outline: Loading CSV from local files system
-    Given the user has entered VR mode
+    Given that the user has the option to load from file system
     When they click the ChooseFile button
     And they select the <CSVFile> from their system
     Then it should load the content into the app
@@ -35,8 +35,7 @@ Feature: Importing From a CSV
       | Grades.csv |
 
   Scenario Outline: Correct data is loaded from CSV
-    Given the user has entered VR mode
-    And the user has entered the <CSV>
+    Given that the user has loaded the <CSV>
     When the user clicks the print to console button
     Then the <Index> <Subject> <Course Number> <Grade> <Term Taken> should become visible
 
@@ -77,25 +76,23 @@ Feature: Importing From a CSV
       | 28    | cmpt    | 370           | 78    | fall2023          |
       | 29    | math    | 336           | 91    | fall2023          |
 
-    Scenario: Pressing import button without CSV
-      Given the user has entered VR mode
-      When they press the Load CSV button
-      But they have not entered anything
-      Then it should not load anything
+  Scenario: Pressing import button without CSV
+    Given the user has not entered a CSV
+    When they press the Load CSV button
+    But they have not entered anything
+    Then it should not load anything
 
-    Scenario: Importing empty CSV
-      Given the user has enterd VR mode
-      When they press Choose file button
-      And they select emptyCSV.csv
-      And they press print to console
-      Then the app should notify them the file was empty
+  Scenario: Importing empty CSV
+    Given the user has selected the emptyCSV.csv
+    When they confirm this entry
+    Then the app should notify them the file was empty
 
-    Scenario: Selecting a new CSV after already selecting one
-      Given the user has selected a csv
-      And they have loaded the CSV
-      When they click the Choose File butotn
-      And they select a different CSV
-      Then the new data should be loaded
-      And the old data should be gone
+  Scenario: Selecting a new CSV after already selecting one
+    Given the user has selected a csv
+    And they have loaded the CSV
+    When they click the Choose File butotn
+    And they select a different CSV
+    Then the new data should be loaded
+    And the old data should be gone
 
 
