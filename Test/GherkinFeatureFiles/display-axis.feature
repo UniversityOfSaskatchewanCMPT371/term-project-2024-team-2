@@ -38,3 +38,11 @@ Feature: Create Axis for 3D Graph
     When I move along the X, Y, and Z axes
     Then the 3D axes should remain stable
     And there should be no noticeable lag
+
+@manualtesting
+Scenario: Scaling the 3D axes based on loaded data points
+    Given I have a displayed 3D axes
+    And I have loaded data points into the application
+    When the data points are plotted on the 3D axes
+    Then the 3D axes should scale to accommodate all the data points
+    And no data points should be outside the visible range of the 3D axes
