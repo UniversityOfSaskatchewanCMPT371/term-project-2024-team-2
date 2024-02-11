@@ -11,23 +11,23 @@ Feature: Data Point Component in WebXR Application
     Then the data points should be visible from all angles
 
   Scenario: Touch Data Points in 3D Space with left controller
-    Then the data points should be rendered in 3D space
+    Given the user has access to a left controller
     When user hover the left controller on a data point
     Then the data point should be highlighted
 
   Scenario: Touch with Data Points in 3D Space with right controller
-    Then the data points should be rendered in 3D space
+    Given the user has access to a right controller
     When user hover the right controller on a data point
     Then the data point should be highlighted
 
   Scenario: Choose Data Points in 3D Space with left controller
-    Then the data points should be rendered in 3D space
+    Given the user has access to a left controller
     When user selects a data point with the left controller
     Then the data point should be highlighted
     And the data point's information should be displayed
 
   Scenario: Choose Data Points in 3D Space with right controller
-    Then the data points should be rendered in 3D space
+    Given the user has access to a right controller
     When user selects a data point with the right controller
     Then the data point should be highlighted
     And the data point's information should be displayed
