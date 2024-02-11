@@ -18,10 +18,10 @@
 - [ID 1 Review, Retro, and Planning Minutes](./Review%20and%20Retro%20-%20ID1.pdf)
 - [ID 1 Review, Retro, and Planning JamBoard](./ID1%20-%20Retro%20Jamboard.pdf)
 - [Requirement Specifications]()
-- [Smoke Testing Plan]()
 - [General Test Plan]()
 - [Test Matrix]()
 - [API Design]()
+- [Time Tracking and Activity Logs]()
 
 ### Knowledge Sharing and Pairing Sessions:
 We have a group shared calendar to book meetings, standups, and pairing sessions.
@@ -192,6 +192,7 @@ On the Build side, we introduced:
 #### Inspections
 - [Mitchell Wagner](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-mitchell-wagner)
 - [Tony Nguyen](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-tony-nguyen)
+- [Matthew Buglass](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-matthew-buglass)
 
 ## ID3
 ### Work Planned
