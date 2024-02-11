@@ -19,15 +19,16 @@
 - [ID 1 Review, Retro, and Planning JamBoard](./id1_retro_jamboard.pdf)
 - [Development Update](./id2_dev_team_update.pdf)
 - [Testing Update](./id2_test_team_update.pdf)
-- [Risk Analysi](./id2_risk_analysis.pdf)
-- [Requirement Specifications](./id2_requirements_specifications.pdf)
-- [Code Style Guide](./id2_code_template_report.pdf)
+- [Risk Analysis](./id2_risk_analysis.pdf)
+- [Requirements Specification](./id2_requirements_specifications.pdf)
+- [Code Style Report](./id2_code_template_report.pdf)
 - [Integration Test Results](./id2_test_list.pdf)
 - [Test Matrix](./id2_test_matrix.pdf)
 - [Class Diagram](./id2_class_diagram.pdf)
 - [Sequence Diagram](./id2_sequence_diagram.pdf)
 - [Componenet Diagram](./id2_component_diagram.pdf)
 - [Time Tracking and Activity Logs](./id2_activity_log.pdf)
+    - Note Matthew's log refernces [this document](./id2_matthew_buglass_activity_log.pdf). Added to source control as the link in the activity log doesn't work.
 
 ### Knowledge Sharing and Pairing Sessions:
 We have a group shared calendar to book meetings, standups, and pairing sessions.
@@ -194,6 +195,7 @@ On the Build side, we introduced:
 - [Code Style](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Style-Sheet-for-Typescript-and-React)
 - [Logging Configuration Guidance](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Logging-framework-log4js)
 - [Sequence Diagram](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#3-sequence-diagram)
+- [Component Diagram](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#4-component-diagram)
 
 #### Inspections
 - [Mitchell Wagner](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-mitchell-wagner)
