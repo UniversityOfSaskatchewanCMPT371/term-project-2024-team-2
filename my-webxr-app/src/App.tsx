@@ -2,7 +2,7 @@ import {XR, Controllers, VRButton} from '@react-three/xr'
 import {Sky} from '@react-three/drei'
 import '@react-three/fiber'
 import './styles.css'
-import Axis from "./Components/axis.tsx";
+import Axis from "./components/axis.tsx";
 import { Canvas } from '@react-three/fiber'
 
 
