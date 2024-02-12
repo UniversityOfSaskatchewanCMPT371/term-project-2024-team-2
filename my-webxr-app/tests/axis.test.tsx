@@ -1,7 +1,7 @@
 import ReactThreeTestRenderer from "@react-three/test-renderer"
 import {XR} from "@react-three/xr"
-import Axis from '../src/Components/axis';
-// import SingleAxis from '../src/Components/singleAxis';
+import Axis from '../src/components/axis';
+// import SingleAxis from '../src/components/singleAxis';
 import {Vector3} from "three";
 
 describe('Axis Tests', () => {
