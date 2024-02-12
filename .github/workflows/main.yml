@@ -25,10 +25,10 @@ jobs:
 
     steps:
       - name: Checkout Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
@@ -48,3 +48,21 @@ jobs:
 
       - name: Run Unit Tests
         run: npm test
+
+  deploy_to_staging:
+    name: Deploy to Staging
+    if: startsWith(github.base_ref, 'release/')
+    needs: build
+    permissions:
+      checks: write
+    uses: ./.github/workflows/deployment_staging.yml
+    secrets: inherit
+
+  deploy_to_production:
+    name: Deploy to Production
+    if: github.base_ref == 'master'
+    needs: build
+    permissions:
+      checks: write
+    uses: ./.github/workflows/deployment_prod.yml
+    secrets: inherit
