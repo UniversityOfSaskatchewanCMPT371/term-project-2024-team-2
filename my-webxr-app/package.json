@@ -18,6 +18,7 @@
     "@types/log4js": "^2.3.5",
     "idb": "^8.0.0",
     "log4js": "^6.9.1",
+    "ml-matrix": "^6.11.0",
     "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
