@@ -16,7 +16,7 @@ import { UrlCsvReader } from './components/UrlCsvReader.tsx';
 import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";
-import { calculateCovarianceMatrix, computeEigenvaluesFromCovarianceMatrix, computeEigenvectorsFromCovarianceMatrix, computePCA, convertToMatrix, standardizeDataset } from './components/PCA.tsx';
+import { computePCA } from './components/PCA.tsx';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
