@@ -22,21 +22,19 @@ type MaybeMatrix = number[][] | Matrix;
  * @param dataset - The dataset to convert into a Matrix. This can be a Matrix or a 2D array of numbers.
  * @param assert - Optional. Whether to enable assertions. Default is true.
  * @returns The dataset as a Matrix.
- * @throws {Error} If the input dataset is not a Matrix or a 2D array of numbers and assertions are enabled.
+ * @throws {Error} If the input dataset is an array but not a 2D array.
  */
 export function convertToMatrix(dataset: MaybeMatrix, assert: boolean = true): Matrix {
     let datasetMatrix: Matrix;
     if (Array.isArray(dataset)) {
-        // Make use of lazy evaluation, assert is false the rest of condition will not evaluated, reduce computation.
-        if (assert && !dataset.every(subArray => Array.isArray(subArray) && subArray.every(item => typeof item === 'number'))) {
+        // Lazy evaluation, assert is false the rest of condition will not be evaluated, reducing computation.
+        if (assert && !dataset.every(subArray => Array.isArray(subArray))) {
             throw new Error("The input dataset must be a 2D array of numbers.");
         }
         datasetMatrix = new Matrix(dataset);
-    } else if (dataset instanceof Matrix) {
-        datasetMatrix = dataset;
     } else {
-        throw new Error("The input dataset must be a Matrix or a 2D array.");
-    }
+        datasetMatrix = dataset;
+    } 
     return datasetMatrix;
 }
 
@@ -117,7 +115,7 @@ function isSymmetricMatrix(matrix: Matrix): boolean {
  * @throws {Error} If the input matrix is not symmetric and checkSymmetry is true.
  */
 export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix, checkSymmetry: boolean = true): number[] {
-    // Make use of lazy evaluation, checkSymmetry is false the rest of condition will not evaluated, reduce computation.
+    // Lazy evaluation, checkSymmetry is false the rest of condition will not be evaluated, reducing computation.
     if (checkSymmetry && !isSymmetricMatrix(covarianceMatrix)) {
         throw new Error("The input matrix must be symmetric.");
     }
@@ -140,7 +138,7 @@ export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix,
  * @throws {Error} If the input matrix is not symmetric and checkSymmetry is true.
  */
 export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix, checkSymmetry: boolean = true): Matrix {
-    // Make use of lazy evaluation, checkSymmetry is false the rest of condition will not evaluated, reduce computation.
+    // Lazy evaluation, checkSymmetry is false the rest of condition will not be evaluated, reducing computation.
     if (checkSymmetry && !isSymmetricMatrix(covarianceMatrix)) {
         throw new Error("The input matrix must be symmetric.");
     }
@@ -172,6 +170,6 @@ export function computePCA(datasetMatrix: MaybeMatrix, kComponents: number, asse
     const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix, assert);
     const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix, assert);
 
-    let predictions = datasetMatrix.mmul(U);
+    const predictions = datasetMatrix.mmul(U);
     return predictions.subMatrix(0, predictions.rows - 1, 0, kComponents - 1);
 }
