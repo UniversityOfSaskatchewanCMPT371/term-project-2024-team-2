@@ -16,7 +16,7 @@ import { UrlCsvReader } from './components/UrlCsvReader.tsx';
 import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";
-import { computePCA } from './components/PCA.tsx';
+import { computePCA } from './utils/PCA.tsx';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -35,24 +35,12 @@ const endPoint: number = 1;
 const radius: number = 0.002;
 
 export default function App() {
-
-    // Reproduce result from this blog: https://medium.com/analytics-vidhya/understanding-principle-component-analysis-pca-step-by-step-e7a4bb4031d9
-    // Note the signs of the eigenvectors (the result pca) are essentially arbitrary.
-
+    // PCA run check
     const dataset = [[1,2,3,4],
                      [5,5,6,7],
                      [1,4,2,3],
                      [5,3,2,1],
                      [8,1,2,2]];
-    
-    // const datasetMatrix = convertToMatrix(dataset);
-    // console.log("Data Matrix", datasetMatrix);
-    // const standardizedDataSet= standardizeDataset(datasetMatrix);
-    // console.log("Standarized Matrix", standardizedDataSet);
-    // const covarianceMatrix = calculateCovarianceMatrix(standardizedDataSet);
-    // console.log("Co-Matrix", covarianceMatrix);
-    // console.log("e-values:", computeEigenvaluesFromCovarianceMatrix(covarianceMatrix));
-    // console.log("e-vectors:", computeEigenvectorsFromCovarianceMatrix(covarianceMatrix));
     console.log(computePCA(dataset, 2, true));
 
 

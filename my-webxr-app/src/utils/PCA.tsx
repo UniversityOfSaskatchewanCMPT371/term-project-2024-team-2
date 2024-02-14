@@ -9,7 +9,7 @@ import { Matrix, EVD } from 'ml-matrix';
  *    3: Calculate the eigenvalues and eigenvectors for the covariance matrix and sort eigenvalues and their corresponding eigenvectors.
  *    4: Pick k eigenvalues and form a matrix of eigenvectors. Then Transform the original matrix.
  * 
- * Note: assertions in some functions could be turn on/off and passed to inner function to reduce computations.
+ * Note: assertions in some functions could be turned on/off and passed to inner function to reduce computations.
 */
 
 type MaybeMatrix = number[][] | Matrix;
@@ -90,7 +90,7 @@ export function calculateCovarianceMatrix(dataSetMatrix: Matrix, assert: boolean
  * @param matrix - The matrix to check.
  * @returns True if the matrix is symmetric, false otherwise.
  */
-function isSymmetricMatrix(matrix: Matrix): boolean {
+export function isSymmetricMatrix(matrix: Matrix): boolean {
     const transpose = matrix.transpose();
     for (let i = 0; i < matrix.rows; i++) {
         for (let j = 0; j < matrix.columns; j++) {
@@ -162,6 +162,7 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
  * @param assert - Optional. Whether to enable assertions. Default is true. Turn off to reduce computations.
  * @returns The transformed dataset, as a first principal kComponents  Matrix.
  * @throws {Error} If the input dataset is not a Matrix or a 2D array and assert is true.
+ * @throws {Error} If kComponents is not a positive integer or is greater than the number of columns in the dataset and assert is true.
  */
 export function computePCA(datasetMatrix: MaybeMatrix, kComponents: number, assert: boolean = true): Matrix {
     datasetMatrix = convertToMatrix(datasetMatrix, assert);
@@ -171,5 +172,10 @@ export function computePCA(datasetMatrix: MaybeMatrix, kComponents: number, asse
     const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix, assert);
 
     const predictions = datasetMatrix.mmul(U);
+
+    if (assert && kComponents < 1 && kComponents > predictions.columns){
+        throw new Error("Invalid chosen number of principal components.");
+    }
+    
     return predictions.subMatrix(0, predictions.rows - 1, 0, kComponents - 1);
 }
