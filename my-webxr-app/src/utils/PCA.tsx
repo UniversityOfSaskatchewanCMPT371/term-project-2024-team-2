@@ -42,26 +42,25 @@ export function convertToMatrix(dataset: MaybeMatrix, assert: boolean = true): M
  * Standardizes the given dataset.
  * 
  * This is done by subtracting the mean and dividing by the standard deviation for each feature independently.
+ * If the standard deviation of a feature is zero, that feature is left unchanged.
  * 
  * @param dataSetMatrix - The dataset to standardize, represented as a Matrix.
- * @param assert - Optional. Whether to check if the standard deviation is zero. Default is true.
  * @returns The standardized matrix of dataset.
- * @throws {Error} If the standard deviation of a column in the dataset is zero and assert is true.
  */
-export function standardizeDataset(dataSetMatrix: Matrix, assert: boolean = true): Matrix {
+export function standardizeDataset(dataSetMatrix: Matrix): Matrix {
     const mean = dataSetMatrix.mean('column');
     const stdevs = dataSetMatrix.standardDeviation('column', { mean });
 
-    if (assert) {
-        stdevs.forEach(stdDev => {
-            if (stdDev === 0) {
-                throw new Error("Standard deviation of a column in the dataset is zero, causing division by zero.");
-            }
-        });
+    for (let i = 0; i < dataSetMatrix.columns; i++) {
+        if (stdevs[i] === 0) {
+            // Skip standardization for this column
+            continue;
+        }
+        for (let j = 0; j < dataSetMatrix.rows; j++) {
+            const standardizedValue = (dataSetMatrix.get(j, i) - mean[i]) / stdevs[i];
+            dataSetMatrix.set(j, i, standardizedValue);
+        }
     }
-
-    dataSetMatrix.subRowVector(mean);
-    dataSetMatrix.divRowVector(stdevs);
     return dataSetMatrix;
 }
 
@@ -166,7 +165,7 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
  */
 export function computePCA(datasetMatrix: MaybeMatrix, kComponents: number, assert: boolean = true): Matrix {
     datasetMatrix = convertToMatrix(datasetMatrix, assert);
-    datasetMatrix = standardizeDataset(datasetMatrix, assert);
+    datasetMatrix = standardizeDataset(datasetMatrix);
 
     const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix, assert);
     const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix, assert);
