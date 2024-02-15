@@ -15,7 +15,7 @@ describe('PCA methods', () => {
         const classicPCA = computeClassicPCA(dataset, 4);
         for (let i = 0; i < covariancePCA.rows; i++) {
             for (let j = 0; j < covariancePCA.columns; j++) {
-              expect(Math.abs(covariancePCA.get(i, j))).toBeCloseTo(Math.abs(classicPCA.get(i, j)), 2);
+              expect(Math.abs(covariancePCA.get(i, j))).toBeCloseTo(Math.abs(classicPCA.get(i, j)), 12);
             }
           }
     });
