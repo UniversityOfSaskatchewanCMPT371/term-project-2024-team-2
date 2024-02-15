@@ -1,12 +1,11 @@
 import { Matrix } from 'ml-matrix';
 import {  
-    standardizeDataset, 
     calculateCovarianceMatrix, 
     isSymmetricMatrix,
     computeEigenvaluesFromCovarianceMatrix, 
     computeEigenvectorsFromCovarianceMatrix, 
-    computePCA 
-} from '../src/utils/PCA';
+    computeCovariancePCA 
+} from '../src/utils/PCA-covariance';
 
 let matrix: Matrix;
 let covarianceMatrix: Matrix;
@@ -15,13 +14,6 @@ beforeEach(() => {
     const dataset = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
     matrix = new Matrix(dataset);
     covarianceMatrix = calculateCovarianceMatrix(matrix);
-});
-
-describe('standardizeDataset', () => {
-    test('returns a Matrix', () => {
-        const standardized = standardizeDataset(matrix);
-        expect(standardized).toBeInstanceOf(Matrix);
-    });
 });
 
 describe('calculateCovarianceMatrix', () => {
@@ -69,13 +61,13 @@ describe('computeEigenvectorsFromCovarianceMatrix', () => {
 describe('computePCA', () => {
     it('should compute PCA correctly', () => {
         const kComponents = 2;
-        const result = computePCA(matrix, kComponents);
+        const result = computeCovariancePCA(matrix, kComponents);
         expect(result).toBeInstanceOf(Matrix);
         expect(result.columns).toBe(kComponents);
     });
 
     it('should throw an error if kComponents is invalid', () => {
         const kComponents = 4;
-        expect(() => computePCA(matrix, kComponents)).toThrow("Invalid kComponents value.");
+        expect(() => computeCovariancePCA(matrix, kComponents)).toThrow("Invalid kComponents value.");
     });
 });

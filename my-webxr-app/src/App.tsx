@@ -16,8 +16,10 @@ import { UrlCsvReader } from './components/UrlCsvReader.tsx';
 import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";
-import { computePCA } from './utils/PCA.tsx';
+import { computeCovariancePCA } from './utils/PCA-covariance.tsx';
+import { computeClassicPCA } from './utils/PCA-classic.tsx';
 import Matrix from 'ml-matrix';
+
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -44,7 +46,8 @@ export default function App() {
         [5,3,2,1],
         [8,1,2,2]
     ]);
-    console.log(computePCA(dataset, 2));
+    console.log("Covariance PCA:",computeCovariancePCA(dataset, 4));
+    console.log("Classic PCA",computeClassicPCA(dataset, 4));
 
 
     // Database name and store name will be pass as prop to reader components,

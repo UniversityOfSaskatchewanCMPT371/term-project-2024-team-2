@@ -1,5 +1,6 @@
 import {EVD, Matrix} from 'ml-matrix';
 import assert from "./assert.tsx";
+import {standardizeDataset} from "./standardizeDataset.tsx"
 
 /** 
  * Inspired by: https://medium.com/analytics-vidhya/understanding-principle-component-analysis-pca-step-by-step-e7a4bb4031d9 
@@ -12,32 +13,6 @@ import assert from "./assert.tsx";
  * 
  * Note: assertions in some functions could be turned on/off and passed to inner function to reduce computations.
 */
-
-/**
- * Standardizes the given dataset.
- * 
- * This is done by subtracting the mean and dividing by the standard deviation for each feature independently.
- * If the standard deviation of a feature is zero, that feature is left unchanged.
- * 
- * @param dataSetMatrix - The dataset to standardize, represented as a Matrix.
- * @returns The standardized matrix of dataset.
- */
-export function standardizeDataset(dataSetMatrix: Matrix): Matrix {
-    const mean = dataSetMatrix.mean('column');
-    const stdevs = dataSetMatrix.standardDeviation('column', { mean });
-
-    for (let i = 0; i < dataSetMatrix.columns; i++) {
-        if (stdevs[i] === 0) {
-            // Skip standardization for this column
-            continue;
-        }
-        for (let j = 0; j < dataSetMatrix.rows; j++) {
-            const standardizedValue = (dataSetMatrix.get(j, i) - mean[i]) / stdevs[i];
-            dataSetMatrix.set(j, i, standardizedValue);
-        }
-    }
-    return dataSetMatrix;
-}
 
 /**
  * Calculates the covariance matrix of the given dataset.
@@ -111,11 +86,11 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
     return U;
 }
 
-
 /**
- * This function performs Principal Component Analysis (PCA) on a given dataset.
+ * This function performs PCA on a data set using covariance method.
  * 
- * It then standardizes the dataset and calculates the covariance matrix.
+ * It standardizes the dataset, ensuring all features have a mean of 0 and a standard deviation of 1.
+ * Then calculates the covariance matrix.
  * The eigenvectors of the covariance matrix are computed, which are then used to transform the dataset.
  * The transformed dataset is then returned, with only the first kComponents principal components.
  * 
@@ -125,7 +100,7 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
  * @throws {Error} If kComponent exceeds the dimensions of dataset or less than zero.
  * @throws {Error} If an error occurs during the PCA computation.
  */
-export function computePCA(datasetMatrix: Matrix, kComponents: number): Matrix {
+export function computeCovariancePCA(datasetMatrix: Matrix, kComponents: number): Matrix {
     assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value.");
     try {
         datasetMatrix = standardizeDataset(datasetMatrix);
@@ -134,7 +109,8 @@ export function computePCA(datasetMatrix: Matrix, kComponents: number): Matrix {
         const predictions = datasetMatrix.mmul(U);
         return predictions.subMatrix(0, predictions.rows - 1, 0, kComponents - 1);
     } catch (e) {
-        console.log(`An error occurred during PCA computation: ${e}`);
+        console.log(`An error occurred during covariance PCA computation: ${e}`);
         return new Matrix(0, 0);
     }
 }
+
