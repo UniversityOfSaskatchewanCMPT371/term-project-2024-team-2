@@ -1,5 +1,5 @@
 import {EVD, Matrix} from 'ml-matrix';
-import assert from "./assert.ts";
+import assert from "./assert.tsx";
 
 /** 
  * Inspired by: https://medium.com/analytics-vidhya/understanding-principle-component-analysis-pca-step-by-step-e7a4bb4031d9 
