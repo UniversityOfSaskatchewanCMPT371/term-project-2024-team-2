@@ -17,6 +17,7 @@ import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";
 import { computePCA } from './utils/PCA.tsx';
+import {Matrix} from "ml-matrix";
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -36,12 +37,14 @@ const radius: number = 0.002;
 
 export default function App() {
     // PCA run check
-    const dataset = [[1,2,3,4],
-                     [5,5,6,7],
-                     [1,4,2,3],
-                     [5,3,2,1],
-                     [8,1,2,2]];
-    console.log(computePCA(dataset, 2, true));
+    const dataset = new Matrix([
+        [1,2,3,4],
+        [5,5,6,7],
+        [1,4,2,3],
+        [5,3,2,1],
+        [8,1,2,2]
+    ]);
+    console.log(computePCA(dataset, 2));
 
 
     // Database name and store name will be pass as prop to reader components,

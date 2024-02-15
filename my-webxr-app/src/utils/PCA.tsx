@@ -1,4 +1,5 @@
-import { Matrix, EVD } from 'ml-matrix';
+import {EVD, Matrix} from 'ml-matrix';
+import assert from "assert";
 
 /** 
  * Inspired by: https://medium.com/analytics-vidhya/understanding-principle-component-analysis-pca-step-by-step-e7a4bb4031d9 
@@ -20,17 +21,17 @@ type MaybeMatrix = number[][] | Matrix;
  * If the dataset is already a Matrix, it is returned as is. If the dataset is a 2D array of numbers, it is converted into a Matrix.
  * 
  * @param dataset - The dataset to convert into a Matrix. This can be a Matrix or a 2D array of numbers.
- * @param assert - Optional. Whether to enable assertions. Default is true.
  * @returns The dataset as a Matrix.
  * @throws {Error} If the input dataset is an array but not a 2D array.
  */
-export function convertToMatrix(dataset: MaybeMatrix, assert: boolean = true): Matrix {
+export function convertToMatrix(dataset: MaybeMatrix): Matrix {
     let datasetMatrix: Matrix;
     if (Array.isArray(dataset)) {
         // Lazy evaluation, assert is false the rest of condition will not be evaluated, reducing computation.
-        if (assert && !dataset.every(subArray => Array.isArray(subArray))) {
-            throw new Error("The input dataset must be a 2D array of numbers.");
-        }
+        // if (assert && !dataset.every(subArray => Array.isArray(subArray))) {
+        //     throw new Error("The input dataset must be a 2D array of numbers.");
+        // }
+        assert(!dataset.every(subArray => Array.isArray(subArray)))
         datasetMatrix = new Matrix(dataset);
     } else {
         datasetMatrix = dataset;
@@ -163,18 +164,24 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
  * @throws {Error} If the input dataset is not a Matrix or a 2D array and assert is true.
  * @throws {Error} If kComponents is not a positive integer or is greater than the number of columns in the dataset and assert is true.
  */
-export function computePCA(datasetMatrix: MaybeMatrix, kComponents: number, assert: boolean = true): Matrix {
-    datasetMatrix = convertToMatrix(datasetMatrix, assert);
-    datasetMatrix = standardizeDataset(datasetMatrix);
+export function computePCA(datasetMatrix: Matrix, kComponents: number): Matrix {
+    assert( kComponents > 0 || kComponents <= datasetMatrix.columns );
+    try {
+        datasetMatrix = convertToMatrix(datasetMatrix);
+        datasetMatrix = standardizeDataset(datasetMatrix);
+    } catch (e) {
+        console.log(`Could not convert array to matrix. Received error ${e}`);
+        return new Matrix(0, 0);
+    }
 
-    const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix, assert);
-    const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix, assert);
+    const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix);
+    const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix);
 
     const predictions = datasetMatrix.mmul(U);
 
-    if (assert && kComponents < 1 && kComponents > predictions.columns){
-        throw new Error("Invalid chosen number of principal components.");
-    }
+    // if (assert && kComponents < 1 && kComponents > predictions.columns){
+    //     throw new Error("Invalid chosen number of principal components.");
+    // }
     
     return predictions.subMatrix(0, predictions.rows - 1, 0, kComponents - 1);
 }
