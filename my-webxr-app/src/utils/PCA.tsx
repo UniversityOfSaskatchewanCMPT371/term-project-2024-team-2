@@ -13,32 +13,6 @@ import assert from "./assert.tsx";
  * Note: assertions in some functions could be turned on/off and passed to inner function to reduce computations.
 */
 
-type MaybeMatrix = number[][] | Matrix;
-
-/**
- * Converts the input dataset into a Matrix.
- * 
- * If the dataset is already a Matrix, it is returned as is. If the dataset is a 2D array of numbers, it is converted into a Matrix.
- * 
- * @param dataset - The dataset to convert into a Matrix. This can be a Matrix or a 2D array of numbers.
- * @returns The dataset as a Matrix.
- * @throws {Error} If the input dataset is an array but not a 2D array.
- */
-export function convertToMatrix(dataset: MaybeMatrix): Matrix {
-    let datasetMatrix: Matrix;
-    if (Array.isArray(dataset)) {
-        // Lazy evaluation, assert is false the rest of condition will not be evaluated, reducing computation.
-        // if (assert && !dataset.every(subArray => Array.isArray(subArray))) {
-        //     throw new Error("The input dataset must be a 2D array of numbers.");
-        // }
-        assert(!dataset.every(subArray => Array.isArray(subArray)))
-        datasetMatrix = new Matrix(dataset);
-    } else {
-        datasetMatrix = dataset;
-    } 
-    return datasetMatrix;
-}
-
 /**
  * Standardizes the given dataset.
  * 
@@ -68,17 +42,14 @@ export function standardizeDataset(dataSetMatrix: Matrix): Matrix {
 /**
  * Calculates the covariance matrix of the given dataset.
  * 
- * (X^T * X) * (1/(n-1))
+ * Formula: (X^T * X) * (1/(n-1))
  * 
- * @param dataSetMatrix - The dataset to calculate the covariance matrix for, represented as a Matrix.
- * @param assert - Optional. Whether to check if dataset has one row. Default is true.
- * @returns The covariance matrix of the dataset. This matrix is symmetric.
- * @throws {Error} If the number of rows in the dataset is one and assert is true.
+ * @param {Matrix} dataSetMatrix - The dataset to calculate the covariance matrix for, represented as a Matrix.
+ * @returns {Matrix} The covariance matrix of the dataset. This matrix is symmetric.
+ * @throws {Error} If the number of rows in the dataset is one.
  */
-export function calculateCovarianceMatrix(dataSetMatrix: Matrix, assert: boolean = true): Matrix {
-    if (assert && dataSetMatrix.rows === 1) {
-        throw new Error("Number of rows in the dataset is one, causing division by zero.");
-    }
+export function calculateCovarianceMatrix(dataSetMatrix: Matrix): Matrix {
+    assert(dataSetMatrix.rows !== 1, "Number of rows in the dataset is one, causing division by zero.");
     return dataSetMatrix.transpose().mmul(dataSetMatrix).div(dataSetMatrix.rows - 1);
 }
 
@@ -87,8 +58,8 @@ export function calculateCovarianceMatrix(dataSetMatrix: Matrix, assert: boolean
  * 
  * X ?= X^T
  * 
- * @param matrix - The matrix to check.
- * @returns True if the matrix is symmetric, false otherwise.
+ * @param {Matrix} matrix - The matrix to check.
+ * @returns {boolean} True if the matrix is symmetric, false otherwise.
  */
 export function isSymmetricMatrix(matrix: Matrix): boolean {
     const transpose = matrix.transpose();
@@ -109,16 +80,12 @@ export function isSymmetricMatrix(matrix: Matrix): boolean {
  * so that the first eigenvalue corresponds to the direction of maximum variance in the data, the second to the direction 
  * of second most variance, and so on.
  * 
- * @param covarianceMatrix - The covariance matrix to compute the eigenvalues from.
- * @param checkSymmetry - Optional. Whether to check if the input matrix is symmetric. Default is true.
- * @returns An array of eigenvalues (S).
- * @throws {Error} If the input matrix is not symmetric and checkSymmetry is true.
+ * @param {Matrix} covarianceMatrix - The covariance matrix from which to compute the eigenvalues.
+ * @returns {number[]} An array of eigenvalues in descending order.
+ * @throws {Error} If the input matrix is not symmetric.
  */
-export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix, checkSymmetry: boolean = true): number[] {
-    // Lazy evaluation, checkSymmetry is false the rest of condition will not be evaluated, reducing computation.
-    if (checkSymmetry && !isSymmetricMatrix(covarianceMatrix)) {
-        throw new Error("The input matrix must be symmetric.");
-    }
+export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix): number[] {
+    assert(isSymmetricMatrix(covarianceMatrix), "Compute eigenvalues from non symetric covariance matrix.");
     const evd = new EVD(covarianceMatrix, { assumeSymmetric: true });
     const S = evd.realEigenvalues;
     S.reverse();
@@ -132,16 +99,12 @@ export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix,
  * of their corresponding eigenvalues, so that the first eigenvector corresponds to the direction of maximum variance in the data, 
  * the second to the direction of second most variance, and so on.
  * 
- * @param covarianceMatrix - The covariance matrix to compute the eigenvectors from.
- * @param checkSymmetry - Optional. Whether to check if the input matrix is symmetric. Default is true.
- * @returns A matrix of eigenvectors (U).
- * @throws {Error} If the input matrix is not symmetric and checkSymmetry is true.
+ * @param {Matrix} covarianceMatrix - The covariance matrix from which to compute the eigenvectors.
+ * @returns {Matrix} A matrix of eigenvectors (U).
+ * @throws {Error} If the input matrix is not symmetric.
  */
-export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix, checkSymmetry: boolean = true): Matrix {
-    // Lazy evaluation, checkSymmetry is false the rest of condition will not be evaluated, reducing computation.
-    if (checkSymmetry && !isSymmetricMatrix(covarianceMatrix)) {
-        throw new Error("The input matrix must be symmetric.");
-    }
+export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix): Matrix {
+    assert(isSymmetricMatrix(covarianceMatrix), "Compute eigenvectors from non symetric covariance matrix.");
     const evd = new EVD(covarianceMatrix, { assumeSymmetric: true });
     const U = evd.eigenvectorMatrix;
     U.flipRows();
@@ -150,39 +113,28 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
 
 
 /**
- * Performs Principal Component Analysis (PCA) on the input dataset.
+ * This function performs Principal Component Analysis (PCA) on a given dataset.
  * 
- * The function first converts the input to a Matrix if it's not already one. Then, the dataset is standardized.
- * The covariance matrix of the standardized dataset is calculated next.
- * The eigenvectors of the covariance matrix are computed and used to transform the dataset into the principal component space.
- * The transformed dataset is then truncated to only include the first kComponents principal components.
+ * It then standardizes the dataset and calculates the covariance matrix.
+ * The eigenvectors of the covariance matrix are computed, which are then used to transform the dataset.
+ * The transformed dataset is then returned, with only the first kComponents principal components.
  * 
- * @param datasetMatrix - The dataset to perform PCA on. This can be a Matrix or a data structure that can be converted to a Matrix.
- * @param kComponents - The number of principal components to keep.
- * @returns The transformed dataset, as a first principal kComponents  Matrix.
- * @throws {Error} If the input dataset is not a Matrix or a 2D array and assert is true.
- * @throws {Error} If kComponents is not a positive integer or is greater than the number of columns in the dataset and assert is true.
+ * @param {Matrix} datasetMatrix - The dataset to perform PCA on, represented as a matrix.
+ * @param {number} kComponents - The number of principal components to retain.
+ * @returns {Matrix} The transformed dataset, with only the first kComponents principal components.
+ * @throws {Error} If kComponent exceeds the dimensions of dataset or less than zero.
+ * @throws {Error} If an error occurs during the PCA computation.
  */
 export function computePCA(datasetMatrix: Matrix, kComponents: number): Matrix {
-    console.log("in compute")
-    assert( kComponents > 0 || kComponents <= datasetMatrix.columns );
-    console.log("past assert")
+    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value.");
     try {
-        datasetMatrix = convertToMatrix(datasetMatrix);
         datasetMatrix = standardizeDataset(datasetMatrix);
+        const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix);
+        const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix);
+        const predictions = datasetMatrix.mmul(U);
+        return predictions.subMatrix(0, predictions.rows - 1, 0, kComponents - 1);
     } catch (e) {
-        console.log(`Could not convert array to matrix. Received error ${e}`);
+        console.log(`An error occurred during PCA computation: ${e}`);
         return new Matrix(0, 0);
     }
-
-    const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix);
-    const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix);
-
-    const predictions = datasetMatrix.mmul(U);
-
-    // if (assert && kComponents < 1 && kComponents > predictions.columns){
-    //     throw new Error("Invalid chosen number of principal components.");
-    // }
-    
-    return predictions.subMatrix(0, predictions.rows - 1, 0, kComponents - 1);
 }

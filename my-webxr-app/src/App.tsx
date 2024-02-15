@@ -17,7 +17,7 @@ import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";
 import { computePCA } from './utils/PCA.tsx';
-import {Matrix} from "ml-matrix";
+import Matrix from 'ml-matrix';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;

@@ -1,6 +1,5 @@
 import { Matrix } from 'ml-matrix';
-import { 
-    convertToMatrix, 
+import {  
     standardizeDataset, 
     calculateCovarianceMatrix, 
     isSymmetricMatrix,
@@ -9,17 +8,13 @@ import {
     computePCA 
 } from '../src/utils/PCA';
 
-const dataset = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-const matrix = new Matrix(dataset);
+let matrix: Matrix;
+let covarianceMatrix: Matrix;
 
-describe('convertToMatrix', () => {
-    test('converts array to Matrix', () => {
-        expect(convertToMatrix(dataset)).toBeInstanceOf(Matrix);
-    });
-
-    test('returns same Matrix if input is Matrix', () => {
-        expect(convertToMatrix(matrix)).toBe(matrix);
-    });
+beforeEach(() => {
+    const dataset = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+    matrix = new Matrix(dataset);
+    covarianceMatrix = calculateCovarianceMatrix(matrix);
 });
 
 describe('standardizeDataset', () => {
@@ -33,6 +28,11 @@ describe('calculateCovarianceMatrix', () => {
     test('returns a Matrix', () => {
         const covarianceMatrix = calculateCovarianceMatrix(matrix);
         expect(covarianceMatrix).toBeInstanceOf(Matrix);
+    });
+
+    test('returns a symmetric Matrix', () => {
+        const covarianceMatrix = calculateCovarianceMatrix(matrix);
+        expect(isSymmetricMatrix(covarianceMatrix)).toBe(true);
     });
 });
 
@@ -50,39 +50,32 @@ describe('isSymmetricMatrix', () => {
 
 describe('computeEigenvaluesFromCovarianceMatrix', () => {
     test('returns an array', () => {
-        const covarianceMatrix = calculateCovarianceMatrix(matrix);
         const eigenvalues = computeEigenvaluesFromCovarianceMatrix(covarianceMatrix);
         expect(eigenvalues).toBeInstanceOf(Array);
     });
 
     test('returns a symmetric matrix', () => {
-        const covarianceMatrix = calculateCovarianceMatrix(matrix);
         expect(isSymmetricMatrix(covarianceMatrix)).toBe(true);
     });
 });
 
 describe('computeEigenvectorsFromCovarianceMatrix', () => {
     test('returns a Matrix', () => {
-        const covarianceMatrix = calculateCovarianceMatrix(matrix);
         const eigenvectors = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix);
         expect(eigenvectors).toBeInstanceOf(Matrix);
     });
 });
 
 describe('computePCA', () => {
-    test('throws error if kComponents is greater than number of columns', () => {
-        expect(() => computePCA(matrix, matrix.columns + 1)).toThrow();
-    });
-
-    test('does not throw error if kComponents is less than or equal to number of columns', () => {
-        expect(() => computePCA(matrix, matrix.columns)).not.toThrow();
-        expect(() => computePCA(matrix, matrix.columns - 1)).not.toThrow();
-    });
-
-    test('returns a matrix with kComponents columns', () => {
+    it('should compute PCA correctly', () => {
         const kComponents = 2;
-        const pca = computePCA(matrix, kComponents);
-        expect(pca).toBeInstanceOf(Matrix);
-        expect(pca.columns).toBe(kComponents);
+        const result = computePCA(matrix, kComponents);
+        expect(result).toBeInstanceOf(Matrix);
+        expect(result.columns).toBe(kComponents);
+    });
+
+    it('should throw an error if kComponents is invalid', () => {
+        const kComponents = 4;
+        expect(() => computePCA(matrix, kComponents)).toThrow("Invalid kComponents value.");
     });
 });
