@@ -5,14 +5,12 @@ import {standardizeDataset} from "./standardizeDataset.tsx"
 /** 
  * Inspired by: https://medium.com/analytics-vidhya/understanding-principle-component-analysis-pca-step-by-step-e7a4bb4031d9 
  * 
- * Steps Involved in the PCA
+ * Steps involved in this method of PCA
  *    1: Standardize the dataset.
  *    2: Calculate the covariance matrix for the features in the dataset.
  *    3: Calculate the eigenvalues and eigenvectors for the covariance matrix and sort eigenvalues and their corresponding eigenvectors.
- *    4: Pick k eigenvalues and form a matrix of eigenvectors. Then Transform the original matrix.
- * 
- * Note: assertions in some functions could be turned on/off and passed to inner function to reduce computations.
-*/
+ *    4: Pick k eigenvalues and form a matrix of eigenvectors. Then take product of dataset and eigenvectors to form PCA matrix.
+ * /
 
 /**
  * Calculates the covariance matrix of the given dataset.
@@ -106,8 +104,8 @@ export function computeCovariancePCA(datasetMatrix: Matrix, kComponents: number)
         datasetMatrix = standardizeDataset(datasetMatrix);
         const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix);
         const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix);
-        const predictions = datasetMatrix.mmul(U);
-        return predictions.subMatrix(0, predictions.rows - 1, 0, kComponents - 1);
+        const PCA = datasetMatrix.mmul(U);
+        return PCA.subMatrix(0, PCA.rows - 1, 0, kComponents - 1);
     } catch (e) {
         console.log(`An error occurred during covariance PCA computation: ${e}`);
         return new Matrix(0, 0);
