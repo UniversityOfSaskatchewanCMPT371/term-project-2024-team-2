@@ -1,5 +1,5 @@
 import {EVD, Matrix} from 'ml-matrix';
-import assert from "assert";
+import assert from "./assert.ts";
 
 /** 
  * Inspired by: https://medium.com/analytics-vidhya/understanding-principle-component-analysis-pca-step-by-step-e7a4bb4031d9 
@@ -159,13 +159,14 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
  * 
  * @param datasetMatrix - The dataset to perform PCA on. This can be a Matrix or a data structure that can be converted to a Matrix.
  * @param kComponents - The number of principal components to keep.
- * @param assert - Optional. Whether to enable assertions. Default is true. Turn off to reduce computations.
  * @returns The transformed dataset, as a first principal kComponents  Matrix.
  * @throws {Error} If the input dataset is not a Matrix or a 2D array and assert is true.
  * @throws {Error} If kComponents is not a positive integer or is greater than the number of columns in the dataset and assert is true.
  */
 export function computePCA(datasetMatrix: Matrix, kComponents: number): Matrix {
+    console.log("in compute")
     assert( kComponents > 0 || kComponents <= datasetMatrix.columns );
+    console.log("past assert")
     try {
         datasetMatrix = convertToMatrix(datasetMatrix);
         datasetMatrix = standardizeDataset(datasetMatrix);
