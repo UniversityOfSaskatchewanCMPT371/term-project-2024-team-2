@@ -55,6 +55,7 @@ jobs:
     needs: build
     permissions:
       checks: write
+      pull-requests: write
     uses: ./.github/workflows/deployment_staging.yml
     secrets: inherit
 
