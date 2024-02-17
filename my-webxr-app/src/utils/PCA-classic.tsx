@@ -19,7 +19,7 @@ import {standardizeDataset} from "./standardizeDataset.tsx"
  * @return {Matrix} - The first k right singular vectors (has k-columns).
  */
 export function getRightSingularVectors(datasetMatrix: Matrix, kComponents: number): Matrix {
-    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value.");
+    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value:" + kComponents);
     const svd = new SVD(datasetMatrix, {
         computeLeftSingularVectors: false,
         computeRightSingularVectors: true,
