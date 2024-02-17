@@ -25,6 +25,16 @@ describe('calculateCovarianceMatrix', () => {
         const covarianceMatrix = calculateCovarianceMatrix(matrix);
         expect(covarianceMatrix.isSymmetric()).toBe(true);
     });
+
+    it('should throw error if data set row is 0', () => {
+        const dataset = new Matrix(0,2);
+        expect(() => calculateCovarianceMatrix(dataset)).toThrow();
+    });
+
+    it('should throw error if data set row is 1', () => {
+        const dataset = new Matrix(1,2);
+        expect(() => calculateCovarianceMatrix(dataset)).toThrow();
+    });
 });
 
 describe('computeEigenvaluesFromCovarianceMatrix', () => {

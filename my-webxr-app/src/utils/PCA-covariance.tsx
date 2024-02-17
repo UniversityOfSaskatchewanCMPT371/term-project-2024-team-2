@@ -19,10 +19,11 @@ import {standardizeDataset} from "./standardizeDataset.tsx"
  * 
  * @param {Matrix} dataSetMatrix - The dataset to calculate the covariance matrix for, represented as a Matrix.
  * @returns {Matrix} The covariance matrix of the dataset. This matrix is symmetric.
- * @throws {Error} If the number of rows in the dataset is one.
+ * @throws {Error} If the number of rows in the dataset is one or zero.
  */
 export function calculateCovarianceMatrix(dataSetMatrix: Matrix): Matrix {
-    assert(dataSetMatrix.rows !== 1, "Number of rows in the dataset is one, causing division by zero.");
+    assert(dataSetMatrix.rows !== 0, "Data set of zero row!")
+    assert(dataSetMatrix.rows !== 1, "Number of rows in the dataset is one, causing division by zero in covariance matrix calculation.");
     return dataSetMatrix.transpose().mmul(dataSetMatrix).div(dataSetMatrix.rows - 1);
 }
 
