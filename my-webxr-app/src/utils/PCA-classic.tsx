@@ -40,11 +40,11 @@ export function getRightSingularVectors(datasetMatrix: Matrix, kComponents: numb
  * @param {Matrix} datasetMatrix - The dataset to perform PCA on, represented as a matrix where each row is an observation and each column is a feature.
  * @param {number} kComponents - The number of principal components to retain.
  * @returns {Matrix} The PCA-transformed dataset, with only the first kComponents principal components.
+ *                   If an error occurs during the PCA computation, an empty matrix is returned.
  * @throws {Error} If kComponents is less than 1 or greater than the number of features in the dataset.
- * @throws {Error} If an error occurs during the PCA computation.
  */
 export function computeClassicPCA(datasetMatrix: Matrix, kComponents: number): Matrix {
-    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value.");
+    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value: " +kComponents);
     try {
         datasetMatrix = standardizeDataset(datasetMatrix);
         const rightSingularVectors = getRightSingularVectors(datasetMatrix, kComponents);

@@ -75,11 +75,11 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
  * @param {Matrix} datasetMatrix - The dataset to perform PCA on, represented as a matrix.
  * @param {number} kComponents - The number of principal components to retain.
  * @returns {Matrix} The transformed dataset, with only the first kComponents principal components.
- * @throws {Error} If kComponent exceeds the dimensions of dataset or less than zero.
- * @throws {Error} If an error occurs during the PCA computation.
+ *                   If an error occurs during the PCA computation, an empty matrix is returned.
+ * @throws {Error} If kComponent exceeds the dimensions of dataset or less than 1.
  */
 export function computeCovariancePCA(datasetMatrix: Matrix, kComponents: number): Matrix {
-    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value.");
+    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value: " + kComponents);
     try {
         datasetMatrix = standardizeDataset(datasetMatrix);
         const covarianceMatrix = calculateCovarianceMatrix(datasetMatrix);

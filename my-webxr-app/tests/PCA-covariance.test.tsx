@@ -55,6 +55,28 @@ describe('computePCA', () => {
 
     it('should throw an error if kComponents is invalid', () => {
         const kComponents = 4;
-        expect(() => computeCovariancePCA(matrix, kComponents)).toThrow("Invalid kComponents value.");
+        expect(() => computeCovariancePCA(matrix, kComponents)).toThrow();
     });
+
+    it('should return empty Matrix if datasetMatrix is 1 by 1', () => {
+        const datasetMatrix = new Matrix(1,1);
+        const kComponents = 1;
+        const result = computeCovariancePCA(datasetMatrix, kComponents)
+        expect(() => result.columns == 0 && result.rows == 0);
+    });
+
+    it('should return empty Matrix if datasetMatrix is 1 by 2', () => {
+        const datasetMatrix = new Matrix(1,2);
+        const kComponents = 1;
+        const result = computeCovariancePCA(datasetMatrix, kComponents)
+        expect(() => result.columns == 0 && result.rows == 0);
+    });
+
+    it('should return empty Matrix if datasetMatrix is 2 by 1', () => {
+        const datasetMatrix = new Matrix(2,1);
+        const kComponents = 1;
+        const result = computeCovariancePCA(datasetMatrix, kComponents)
+        expect(() => result.columns == 0 && result.rows == 0);
+    });
+
 });

@@ -1,4 +1,5 @@
 import {Matrix} from 'ml-matrix';
+import assert from './assert.tsx';
 
 /**
  * Standardizes the given dataset.
@@ -10,6 +11,7 @@ import {Matrix} from 'ml-matrix';
  * @returns {Matrix}The standardized matrix of dataset.
  */
 export function standardizeDataset(dataSetMatrix: Matrix): Matrix {
+    assert(dataSetMatrix.rows >= 2 && dataSetMatrix.columns >= 2, "Invalid data set: "+ dataSetMatrix.rows + " rows, " + dataSetMatrix.columns + " colums.");
     const mean = dataSetMatrix.mean('column');
     const stdevs = dataSetMatrix.standardDeviation('column', { mean });
 
