@@ -27,26 +27,6 @@ export function calculateCovarianceMatrix(dataSetMatrix: Matrix): Matrix {
 }
 
 /**
- * Checks if a matrix is symmetric.
- * 
- * X ?= X^T
- * 
- * @param {Matrix} matrix - The matrix to check.
- * @returns {boolean} True if the matrix is symmetric, false otherwise.
- */
-export function isSymmetricMatrix(matrix: Matrix): boolean {
-    const transpose = matrix.transpose();
-    for (let i = 0; i < matrix.rows; i++) {
-        for (let j = 0; j < matrix.columns; j++) {
-            if (matrix.get(i, j) !== transpose.get(i, j)) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-/**
  * Computes the eigenvalues from a covariance matrix.
  * 
  * It uses Eigenvalue Decomposition (EVD) to compute the eigenvalues. The eigenvalues are then sorted in descending order, 
@@ -58,7 +38,7 @@ export function isSymmetricMatrix(matrix: Matrix): boolean {
  * @throws {Error} If the input matrix is not symmetric.
  */
 export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix): number[] {
-    assert(isSymmetricMatrix(covarianceMatrix), "Compute eigenvalues from non symetric covariance matrix.");
+    assert(covarianceMatrix.isSymmetric(), "Compute eigenvalues from non symetric covariance matrix.");
     const evd = new EVD(covarianceMatrix, { assumeSymmetric: true });
     const S = evd.realEigenvalues;
     S.reverse();
@@ -77,7 +57,7 @@ export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix)
  * @throws {Error} If the input matrix is not symmetric.
  */
 export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix): Matrix {
-    assert(isSymmetricMatrix(covarianceMatrix), "Compute eigenvectors from non symetric covariance matrix.");
+    assert(covarianceMatrix.isSymmetric(), "Compute eigenvectors from non symetric covariance matrix.");
     const evd = new EVD(covarianceMatrix, { assumeSymmetric: true });
     const U = evd.eigenvectorMatrix;
     U.flipRows();

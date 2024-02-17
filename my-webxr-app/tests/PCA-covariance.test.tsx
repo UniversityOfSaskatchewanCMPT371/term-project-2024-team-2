@@ -1,7 +1,6 @@
 import { Matrix } from 'ml-matrix';
 import {  
     calculateCovarianceMatrix, 
-    isSymmetricMatrix,
     computeEigenvaluesFromCovarianceMatrix, 
     computeEigenvectorsFromCovarianceMatrix, 
     computeCovariancePCA 
@@ -24,19 +23,7 @@ describe('calculateCovarianceMatrix', () => {
 
     test('returns a symmetric Matrix', () => {
         const covarianceMatrix = calculateCovarianceMatrix(matrix);
-        expect(isSymmetricMatrix(covarianceMatrix)).toBe(true);
-    });
-});
-
-describe('isSymmetricMatrix', () => {
-    test('returns true for symmetric matrix', () => {
-        const symmetricMatrix = new Matrix([[1, 2, 3], [2, 1, 4], [3, 4, 1]]);
-        expect(isSymmetricMatrix(symmetricMatrix)).toBe(true);
-    });
-
-    test('returns false for non-symmetric matrix', () => {
-        const nonSymmetricMatrix = new Matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
-        expect(isSymmetricMatrix(nonSymmetricMatrix)).toBe(false);
+        expect(covarianceMatrix.isSymmetric()).toBe(true);
     });
 });
 
@@ -47,7 +34,7 @@ describe('computeEigenvaluesFromCovarianceMatrix', () => {
     });
 
     test('returns a symmetric matrix', () => {
-        expect(isSymmetricMatrix(covarianceMatrix)).toBe(true);
+        expect(covarianceMatrix.isSymmetric()).toBe(true);
     });
 });
 
