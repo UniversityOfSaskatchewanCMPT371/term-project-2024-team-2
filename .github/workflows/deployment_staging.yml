@@ -4,30 +4,23 @@
 name: Deploy to Firebase Hosting (Staging Environment)
 
 on:
-  workflow_call:
+  push:
+    branches: ["release/*"]
 
 defaults:
   run:
     working-directory: ./my-webxr-app
 
 jobs:
-  build_and_preview_on_staging:
-    name: Preview
+  build_test_deploy_review:
+    name: Build - Test - Deploy Preview
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: npm ci && npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          entrypoint: ./my-webxr-app
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OCULUS_3D_RENDER_STAGING }}'
-          projectId: oculus-3d-render-staging
+      - uses: ./.github/workflows/deployment_dev.yml
 
   build_and_deploy_to_staging:
     name: Staging
-    needs: build_and_preview_on_staging
-    if: github.event.pull_request.merged == true
+    needs: build_test_deploy_review
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -1,0 +1,55 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Build - Test - Deploy Preview
+
+on:
+  pull_request:
+    branches: ["master", "release/*"]
+  workflow_dispatch:
+  workflow_call:
+
+defaults:
+  run:
+    working-directory: ./my-webxr-app
+
+permissions:
+  pull-requests: write
+
+jobs:
+  build_and_test:
+    name: Build and Test
+    uses: ./.github/workflows/build_and_test.yml
+
+  build_and_preview_on_staging:
+    name: Deploy Preview - Staging
+    if: startsWith(github.base_ref, 'release/')
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          entrypoint: ./my-webxr-app
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OCULUS_3D_RENDER_STAGING }}'
+          projectId: oculus-3d-render-staging
+
+  build_and_preview_on_production:
+    name: Deploy Preview - Production
+    if: github.base_ref == 'master'
+    needs: build_and_test
+    permissions:
+      checks: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          entrypoint: ./my-webxr-app
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OCULUS_3D_RENDER }}'
+          projectId: oculus-3d-render

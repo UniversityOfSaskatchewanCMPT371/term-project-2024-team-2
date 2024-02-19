@@ -1,0 +1,42 @@
+name: Build and Test
+
+on:
+  workflow_call:
+
+defaults:
+  run:
+    working-directory: ./my-webxr-app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Review Dependencies
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: on-failure
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Run Unit Tests
+        run: npm test
