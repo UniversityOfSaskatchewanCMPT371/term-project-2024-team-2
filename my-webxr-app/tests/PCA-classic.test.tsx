@@ -63,7 +63,7 @@ describe('getRightSingularVectors', () => {
 });
 
 describe('computeClassicPCA', () => {
-    it('should compute PCA correctly for a simple dataset', () => {
+    it('should compute and return k-columns PCA matrix', () => {
         const datasetMatrix = new Matrix([
             [1, 2, 3],
             [4, 5, 6],
@@ -73,6 +73,29 @@ describe('computeClassicPCA', () => {
         const result = computeClassicPCA(datasetMatrix, kComponents);
         expect(result).toBeInstanceOf(Matrix);
         expect(result.columns).toBe(kComponents);
+    });
+    
+    it('should compute PCA correctly', () => {
+        const dataset = new Matrix([
+            [1,2,3,4],
+            [5,5,6,7],
+            [1,4,2,3],
+            [5,3,2,1],
+            [8,1,2,2]
+        ]);
+        const expected:Matrix = new Matrix([
+            [0.014003307840190854, 0.7559747649563956, -0.9411996145946913, 0.10185222583403639],
+            [-2.556533994286821, -0.7804317748323719, 0.10686986110060037, 0.00575705265323978],
+            [-0.051480191864711825, 1.2531347040524985, 0.396673396942314, -0.18214124212185673],
+            [1.014150018390944, 0.00023880830993423807, 0.6798861824511147, 0.20122464897453068],
+            [1.5798608599203976, -1.2289165024864566, -0.24222982589933784, -0.12669268533995032]
+        ]);
+        const PCA = computeClassicPCA(dataset, 4);
+        for (let i = 0; i < PCA.rows; i++) {
+            for (let j = 0; j < PCA.columns; j++) {
+              expect(PCA.get(i, j)).toBeCloseTo(expected.get(i, j), 12);
+            }
+        }
     });
 
     it('should throw an error if kComponents is invalid', () => {

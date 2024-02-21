@@ -56,11 +56,34 @@ describe('computeEigenvectorsFromCovarianceMatrix', () => {
 });
 
 describe('computePCA', () => {
-    it('should compute PCA correctly', () => {
+    it('should compute and return k-columns PCA matrix', () => {
         const kComponents = 2;
         const result = computeCovariancePCA(matrix, kComponents);
         expect(result).toBeInstanceOf(Matrix);
         expect(result.columns).toBe(kComponents);
+    });
+    
+    it('should compute PCA correctly', () => {
+        const dataset = new Matrix([
+            [1,2,3,4],
+            [5,5,6,7],
+            [1,4,2,3],
+            [5,3,2,1],
+            [8,1,2,2]
+        ]);
+        const expected:Matrix = new Matrix([
+            [-0.014003307840190604, 0.7559747649563959, 0.941199614594691, -0.10185222583403578],
+            [2.5565339942868186, -0.7804317748323727, -0.10686986110059982, -0.00575705265323978],
+            [0.051480191864712074, 1.2531347040524978, -0.39667339694231407, 0.18214124212185656],
+            [-1.0141500183909433, 0.0002388083099344046, -0.6798861824511148, -0.20122464897453102],
+            [-1.5798608599203967, -1.2289165024864557, 0.24222982589933767, 0.1266926853399502]
+        ]);
+        const covariancePCA = computeCovariancePCA(dataset, 4);
+        for (let i = 0; i < covariancePCA.rows; i++) {
+            for (let j = 0; j < covariancePCA.columns; j++) {
+              expect(covariancePCA.get(i, j)).toBeCloseTo(expected.get(i, j), 12);
+            }
+        }
     });
 
     it('should throw an error if kComponents is invalid', () => {
