@@ -2,7 +2,7 @@
 // import {Text} from "@react-three/drei";
 
 // this function creates the ticks and labels for the axes
-export function GenerateTicks(
+export default function GenerateTicks(
   startX: number,
   startY: number,
   startZ: number,
@@ -14,8 +14,7 @@ export function GenerateTicks(
   axis: string,
 ) {
   let positionTicks: [number, number, number] | undefined;
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
+  // @ts-expect-error Temporary removal of drei
   let positionLabels: [number, number, number] | undefined;
   let ticksShape: [number, number, number] | undefined;
 
@@ -23,13 +22,13 @@ export function GenerateTicks(
   if (axis === 'x') {
     positionTicks = [
       // this calculation gives the correct space between each tick
-      startX + labelOffset * label * scaleFactor / 2,
+      startX + (labelOffset * label * scaleFactor) / 2,
       startY,
       startZ,
     ];
     positionLabels = [
       // this calculation gives the correct space between each label
-      startX + labelOffset * label * scaleFactor / 2,
+      startX + (labelOffset * label * scaleFactor) / 2,
       startY - 0.02,
       startZ,
     ];
@@ -37,12 +36,12 @@ export function GenerateTicks(
   } else if (axis === 'y') {
     positionTicks = [
       startX,
-      startY + labelOffset * label * scaleFactor / 2,
+      startY + (labelOffset * label * scaleFactor) / 2,
       startZ,
     ];
     positionLabels = [
       startX + 0.03,
-      startY + labelOffset * label * scaleFactor / 2,
+      startY + (labelOffset * label * scaleFactor) / 2,
       startZ,
     ];
     ticksShape = [radius * 7, 0.002, radius * 2];
@@ -50,21 +49,20 @@ export function GenerateTicks(
     positionTicks = [
       startX,
       startY,
-      startZ + labelOffset * label * scaleFactor / 2,
+      startZ + (labelOffset * label * scaleFactor) / 2,
     ];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     positionLabels = [
       startX,
       startY - 0.02,
-      startZ + labelOffset * label * scaleFactor / 2,
+      startZ + (labelOffset * label * scaleFactor) / 2,
     ];
     ticksShape = [0.002, radius * 7, radius * 2];
   }
 
-  { /* Text from drei breaks the jest testing, so need the disables */ }
+  /* Text from drei breaks the jest testing, so need the disables */
   // labelText is assigned the correct label by multiplying by the increment
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
+  // @ts-expect-error Temporary removal of drei
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const labelText: string = `${label * increment}`;
 

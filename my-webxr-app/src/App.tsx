@@ -4,16 +4,16 @@ import { Canvas } from '@react-three/fiber';
 import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import Axis from './components/axis.tsx';
+import Axis from './components/Axis';
 
 import Floor from './components/Floor';
 import RotatingBox from './components/RotatingBox';
 import Button from './components/Button';
-import { LocalCsvReader } from './components/LocalCsvReader.tsx';
-import { UrlCsvReader } from './components/UrlCsvReader.tsx';
-import DataPoint from './components/DataPoint.tsx';
-import { PointSelectionProvider } from './contexts/PointSelectionContext.tsx';
-import DataPointMenu from './components/DataPointMenu.tsx';
+import { LocalCsvReader } from './components/LocalCsvReader';
+import { UrlCsvReader } from './components/UrlCsvReader';
+import DataPoint from './components/DataPoint';
+import { PointSelectionProvider } from './contexts/PointSelectionContext';
+import DataPointMenu from './components/DataPointMenu';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -57,11 +57,14 @@ export default function App() {
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
-        <button onClick={async () => {
-          const db = await openDB(dbName, 1);
-          const data = await db.getAll(storeName);
-          console.table(data);
-        }}
+        <button
+          type="button"
+          onClick={async () => {
+            const db = await openDB(dbName, 1);
+            const data = await db.getAll(storeName);
+            /* eslint-disable-next-line no-console */
+            console.table(data);
+          }}
         >
           Print Data to Console
         </button>
