@@ -20,13 +20,13 @@
  */
 
 export const logConfig = {
-    appenders: {
-        everything: { type: 'file', filename: '../logs/info-file-logger.log' },
-        errors: { type: 'file', filename: '../logs/error-file-logger.log' },
-        errorFilter: { type: 'logLevelFilter', appender: 'errors', level: 'error' },
-        infoFilter: { type: 'logLevelFilter', appender: 'everything', level: 'info' }
-    },
-    categories: {
-        default: { appenders: [ 'infoFilter', 'errorFilter' ], level: 'debug' }
-    }
+  appenders: {
+    everything: { type: 'file', filename: '../logs/info-file-logger.log' },
+    errors: { type: 'file', filename: '../logs/error-file-logger.log' },
+    errorFilter: { type: 'logLevelFilter', appender: 'errors', level: 'error' },
+    infoFilter: { type: 'logLevelFilter', appender: 'everything', level: 'info' },
+  },
+  categories: {
+    default: { appenders: ['infoFilter', 'errorFilter'], level: 'debug' },
+  },
 };

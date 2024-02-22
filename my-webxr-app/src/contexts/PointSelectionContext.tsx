@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, {
+  createContext, useContext, useMemo, useState,
+} from 'react';
 
 // import * as log4js from "log4js";
 
@@ -12,7 +14,7 @@ import React, { createContext, useContext, useMemo, useState } from "react";
 interface PointSelectionContext {
   selectedDataPoint: number | null;
   setSelectedDataPoint: React.Dispatch<
-    React.SetStateAction<PointSelectionContext["selectedDataPoint"]>
+  React.SetStateAction<PointSelectionContext['selectedDataPoint']>
   >;
 }
 
@@ -21,20 +23,18 @@ interface PointSelectionContext {
  * There is a default value of null when it used outside a PointSelectionProvider.
  * Otherwise, it is the selectedDataPoint state.
  */
-export const PointSelectionContext =
-  createContext<PointSelectionContext | null>(null);
+export const PointSelectionContext = createContext<PointSelectionContext | null>(null);
 
 /**
  * Create the Context Provider element for the React tree.
  *
  * @param children: pass-through for the child elements.
  */
-export const PointSelectionProvider = ({
+export function PointSelectionProvider({
   children,
-}: React.PropsWithChildren) => {
+}: React.PropsWithChildren) {
   /* Create the internal selected DataPoint State */
-  const [selectedDataPoint, _setSelectedDataPoint] =
-    useState<PointSelectionContext["selectedDataPoint"]>(null);
+  const [selectedDataPoint, _setSelectedDataPoint] = useState<PointSelectionContext['selectedDataPoint']>(null);
 
   const setSelectedDataPoint = (
     newValue: React.SetStateAction<number | null>,
@@ -59,7 +59,7 @@ export const PointSelectionProvider = ({
       {children}
     </PointSelectionContext.Provider>
   );
-};
+}
 
 /**
  * Provide a type-guaranteed context (not null) for use within components.
@@ -70,7 +70,7 @@ export const usePointSelectionContext = () => {
   const context = useContext(PointSelectionContext);
   if (!context) {
     throw new Error(
-      "Assertion failed: You must use this context within a PointSelectionProvider!",
+      'Assertion failed: You must use this context within a PointSelectionProvider!',
     );
   }
   return context;

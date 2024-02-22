@@ -7,7 +7,7 @@
     "dev": "vite",
     "test": "NODE_ENV=test jest",
     "build": "NODE_ENV=production tsc -p tsconfig.prod.json && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --fix",
     "preview": "vite preview"
   },
   "dependencies": {
