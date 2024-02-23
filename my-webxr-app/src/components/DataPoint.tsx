@@ -1,6 +1,6 @@
 import { Interactive } from "@react-three/xr";
 import { useState } from "react";
-import { BackSide } from "three";
+import {BackSide, Vector3} from "three";
 // import * as log4js from "log4js";
 import { usePointSelectionContext } from "../contexts/PointSelectionContext.tsx";
 import { SphereGeometryProps } from "@react-three/fiber";
@@ -14,13 +14,14 @@ interface DataPointProps {
   outlineScale?: number;
   size?: SphereGeometryProps["args"];
   meshProps?: JSX.IntrinsicElements["mesh"];
+  dataSet?: Array<number>;
 }
 
 export default function DataPoint({
   id,
   outlineScale,
   size,
-  meshProps,
+  meshProps, dataSet,
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -42,6 +43,14 @@ export default function DataPoint({
     //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
+
+  if (dataSet != null) {
+    if (meshProps && meshProps.position == null) {
+      meshProps.position = new Vector3(dataSet[0], dataSet[1], dataSet[2]);
+    }
+  }
+
+
 
   return (
     <Interactive
