@@ -1,5 +1,5 @@
 import { openDB } from 'idb';
-import {handleParsedData, validateDbAndStore} from "../src/components/DependentCSVReader";
+import {handleParsedData, validateDbAndStore} from "../src/components/DependentCsvReader";
 
 jest.mock('idb', () => ({
     openDB: jest.fn(),

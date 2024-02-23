@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Papa from 'papaparse';
-import { handleParsedData, validateDbAndStore } from './DependentCSVReader.tsx';
+import { handleParsedData, validateDbAndStore } from './DependentCsvReader.tsx';
 import assert from "../utils/assert.tsx";
 
 interface UrlCsvReaderProps {
@@ -18,7 +18,7 @@ interface UrlCsvReaderProps {
  * @returns {JSX.Element} A form with an input field for the CSV URL and a button to load the CSV data. After successful
  * loading, a success message is displayed.
  */
-export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps) {
+export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps): JSX.Element {
     const [showPopup, setShowPopup] = useState(false);
     const [url, setUrl] = useState(''); 
 

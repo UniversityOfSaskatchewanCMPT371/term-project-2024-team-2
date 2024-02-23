@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Papa from 'papaparse';
-import { handleParsedData, validateDbAndStore } from './DependentCSVReader.tsx';
+import { handleParsedData, validateDbAndStore } from './DependentCsvReader.tsx';
 import assert from "../utils/assert.tsx";
 
 interface LocalCsvReaderProps {
@@ -17,7 +17,7 @@ interface LocalCsvReaderProps {
  * @returns {JSX.Element} A form with a file input field for the CSV file and a success message displayed after successful
  * loading.
  */
-export function LocalCsvReader({ dbName, storeName }: LocalCsvReaderProps) {
+export function LocalCsvReader({ dbName, storeName }: LocalCsvReaderProps): JSX.Element {
     const [showPopup, setShowPopup] = useState(false);
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
