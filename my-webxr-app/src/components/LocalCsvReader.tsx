@@ -58,7 +58,7 @@ export function LocalCsvReader({ dbName, storeName }: LocalCsvReaderProps): JSX.
     return (
         <div>
             <input type="file" accept=".csv" onChange={handleFileChange} />
-            <button onClick={handleButtonClick}>Load CSV</button>
+            <button onClick={handleButtonClick}>Load Local CSV</button>
             {message && <div>{message}</div>}
         </div>
     );

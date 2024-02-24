@@ -53,7 +53,7 @@ export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps): JSX.Elem
     return (
         <div>
             <input type="text" placeholder="Enter CSV URL" onChange={handleUrlChange} />
-            <button onClick={handleButtonClick}>Load CSV</button>
+            <button onClick={handleButtonClick}>Load Url CSV</button>
             {message && <div>Read in successfully</div>}
         </div>
     );
