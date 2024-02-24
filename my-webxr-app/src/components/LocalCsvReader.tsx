@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Papa from 'papaparse';
-import { handleParsedData, validateDbAndStore } from './DependentCsvReader.tsx';
-import assert from "../utils/assert.tsx";
+import { handleParsedData, validateDbAndStore, RowData } from './DependentCsvReader.tsx';
 
 interface LocalCsvReaderProps {
     dbName: string;
@@ -14,38 +13,53 @@ interface LocalCsvReaderProps {
  * @param {string} props.dbName - The name of the database where the data should be stored.
  * @param {string} props.storeName - The name of the store within the database where the data should be stored.
  *
- * @returns {JSX.Element} A form with a file input field for the CSV file and a success message displayed after successful
- * loading.
+ * @returns {JSX.Element} A form with an input field for the local CSV and a button to load the CSV data.
+ * After successful loading, a success message is displayed. If an input error occurs, an error message is displayed and let
+ * user retry.
  */
 export function LocalCsvReader({ dbName, storeName }: LocalCsvReaderProps): JSX.Element {
-    const [showPopup, setShowPopup] = useState(false);
+    const [file, setFile] = useState<File | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        try{
-            const file = event.target.files?.[0];
-            assert(file !== undefined, 'No file selected');
-            if (file){
-                assert(!file || file.type == 'text/csv', 'File must be a CSV file or not empty');
-                await validateDbAndStore(dbName, storeName);
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            setMessage(null); // Clear the message when a new file is selected
+        }
+    };
 
-                Papa.parse(file, {
-                    header: true,
-                    dynamicTyping: true, // Convert data to number type if applicable
-                    complete: async (results) => {
-                        await handleParsedData(results, dbName, storeName);
-                        setShowPopup(true);
-                    },
-                });
-            }
+    const handleButtonClick = async () => {
+        if (file === null) {
+            setMessage('No file selected');
+            return;
+        }
+        if (file?.type !== 'text/csv') {
+            setMessage('File must be a CSV file');
+            return;
+        }
+        try {
+            await validateDbAndStore(dbName, storeName);
+            Papa.parse(file as File, {
+                header: true,
+                dynamicTyping: true, // Convert data to number type if applicable
+                complete: async (results) => {
+                    await handleParsedData(results as Papa.ParseResult<RowData>, dbName, storeName);
+                    setMessage('Local CSV loaded successfully');
+                },
+            });
         } catch (e) {
             console.log(`An error occurred in LocalCsvReader: ${e}`);
+            setMessage(`An error occurred: ${e}`);
+            return;
         }
     };
 
     return (
         <div>
             <input type="file" accept=".csv" onChange={handleFileChange} />
-            {showPopup && <div>Data loaded successfully</div>}
+            <button onClick={handleButtonClick}>Load CSV</button>
+            {message && <div>{message}</div>}
         </div>
     );
 }

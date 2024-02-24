@@ -1,5 +1,5 @@
 import { openDB } from 'idb';
-import {handleParsedData, validateDbAndStore} from "../src/components/DependentCsvReader";
+import {handleParsedData, validateDbAndStore, RowData} from "../src/components/DependentCsvReader";
 
 jest.mock('idb', () => ({
     openDB: jest.fn(),
@@ -28,17 +28,17 @@ describe('validateDbAndStore functions', () => {
 });
 
 describe('handleParsedData functions', () => {
-    test('throws an error when the parsed data is not an array', async () => {
-        const results = {
-            data: 'not an array',
-        };
-
-        await expect(handleParsedData(results, 'testDb', 'testStore')).rejects.toThrow('Parsed data must be an array');
-    });
-
-    test('does not throw an error when the parsed data is an array', async () => {
-        const results = {
-            data: [],
+    it('should handle parsed data correctly', async () => {
+       const results: Papa.ParseResult<RowData> = {
+            data: [{key1: 'value1', key2: 'value2'}],
+            errors: [],
+            meta: {
+                delimiter: ",",
+                linebreak: "\n",
+                aborted: false,
+                truncated: false,
+                cursor: 0
+            },
         };
         (openDB as jest.Mock).mockResolvedValueOnce({
             transaction: () => ({

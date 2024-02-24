@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Papa from 'papaparse';
-import { handleParsedData, validateDbAndStore } from './DependentCsvReader.tsx';
-import assert from "../utils/assert.tsx";
+import { handleParsedData, validateDbAndStore, RowData } from './DependentCsvReader.tsx';
 
 interface UrlCsvReaderProps {
     dbName: string;
@@ -16,10 +15,11 @@ interface UrlCsvReaderProps {
  * @param {string} props.storeName - The name of the store within the database where the data should be stored.
  *
  * @returns {JSX.Element} A form with an input field for the CSV URL and a button to load the CSV data. After successful
- * loading, a success message is displayed.
+ * loading, a success message is displayed. If an input error occurs, an error message is displayed and let
+ * user retry.
  */
 export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps): JSX.Element {
-    const [showPopup, setShowPopup] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
     const [url, setUrl] = useState(''); 
 
     const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,8 +27,11 @@ export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps): JSX.Elem
     };
 
     const handleButtonClick = async () => {
+        if (!url.endsWith('.csv')) {
+            setMessage('URL must point to a CSV file or not empty');
+            return;
+        }
         try{
-            assert(url.endsWith('.csv'), 'URL must point to a CSV file or not empty');
             await validateDbAndStore(dbName, storeName);
 
             Papa.parse(url, {
@@ -36,12 +39,14 @@ export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps): JSX.Elem
                 header: true,
                 dynamicTyping: true, // Convert data to number type if applicable
                 complete: async (results) => {
-                    await handleParsedData(results, dbName, storeName);
-                    setShowPopup(true);
+                    await handleParsedData(results as Papa.ParseResult<RowData>, dbName, storeName);
+                    setMessage('Url CSV loaded successfully');
                 },
             });
         } catch (e) {
             console.log(`An error occurred in UrlCsvReader: ${e}`);
+            setMessage(`An error occurred: ${e}`);
+            return;
         }
     };
 
@@ -49,7 +54,7 @@ export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps): JSX.Elem
         <div>
             <input type="text" placeholder="Enter CSV URL" onChange={handleUrlChange} />
             <button onClick={handleButtonClick}>Load CSV</button>
-            {showPopup && <div>Read in successfully</div>}
+            {message && <div>Read in successfully</div>}
         </div>
     );
 }
