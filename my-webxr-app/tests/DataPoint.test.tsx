@@ -24,7 +24,7 @@ describe("DataPoint Creation and Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} meshProps={{ position: [1, 2, 3] }} />
+          <DataPoint id={0} meshProps={{ position: [1, 2, 3] } } />
         </XR>
       </PointSelectionProvider>,
     );

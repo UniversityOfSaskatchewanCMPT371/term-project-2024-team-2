@@ -14,14 +14,14 @@ interface DataPointProps {
   outlineScale?: number;
   size?: SphereGeometryProps["args"];
   meshProps?: JSX.IntrinsicElements["mesh"];
-  dataSet?: Array<number>;
+  position?: Vector3;
 }
 
 export default function DataPoint({
   id,
   outlineScale,
   size,
-  meshProps, dataSet,
+  meshProps,
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -44,11 +44,6 @@ export default function DataPoint({
     setHoverCount(amount);
   };
 
-  if (dataSet != null) {
-    if (meshProps && meshProps.position == null) {
-      meshProps.position = new Vector3(dataSet[0], dataSet[1], dataSet[2]);
-    }
-  }
 
 
 
@@ -72,14 +67,14 @@ export default function DataPoint({
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
       <mesh
-        {...meshProps}
-        scale={outlineScale || 1.25}
-        visible={hoverCount != 0 || selectedDataPoint === id}
+          {...meshProps}
+          scale={outlineScale || 1.25}
+          visible={hoverCount != 0 || selectedDataPoint === id}
       >
-        <sphereGeometry args={size || [0.1, 10, 10]} />
+        <sphereGeometry args={size || [0.1, 10, 10]}/>
         <meshStandardMaterial
-          color={selectedDataPoint === id ? "blue" : "aqua"}
-          side={BackSide}
+            color={selectedDataPoint === id ? "blue" : "aqua"}
+            side={BackSide}
         />
       </mesh>
     </Interactive>
