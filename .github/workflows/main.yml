@@ -44,7 +44,10 @@ jobs:
           comment-summary-in-pr: on-failure
 
       - name: Build Application
-        run: npm run build
+        run: |
+          pwd
+          ls -al
+          npm run build
 
       - name: Run Unit Tests
         run: npm test
