@@ -1,5 +1,5 @@
 import { openDB } from 'idb';
-import {handleParsedData, validateDbAndStore, RowData} from "../src/components/DependentCsvReader";
+import {handleParsedData, validateDbAndStore} from "../src/components/DependentCsvReader";
 
 jest.mock('idb', () => ({
     openDB: jest.fn(),
@@ -29,8 +29,8 @@ describe('validateDbAndStore functions', () => {
 
 describe('handleParsedData functions', () => {
     it('should handle parsed data correctly', async () => {
-       const results: Papa.ParseResult<RowData> = {
-            data: [{key1: 'value1', key2: 'value2'}],
+        const results: Papa.ParseResult<Array<string | number | null>> = {
+            data: [['value1', 'value2']],
             errors: [],
             meta: {
                 delimiter: ",",

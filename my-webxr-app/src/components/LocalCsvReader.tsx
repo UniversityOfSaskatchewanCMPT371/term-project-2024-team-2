@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Papa from 'papaparse';
-import { handleParsedData, validateDbAndStore, RowData } from './DependentCsvReader.tsx';
+import { handleParsedData, validateDbAndStore } from './DependentCsvReader.tsx';
 
 interface LocalCsvReaderProps {
     dbName: string;
@@ -41,10 +41,9 @@ export function LocalCsvReader({ dbName, storeName }: LocalCsvReaderProps): JSX.
         try {
             await validateDbAndStore(dbName, storeName);
             Papa.parse(file as File, {
-                header: true,
                 dynamicTyping: true, // Convert data to number type if applicable
                 complete: async (results) => {
-                    await handleParsedData(results as Papa.ParseResult<RowData>, dbName, storeName);
+                    await handleParsedData(results as Papa.ParseResult<Array<string | number | null>>, dbName, storeName);
                     setMessage('Local CSV loaded successfully');
                 },
             });

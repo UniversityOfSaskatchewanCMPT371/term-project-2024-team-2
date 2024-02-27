@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Papa from 'papaparse';
-import { handleParsedData, validateDbAndStore, RowData } from './DependentCsvReader.tsx';
+import { handleParsedData, validateDbAndStore } from './DependentCsvReader.tsx';
 
 interface UrlCsvReaderProps {
     dbName: string;
@@ -36,10 +36,9 @@ export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps): JSX.Elem
 
             Papa.parse(url, {
                 download: true,
-                header: true,
                 dynamicTyping: true, // Convert data to number type if applicable
                 complete: async (results) => {
-                    await handleParsedData(results as Papa.ParseResult<RowData>, dbName, storeName);
+                    await handleParsedData(results as Papa.ParseResult<Array<string | number | null>>, dbName, storeName);
                     setMessage('Url CSV loaded successfully');
                 },
             });
