@@ -32,7 +32,7 @@ export class DbRepository extends Dexie implements Repository {
             // Declare tables, IDs and indexes
             // NOTE: Don’t declare all columns like in SQL.
             // You only declare properties you want to index, that is properties you want to use in a where(…) query.
-            columns: '++id',
+            columns: '++id, name'
         });
     }
 
