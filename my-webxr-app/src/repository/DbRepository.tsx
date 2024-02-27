@@ -17,7 +17,7 @@ export class Column {
 export class DbRepository extends Dexie implements Repository {
     // Declare implicit table properties.
     // (just to inform Typescript. Instantiated by Dexie in stores() method)
-    private columns!: Dexie.Table<Column, number >; // number = type of the primkey
+    private columns!: Dexie.Table<Column, number>; // number = type of the primkey
     //...other tables goes here...
 
     constructor(dbName: string) {
@@ -36,17 +36,12 @@ export class DbRepository extends Dexie implements Repository {
         });
     }
 
-    addColumn(column : Column) {
+    addColumn(column: Column) {
         this.columns.add(column)
             .catch(e => console.error("Error: " + e));
     }
 
-    addColumnBulk(columns : Array<Column>) {
-        this.columns.bulkAdd(columns)
-            .catch(e => console.error("Error: " + e));
-    }
-
-    async getPoints(qualifyingPointOnly : boolean): Promise<Array<DataPoint>> {
+    async getPoints(qualifyingPointOnly: boolean): Promise<Array<DataPoint>> {
         const result = await this.columns.toArray();
 
         // transpose the result into an array of DataPoint
@@ -61,7 +56,10 @@ export class DbRepository extends Dexie implements Repository {
                 // for each column
                 for (let j = 0; j < result.length; j++) {
                     const columnValues = result[j].values;
-                    assert.equal(columnValues.length, numRows);
+                    assert.equal(columnValues.length, numRows
+                        , "All columns must have the same number of values!" +
+                        "Column " + result[j].name + " has " + columnValues.length + " values" +
+                        "but column " + result[0].name + " has " + numRows + " values!");
 
                     if (columnValues[i] === null) {
                         hasMissingData = true;
@@ -70,10 +68,9 @@ export class DbRepository extends Dexie implements Repository {
                     dataPointValues.push(result[j].values[i]);
                 }
 
-                if (!qualifyingPointOnly) {
-                    dataPoints.push(new DataPoint(hasMissingData, dataPointValues));
-                } // if only qualifying points are requested, add the point only if it has no missing data
-                else if (!hasMissingData) {
+                // if only qualifying points are requested,
+                // add the point only if it has no missing data
+                if (!qualifyingPointOnly || (qualifyingPointOnly && !hasMissingData)) {
                     dataPoints.push(new DataPoint(hasMissingData, dataPointValues));
                 }
             }

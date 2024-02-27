@@ -6,5 +6,4 @@ import {Column} from "./DbRepository.tsx";
 export interface Repository {
     getPoints: (qualifyingPointOnly : boolean) => Promise<Array<DataPoint>>;
     addColumn: (column : Column) => void;
-    addColumnBulk: (columns : Array<Column>) => void;
 }

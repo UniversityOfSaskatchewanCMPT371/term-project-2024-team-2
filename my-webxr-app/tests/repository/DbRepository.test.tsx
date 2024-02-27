@@ -80,7 +80,9 @@ describe("IndexDbRepository", () => {
         const column1 = new Column("column1", [1.1, null, 3.3]);
         const column2 = new Column("column2", ["CheeseCake", "Takoyaki", "Poutine"]);
         const column3 = new Column("column3", [-1.1, -2.2, -3.3]);
-        repository.addColumnBulk([column1, column2, column3]);
+        repository.addColumn(column1);
+        repository.addColumn(column2);
+        repository.addColumn(column3);
 
         const result = await repository.getPoints(true);
 
