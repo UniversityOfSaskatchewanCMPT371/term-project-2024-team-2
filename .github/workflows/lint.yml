@@ -33,8 +33,9 @@ jobs:
         uses: reviewdog/action-eslint@v1
         with:
           github_token: ${{ github.token }}
-          workdir: ./my-webxr-app
-          filter_mode: "nofilter"
           level: "warning"
-          fail_on_error: true
+          reporter: "github-pr-review"
+          filter_mode: "nofilter"
+          fail_on_error: "true"
           eslint_flags: ". --no-fix --max-warnings 0"
+          workdir: ./my-webxr-app
