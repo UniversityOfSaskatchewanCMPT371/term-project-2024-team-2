@@ -46,7 +46,7 @@ jobs:
       - name: Build Application
         run: |
           pwd
-          ls -al
+          ls -alR src
           npm run build
 
       - name: Run Unit Tests
