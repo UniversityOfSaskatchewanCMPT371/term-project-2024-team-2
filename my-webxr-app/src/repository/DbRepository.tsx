@@ -1,4 +1,4 @@
-import {ColumnRepository} from "./ColumnRepository.tsx";
+import {Repository} from "./Repository.tsx";
 import {DataPoint} from "./DataPoint.tsx";
 import Dexie from "dexie";
 import * as assert from "assert";
@@ -14,7 +14,7 @@ export class Column {
     }
 }
 
-export class IndexDbRepository extends Dexie implements ColumnRepository {
+export class DbRepository extends Dexie implements Repository {
     // Declare implicit table properties.
     // (just to inform Typescript. Instantiated by Dexie in stores() method)
     private columns!: Dexie.Table<Column, number >; // number = type of the primkey

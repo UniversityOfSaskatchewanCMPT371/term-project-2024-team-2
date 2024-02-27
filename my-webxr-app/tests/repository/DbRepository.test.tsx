@@ -1,19 +1,19 @@
 // have to import fake-indexeddb/auto before dexie
 import "fake-indexeddb/auto";
-import {IndexDbRepository} from "../../src/repository/IndexDbRepository";
-import {Column} from "../../src/repository/IndexDbRepository";
+import {DbRepository} from "../../src/repository/DbRepository";
+import {Column} from "../../src/repository/DbRepository";
 import {DataPoint} from "../../src/repository/DataPoint";
 import Dexie from "dexie";
 import {v4 as uuidv4} from "uuid";
 
 describe("IndexDbRepository", () => {
-    let repository: IndexDbRepository;
+    let repository: DbRepository;
     let testDbName: string;
 
     beforeEach(() => {
         // create a new db for each test, allowing the tests to be run in parallel
         const testDbName = "TestDb" + uuidv4();
-        repository = new IndexDbRepository(testDbName);
+        repository = new DbRepository(testDbName);
     });
 
     afterEach(async () => {
