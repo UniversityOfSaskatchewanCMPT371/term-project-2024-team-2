@@ -1,8 +1,12 @@
 import { openDB } from 'idb';
-import {handleParsedData, validateDbAndStore} from "../src/components/DependentCsvReader";
+import { handleParsedData, validateDbAndStore, parseAndHandleLocalCsv, parseAndHandleUrlCsv } from "../src/utils/csvUtils";
+import * as Papa from "papaparse";
 
 jest.mock('idb', () => ({
     openDB: jest.fn(),
+}));
+jest.mock('papaparse', () => ({
+    parse: jest.fn(),
 }));
 
 describe('validateDbAndStore functions', () => {
@@ -51,5 +55,38 @@ describe('handleParsedData functions', () => {
         });
 
         await expect(handleParsedData(results, 'testDb', 'testStore')).resolves.not.toThrow();
+    });
+});
+
+describe('parseAndHandleLocalCsv function', () => {
+    it('should call Papa.parse with correct arguments', async () => {
+        const file = new File([""], "filename.csv", { type: "text/csv" });
+        const dbName = 'testDb';
+        const storeName = 'testStore';
+        const setMessage = jest.fn();
+
+        await parseAndHandleLocalCsv(file, dbName, storeName, setMessage);
+
+        expect(Papa.parse).toHaveBeenCalledWith(file, expect.objectContaining({
+            dynamicTyping: true,
+            complete: expect.any(Function),
+        }));
+    });
+});
+
+describe('parseAndHandleUrlCsv function', () => {
+    it('should call Papa.parse with correct arguments', async () => {
+        const url = 'https://support.staffbase.com/hc/en-us/article_attachments/360009197031/username.csv';
+        const dbName = 'testDb';
+        const storeName = 'testStore';
+        const setMessage = jest.fn();
+
+        await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
+
+        expect(Papa.parse).toHaveBeenCalledWith(url, expect.objectContaining({
+            download: true,
+            dynamicTyping: true,
+            complete: expect.any(Function),
+        }));
     });
 });

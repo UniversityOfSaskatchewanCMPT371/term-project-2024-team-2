@@ -11,8 +11,7 @@ import RotatingBox from './components/RotatingBox'
 import Button from './components/Button'
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import { LocalCsvReader } from './components/LocalCsvReader.tsx';
-import { UrlCsvReader } from './components/UrlCsvReader.tsx';
+import { LocalCsvReader, UrlCsvReader } from './components/csvReader.tsx';
 import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";

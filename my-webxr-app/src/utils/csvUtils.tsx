@@ -1,6 +1,7 @@
 import { openDB } from 'idb';
 import Papa from 'papaparse';
-import assert from '../utils/assert';
+import assert from './assert.tsx';
+import React from "react";
 
 /**
  * Validates the existence of a database and a store within that database.
@@ -41,4 +42,39 @@ export const handleParsedData = async (results: Papa.ParseResult<Array<string | 
     await Promise.all(promises);
     await tx.done;
 };
+/**
+ * Parses a local CSV file and handles the parsed data.
+ *
+ * @param {File} file - The local CSV file to parse.
+ * @param {string} dbName - The name of the database where the data should be stored.
+ * @param {string} storeName - The name of the store within the database where the data should be stored.
+ * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to set the message.
+ */
+export async function parseAndHandleLocalCsv(file: File, dbName: string, storeName: string, setMessage: React.Dispatch<React.SetStateAction<string | null>>) {
+    Papa.parse(file, {
+        dynamicTyping: true, // Convert data to number type if applicable
+        complete: async (results) => {
+            await handleParsedData(results as Papa.ParseResult<Array<string | number | null>>, dbName, storeName);
+            setMessage('Local CSV loaded successfully');
+        },
+    });
+}
 
+/**
+ * Parses a CSV file from a URL and handles the parsed data.
+ *
+ * @param {string} url - The URL of the CSV file to parse.
+ * @param {string} dbName - The name of the database where the data should be stored.
+ * @param {string} storeName - The name of the store within the database where the data should be stored.
+ * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to set the message.
+ */
+export async function parseAndHandleUrlCsv(url: string, dbName: string, storeName: string, setMessage: React.Dispatch<React.SetStateAction<string | null>>) {
+    Papa.parse(url, {
+        download: true,
+        dynamicTyping: true, // Convert data to number type if applicable
+        complete: async (results) => {
+            await handleParsedData(results as Papa.ParseResult<Array<string | number | null>>, dbName, storeName);
+            setMessage('Url CSV loaded successfully');
+        },
+    });
+}
