@@ -32,8 +32,9 @@ module.exports = {
   plugins: [
     '@typescript-eslint',
     'react',
+    'check-file',
   ],
-  ignorePatterns: ['vite.config.ts', 'jest.config.js', 'dist/'],
+  ignorePatterns: ['vite.config.ts', 'jest.config.js', 'dist/', 'node_modules/'],
   rules: {
     // Not required for React V18+
     'react/react-in-jsx-scope': 'off',
@@ -42,5 +43,7 @@ module.exports = {
     'react/no-unknown-property': 'off',
     // Allow ternary expressions (useful to save code and improve readability)
     '@typescript-eslint/no-unused-expressions': ['error', { allowTernary: true }],
+    'check-file/folder-naming-convention': ['error', { 'src/**/': 'KEBAB_CASE' }],
+    'check-file/filename-naming-convention': ['error', { 'src/**/*.tsx': 'PASCAL_CASE' }],
   },
 };

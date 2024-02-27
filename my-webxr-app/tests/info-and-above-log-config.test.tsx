@@ -1,6 +1,6 @@
 import * as log4js from 'log4js';
 import * as fs from 'fs';
-import logConfig from '../src/log-config';
+import logConfig from '../src/LogConfig';
 
 describe('Logger Configuration', () => {
   let logger: log4js.Logger;

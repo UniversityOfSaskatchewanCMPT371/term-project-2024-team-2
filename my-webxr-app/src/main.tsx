@@ -1,3 +1,5 @@
+/* eslint-disable check-file/filename-naming-convention */
+/* Keep main.tsx in lowercase */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
