@@ -19,11 +19,11 @@ const radius: number = 0.002;
 
 const exampleData= [[1,1,1],[2,3,0],[0,0,0],[10,10,10],[-1,-1,-1]]
 
-const datapoint1 = createPosition(exampleData[0],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
-const datapoint2 = createPosition(exampleData[1],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
-const datapoint3 = createPosition(exampleData[2],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
-const datapoint4 = createPosition(exampleData[3],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
-const datapoint5 = createPosition(exampleData[4],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
+const datapoint1 = createPosition(exampleData[0],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,maxNum)
+const datapoint2 = createPosition(exampleData[1],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,maxNum)
+const datapoint3 = createPosition(exampleData[2],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,maxNum)
+const datapoint4 = createPosition(exampleData[3],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,maxNum)
+const datapoint5 = createPosition(exampleData[4],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,maxNum)
 
 describe("Datapoint's Location is based off of values given ",()=>{
     test("Test #1: Creating Datapoint with the location/coordinates 1,2,3, making sure that the positions" +

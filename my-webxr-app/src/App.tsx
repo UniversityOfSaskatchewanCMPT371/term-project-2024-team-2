@@ -20,7 +20,7 @@ import {createPosition} from "./components/Positions.tsx";
 const minNum: number = -10;
 const maxNum: number = 10;
 // scaleFactor adjusts the size of the 3D axis
-const scaleFactor: number = 1;
+const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
 //starting point of the axis
@@ -42,11 +42,11 @@ export default function App() {
     const storeName = 'CsvData';
 
     const exampleData= [[-1,-1,-1],[2,3,0],[4,3,0],[1,1,1],[3,2,2]]
-    const datapoint1 = createPosition(exampleData[0],[startPointX,startPointY,startPointZ],Length,scaleFactor,minNum,maxNum)
-    const datapoint2 = createPosition(exampleData[1],[startPointX,startPointY,startPointZ],Length,scaleFactor,minNum,maxNum)
-    const datapoint3 = createPosition(exampleData[2],[startPointX,startPointY,startPointZ],Length,scaleFactor,minNum,maxNum)
-    const datapoint4 = createPosition(exampleData[3],[startPointX,startPointY,startPointZ],Length,scaleFactor,minNum,maxNum)
-    const datapoint5 = createPosition(exampleData[4],[startPointX,startPointY,startPointZ],Length,scaleFactor,minNum,maxNum)
+    const datapoint1 = createPosition(exampleData[0],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
+    const datapoint2 = createPosition(exampleData[1],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
+    const datapoint3 = createPosition(exampleData[2],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
+    const datapoint4 = createPosition(exampleData[3],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
+    const datapoint5 = createPosition(exampleData[4],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
 
     console.log(datapoint1)
     // Initialize the database and store for csv data
