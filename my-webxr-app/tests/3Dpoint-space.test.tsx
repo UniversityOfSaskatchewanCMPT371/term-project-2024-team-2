@@ -5,28 +5,29 @@ import DataPoint from "../src/components/DataPoint";
 import { Vector3 } from "three";
 import Axis from "../src/components/axis";
 import {createPosition} from "../src/components/Positions";
-// const dataset= new Vector3(1,2,3);
 
 
-// minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
 const maxNum: number = 10;
-// scaleFactor adjusts the size of the 3D axis
 const scaleFactor: number = 1;
-// labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
-//starting point of the axis
-const startPointX: number = 0;
-const startPointY: number = 0.82;
-const startPointZ: number = -0.15;
-// endPoint is used to determine what axis is being calculated, should not need to change
+const startPointX: number = -.2;
+const startPointY: number = 1.6;
+const startPointZ: number = -.5;
 const endPoint: number = 1;
-// adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
-const pos: Vector3 = createPosition([1,2,3], [startPointX,startPointY,startPointZ], endPoint)
+
+const exampleData= [[1,1,1],[2,3,0],[0,0,0],[10,10,10],[-1,-1,-1]]
+
+const datapoint1 = createPosition(exampleData[0],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
+const datapoint2 = createPosition(exampleData[1],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
+const datapoint3 = createPosition(exampleData[2],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
+const datapoint4 = createPosition(exampleData[3],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
+const datapoint5 = createPosition(exampleData[4],[startPointX,startPointY,startPointZ],endPoint,scaleFactor,minNum,maxNum)
 
 describe("Datapoint's Location is based off of values given ",()=>{
-    test("Creating Datapoint with the location/coordinates 1,1,1", async () =>{
+    test("Test #1: Creating Datapoint with the location/coordinates 1,2,3, making sure that the positions" +
+        "actually work", async () =>{
         const render= await ReactThreeTestRenderer.create(
             <PointSelectionProvider>
                 <XR>
@@ -43,19 +44,77 @@ describe("Datapoint's Location is based off of values given ",()=>{
 
     } )
 
-    test("Giving a Datapoint a 'fake' value that will account for the PCA", async () =>{
-        console.log(pos)
+    test(" Test #2: Giving DataPoints a repeating data set to see how it is represented", async () =>{
         const render = await ReactThreeTestRenderer.create(
             <PointSelectionProvider>
                 <XR>
-                    <DataPoint id={4} meshProps={{position:pos}} >
+                    <DataPoint id={4} meshProps={{position:datapoint1}} >
                     </DataPoint>
                 </XR>
             </PointSelectionProvider>
 
         )
         expect(render.scene.children[1].children[0].instance.position).toEqual(
-            new Vector3(1,2,3)
+            new Vector3(-0.15000000000000002, 1.6500000000000001, -0.45)
+        )
+    })
+
+    test("Test #3: Give DataPoints a dataset that contains a 0 in it to see " +
+        "how it is handled", async () =>{
+        const render = await ReactThreeTestRenderer.create(
+            <PointSelectionProvider>
+                <XR>
+                    <DataPoint id={4} meshProps={{position:datapoint2}} >
+                    </DataPoint>
+                </XR>
+            </PointSelectionProvider>
+
+        )
+        expect(render.scene.children[1].children[0].instance.position).toEqual(
+            new Vector3(-0.1,1.75,-0.5)
+        )
+    })
+    test("Test #4: testing with all 0's to make sure it behaves as intended", async () =>{
+        const render = await ReactThreeTestRenderer.create(
+            <PointSelectionProvider>
+                <XR>
+                    <DataPoint id={4} meshProps={{position:datapoint3}} >
+                    </DataPoint>
+                </XR>
+            </PointSelectionProvider>
+
+        )
+        expect(render.scene.children[1].children[0].instance.position).toEqual(
+            new Vector3(-0.2,1.6,-0.5)
+        )
+    })
+    test("Test #5: Testing with the maximum values make sure it is handled ", async () =>{
+        const render = await ReactThreeTestRenderer.create(
+            <PointSelectionProvider>
+                <XR>
+                    <DataPoint id={4} meshProps={{position:datapoint4}} >
+                    </DataPoint>
+                </XR>
+            </PointSelectionProvider>
+
+        )
+        expect(render.scene.children[1].children[0].instance.position).toEqual(
+            new Vector3(0.3,2.1,0)
+        )
+    })
+    test("Test #6: Testing with all negative values to make sure that " +
+        "it behaves as it should", async () =>{
+        const render = await ReactThreeTestRenderer.create(
+            <PointSelectionProvider>
+                <XR>
+                    <DataPoint id={4} meshProps={{position:datapoint5}} >
+                    </DataPoint>
+                </XR>
+            </PointSelectionProvider>
+
+        )
+        expect(render.scene.children[1].children[0].instance.position).toEqual(
+            new Vector3(-0.25,1.55,-0.55)
         )
     })
 })

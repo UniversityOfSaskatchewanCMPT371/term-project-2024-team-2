@@ -30,7 +30,6 @@ const Axis: React.FC<AxisProps> = ({
     return (
         <Interactive>
             {/* adjust position of the whole axis */}
-            <group position={[startX, startY, startZ]}>
                 {/* X-axis */}
                 <SingleAxis
                     startX={startX}
@@ -46,6 +45,7 @@ const Axis: React.FC<AxisProps> = ({
                     minValue={minValue}
                     maxValue={maxValue}
                     labelIncrement={0}
+                    endpoint={endPoint}
                 />
                 {/* Y-axis */}
                 <SingleAxis
@@ -61,6 +61,8 @@ const Axis: React.FC<AxisProps> = ({
                     minValue={minValue}
                     maxValue={maxValue}
                     labelIncrement={0}
+                    endpoint={endPoint}
+
                 />
                 {/* Z-axis */}
                 <SingleAxis
@@ -76,9 +78,10 @@ const Axis: React.FC<AxisProps> = ({
                     minValue={minValue}
                     maxValue={maxValue}
                     labelIncrement={0}
+                    endpoint={endPoint}
+
 
                 />
-            </group>
         </Interactive>
     );
 };

@@ -15,6 +15,7 @@ interface singleAxisProps {
     minValue: number;
     maxValue: number;
     labelIncrement: number;
+    endpoint: number;
 }
 
 // this function will create an axis and call GenerateTicks to put ticks and labels on the axis
@@ -30,7 +31,9 @@ const SingleAxis: React.FC<singleAxisProps> = ({
                                                           scaleFactor,
                                                           minValue,
                                                           maxValue,
-                                                          labelIncrement
+                                                          labelIncrement,
+                                                            endpoint,
+
                                                       }) => {
 
     // Calculate the range in positive and negative directions
@@ -84,15 +87,15 @@ const SingleAxis: React.FC<singleAxisProps> = ({
         // color for the axis
         color = "red";
         // creating the cylinder, with correct position and rotation for x-axis
-        axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
+        axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor*endpoint, 10);
         rotation = new THREE.Euler(0, 0, Math.PI / 2);
     } else if (startY !== endY) {
         color = "forestgreen";
-        axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
+        axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor*endpoint, 10);
         rotation = new THREE.Euler(0, 0, 0);
     } else if (startZ !== endZ) {
         color = "blue";
-        axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
+        axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor*endpoint, 10);
         rotation = new THREE.Euler(Math.PI / 2, 0, 0);
     }
 

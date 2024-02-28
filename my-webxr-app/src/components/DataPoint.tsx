@@ -1,6 +1,6 @@
 import { Interactive } from "@react-three/xr";
 import { useState } from "react";
-import {BackSide, Vector3} from "three";
+import {BackSide} from "three";
 // import * as log4js from "log4js";
 import { usePointSelectionContext } from "../contexts/PointSelectionContext.tsx";
 import { SphereGeometryProps } from "@react-three/fiber";
@@ -14,7 +14,6 @@ interface DataPointProps {
   outlineScale?: number;
   size?: SphereGeometryProps["args"];
   meshProps?: JSX.IntrinsicElements["mesh"];
-  position?: Vector3;
 }
 
 export default function DataPoint({
@@ -44,9 +43,6 @@ export default function DataPoint({
     setHoverCount(amount);
   };
 
-
-
-
   return (
     <Interactive
       onHover={() => adjustHoverCount(hoverCount + 1)}
@@ -60,7 +56,7 @@ export default function DataPoint({
       <mesh {...meshProps}>
         {/* Low numbers to try to minimize the number of faces we need to render*/}
         {/* There will be a LOT of these present in the simulation */}
-        <sphereGeometry args={size || [0.1, 10, 10]} />
+        <sphereGeometry args={size || [.01,10,10]} />
         <meshStandardMaterial />
       </mesh>
 
@@ -71,7 +67,7 @@ export default function DataPoint({
           scale={outlineScale || 1.25}
           visible={hoverCount != 0 || selectedDataPoint === id}
       >
-        <sphereGeometry args={size || [0.1, 10, 10]}/>
+        <sphereGeometry args={size || [.01,10,10]}/>
         <meshStandardMaterial
             color={selectedDataPoint === id ? "blue" : "aqua"}
             side={BackSide}
