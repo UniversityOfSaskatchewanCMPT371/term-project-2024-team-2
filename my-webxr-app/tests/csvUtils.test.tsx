@@ -33,28 +33,29 @@ describe('validateDbAndStore functions', () => {
 
 describe('handleParsedData functions', () => {
     it('should handle parsed data correctly', async () => {
-        const results: Papa.ParseResult<Array<string | number | null>> = {
-            data: [['value1', 'value2']],
-            errors: [],
-            meta: {
-                delimiter: ",",
-                linebreak: "\n",
-                aborted: false,
-                truncated: false,
-                cursor: 0
-            },
-        };
+        const results: Array<Array<string | number | null>> = [['value1', 'value2']];
+        const dbName = 'testDb';
+        const storeName = 'testStore';
+
+        const mockClear = jest.fn().mockResolvedValue(undefined);
+        const mockPut = jest.fn().mockResolvedValue(undefined);
+
         (openDB as jest.Mock).mockResolvedValueOnce({
             transaction: () => ({
                 objectStore: () => ({
-                    clear: jest.fn().mockResolvedValue(undefined),
-                    put: jest.fn().mockResolvedValue(undefined),
+                    clear: mockClear,
+                    put: mockPut,
                 }),
                 done: Promise.resolve(),
             }),
         });
 
-        await expect(handleParsedData(results, 'testDb', 'testStore')).resolves.not.toThrow();
+        await handleParsedData(results, dbName, storeName, 0);
+
+        expect(mockClear).toHaveBeenCalled();
+        results.forEach((item, index) => {
+            expect(mockPut).toHaveBeenCalledWith(item, index);
+        });
     });
 });
 

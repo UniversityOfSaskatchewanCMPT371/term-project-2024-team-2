@@ -14,7 +14,7 @@ interface CsvReaderProps {
  * @param {string} props.storeName - The name of the store within the database where the data should be stored.
  *
  * @returns {JSX.Element} A form with an input field for the local CSV and a button to load the CSV data.
- * After successful loading, a success message is displayed. If an input error occurs, an error message is displayed and let
+ * After successful loading, a success message is displayed. If an error occurs, an error message is displayed and let
  * user retry.
  */
 export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element {
@@ -65,7 +65,7 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
  * @param {string} props.storeName - The name of the store within the database where the data should be stored.
  *
  * @returns {JSX.Element} A form with an input field for the CSV URL and a button to load the CSV data. After successful
- * loading, a success message is displayed. If an input error occurs, an error message is displayed and let
+ * loading, a success message is displayed. If an error occurs, an error message is displayed and let
  * user retry.
  */
 export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element {

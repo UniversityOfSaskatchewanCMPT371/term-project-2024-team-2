@@ -20,30 +20,29 @@ export const validateDbAndStore = async (dbName: string, storeName: string) => {
 };
 
 /**
- * Handles the parsed data from a CSV file and stores it in a database.
+ * Handles the parsed CSV data by storing it in the specified IndexedDB database and store.
+ * This clears the store before adding new data, i.e, overwriting existing data.
  *
- * @param {Papa.ParseResult<Array<string | number | null>>} results - The results object returned by Papa.parse.
- * The object data should be an array of objects, where each object represents a row in the CSV file.
- * The keys in the objects are the column names from the first row of the CSV file, and the values are the data in
- * those columns for a specific row. The values can be strings, numbers, or null.
+ * @param {Array<Array<string | number | null>>} items - The parsed CSV data to be stored.
  * @param {string} dbName - The name of the database where the data should be stored.
  * @param {string} storeName - The name of the store within the database where the data should be stored.
- * @throws {Error} Will throw an error if the 'data' property of the results object is not an array.
+ * @param {number} start - The starting index for the data to be stored.
  */
-export const handleParsedData = async (results: Papa.ParseResult<Array<string | number | null>>, dbName: string, storeName: string) => {
-    assert(Array.isArray(results.data), 'Parsed data must be an array');
-
+export const handleParsedData = async (items: Array<Array<string | number | null>>, dbName: string, storeName: string, start: number) => {
     const db = await openDB(dbName, 1);
     const tx = db.transaction(storeName, 'readwrite');
     const store = tx.objectStore(storeName);
-    await store.clear();
-    // Concurrently process each Database push
-    const promises = results.data.map((item: Array<string | number | null>, i:number) => store.put(item, i));
-    await Promise.all(promises);
+
+    await store.clear(); // Clean the store before adding new data
+
+    for (let i = 0; i < items.length; i++) {
+        await store.put(items[i], start + i);
+    }
     await tx.done;
 };
+
 /**
- * Parses a local CSV file and handles the parsed data.
+ * Parses a local CSV file and handles the parsed data in batches of 1000 rows.
  *
  * @param {File} file - The local CSV file to parse.
  * @param {string} dbName - The name of the database where the data should be stored.
@@ -51,17 +50,30 @@ export const handleParsedData = async (results: Papa.ParseResult<Array<string | 
  * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to set the message.
  */
 export async function parseAndHandleLocalCsv(file: File, dbName: string, storeName: string, setMessage: React.Dispatch<React.SetStateAction<string | null>>) {
+    let i = 0;
+    let batch :Array<Array<string | number | null>> = [];
+    const batchSize = 1000; // # of rows per batch
     Papa.parse(file, {
         dynamicTyping: true, // Convert data to number type if applicable
-        complete: async (results) => {
-            await handleParsedData(results as Papa.ParseResult<Array<string | number | null>>, dbName, storeName);
+        step: async (results) => {
+            batch.push(results.data as Array<string | number | null>);
+            if (batch.length >= batchSize) {
+                await handleParsedData(batch, dbName, storeName, i);
+                i += batch.length;
+                batch = [];
+            }
+        },
+        complete: async () => {
+            if (batch.length > 0) {
+                await handleParsedData(batch, dbName, storeName, i);
+            }
             setMessage('Local CSV loaded successfully');
         },
     });
 }
 
 /**
- * Parses a CSV file from a URL and handles the parsed data.
+ * Parses a CSV file from a URL and handles the parsed data in batches oif 1000 rows.
  *
  * @param {string} url - The URL of the CSV file to parse.
  * @param {string} dbName - The name of the database where the data should be stored.
@@ -69,11 +81,24 @@ export async function parseAndHandleLocalCsv(file: File, dbName: string, storeNa
  * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to set the message.
  */
 export async function parseAndHandleUrlCsv(url: string, dbName: string, storeName: string, setMessage: React.Dispatch<React.SetStateAction<string | null>>) {
+    let i = 0;
+    let batch :Array<Array<string | number | null>> = [];
+    const batchSize = 1000; // # of rows per batch
     Papa.parse(url, {
         download: true,
         dynamicTyping: true, // Convert data to number type if applicable
-        complete: async (results) => {
-            await handleParsedData(results as Papa.ParseResult<Array<string | number | null>>, dbName, storeName);
+        step: async (results) => {
+            batch.push(results.data as Array<string | number | null>);
+            if (batch.length >= batchSize) {
+                await handleParsedData(batch, dbName, storeName, i);
+                i += batch.length;
+                batch = [];
+            }
+        },
+        complete: async () => {
+            if (batch.length > 0) {
+                await handleParsedData(batch, dbName, storeName, i);
+            }
             setMessage('Url CSV loaded successfully');
         },
     });
