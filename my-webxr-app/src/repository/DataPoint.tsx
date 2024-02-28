@@ -1,8 +1,15 @@
 export class DataPoint {
     hasMissingData: boolean;
-    values: Array<number | string | null>;
-    constructor(hasMissingData: boolean, values: Array<number | string | null>) {
+    xValue: number | string | null;
+    yValue: number | string | null;
+    zValue: number | string | null;
+    constructor(hasMissingData: boolean,
+                xValue: number | string | null,
+                yValue: number | string | null,
+                zValue: number | string | null) {
         this.hasMissingData = hasMissingData;
-        this.values = values;
+        this.xValue = xValue;
+        this.yValue = yValue;
+        this.zValue = zValue;
     }
 }

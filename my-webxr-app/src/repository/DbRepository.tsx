@@ -3,8 +3,9 @@ import {DataPoint} from "./DataPoint.tsx";
 import Dexie from "dexie";
 import * as assert from "assert";
 
+// the Column class represents a column in the csv file
+// we will store csv data in the indexedDB as columns
 export class Column {
-    id?: number;
     name: string;
     values: Array<number | string | null>;
 
@@ -16,9 +17,8 @@ export class Column {
 
 export class DbRepository extends Dexie implements Repository {
     // Declare implicit table properties.
-    // (just to inform Typescript. Instantiated by Dexie in stores() method)
-    private columns!: Dexie.Table<Column, number>; // number = type of the primkey
-    //...other tables goes here...
+    // just to inform Typescript of the object type stored in the table. Instantiated by Dexie in stores() method)
+    private columns!: Dexie.Table<Column, string>; // string = type of the primary key
 
     constructor(dbName: string) {
         // create a db instance
@@ -30,54 +30,109 @@ export class DbRepository extends Dexie implements Repository {
 
         this.version(1).stores({
             // Declare tables, IDs and indexes
-            // NOTE: Don’t declare all columns like in SQL.
-            // You only declare properties you want to index, that is properties you want to use in a where(…) query.
-            columns: '++id, name'
+            // set the attribute 'name' as the primary key
+            columns: 'name'
         });
+
+        // explicitly open connection to the database
+        // if not called, db.open() will be called automatically on first query to the db
+        this.open();
     }
 
-    addColumn(column: Column) {
-        this.columns.add(column)
-            .catch(e => console.error("Error: " + e));
+    /*
+    addColumn adds a column to the database
+    @param column: the column to be added to the database
+    @return Promise<void>
+     */
+    async addColumn(column: Column) {
+        return this.columns.add(column)
+            .then(() => console.log("Column " + column.name + " added to the database"))
+            .catch((err) => {
+                console.error("Error when adding column " + column.name + " to the database.");
+                throw err;
+            });
     }
 
-    async getPoints(qualifyingPointOnly: boolean): Promise<Array<DataPoint>> {
-        const result = await this.columns.toArray();
+    /*
+    getColumn gets a column from the database
+    @param columnName: the name of the column to be retrieved
+    @return Promise<Column>
+     */
+    private async getColumn(columnName: string) {
+        const column = await this.columns
+            .where('name')
+            .equals(columnName)
+            .toArray();
+        assert.ok(column.length <= 1, "Found more than one column with name " + columnName + "!");
+        assert.ok(column.length === 1, "Column " + columnName + " does not exist!");
 
-        // transpose the result into an array of DataPoint
-        if (result.length > 0) {
-            const dataPoints: Array<DataPoint> = [];
-            const numRows = result[0].values.length;
+        return column[0];
+    }
 
-            // for each row
-            for (let i = 0; i < numRows; i++) {
-                let hasMissingData = false;
-                const dataPointValues: Array<number | string | null> = [];
-                // for each column
-                for (let j = 0; j < result.length; j++) {
-                    const columnValues = result[j].values;
-                    assert.equal(columnValues.length, numRows
-                        , "All columns must have the same number of values!" +
-                        "Column " + result[j].name + " has " + columnValues.length + " values" +
-                        "but column " + result[0].name + " has " + numRows + " values!");
+    /*
+    getPoints gets the points from the database
+    @param qualifyingPointOnly: if true, only return points that have no missing data
+    @param columnXName: the name of the column to be used as the x-axis
+    @param columnYName: the name of the column to be used as the y-axis
+    @param columnZName: the name of the column to be used as the z-axis
+    @return Promise<Array<DataPoint>>
+     */
+    async getPoints(qualifyingPointOnly: boolean,
+                    columnXName: string,
+                    columnYName: string,
+                    columnZName: string): Promise<Array<DataPoint>> {
+        // verify the three columns are distinct
+        assert.equal((new Set([columnXName, columnYName, columnZName])).size, 3,
+            "The three columns must be distinct but got: " + columnXName + ","
+            + columnYName + "," + columnZName + "!");
 
-                    if (columnValues[i] === null) {
-                        hasMissingData = true;
-                    }
+        // get the three columns
+        const columnX = await this.getColumn(columnXName);
+        const columnY = await this.getColumn(columnYName);
+        const columnZ = await this.getColumn(columnZName);
 
-                    dataPointValues.push(result[j].values[i]);
-                }
+        const sameLength = new Set([columnX.values.length, columnY.values.length, columnZ.values.length]);
+        assert.equal(sameLength.size, 1, "The number of values in the given columns must be the same, but " +
+            "column " + columnXName + " has " + columnX.values.length + " values, " +
+            "column " + columnYName + " has " + columnY.values.length + " values, and " +
+            "column " + columnZName + " has " + columnZ.values.length + " values!");
 
-                // if only qualifying points are requested,
-                // add the point only if it has no missing data
-                if (!qualifyingPointOnly || (qualifyingPointOnly && !hasMissingData)) {
-                    dataPoints.push(new DataPoint(hasMissingData, dataPointValues));
-                }
+        const dataPoints = this.convertColumnsIntoDataPoints(qualifyingPointOnly, columnX, columnY, columnZ);
+        return Promise.resolve(dataPoints);
+    }
+
+    /*
+    convertColumnsIntoDataPoints converts the columns into an array of DataPoints
+    @param qualifyingPointOnly: if true, only return points that have no missing data
+    @param columnX: the column to be used as the x-axis
+    @param columnY: the column to be used as the y-axis
+    @param columnZ: the column to be used as the z-axis
+    @return Array<DataPoint>
+     */
+    private convertColumnsIntoDataPoints(qualifyingPointOnly: boolean,
+                                         columnX: Column,
+                                         columnY: Column,
+                                         columnZ: Column): Array<DataPoint> {
+        const dataPoints: Array<DataPoint> = [];
+
+        for (let i = 0; i < columnX.values.length; i++) {
+            const xValue = columnX.values[i];
+            const yValue = columnY.values[i];
+            const zValue = columnZ.values[i];
+            const hasMissingData = xValue === null || yValue === null || zValue === null;
+
+            // if only qualifying points are requested, add the point only if it has no missing data
+            if (!qualifyingPointOnly || (qualifyingPointOnly && !hasMissingData)) {
+                dataPoints.push(new DataPoint(hasMissingData, xValue, yValue, zValue));
             }
-
-            return Promise.resolve(dataPoints);
         }
+        return dataPoints;
+    }
 
-        return Promise.resolve([]);
+    /*
+    closeConnection closes the connection to the database
+     */
+    closeConnection() {
+        this.close();
     }
 }
