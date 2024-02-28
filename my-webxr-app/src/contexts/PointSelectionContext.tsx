@@ -10,7 +10,15 @@ import React, { createContext, useContext, useMemo, useState } from "react";
  * setSelectedDataPoint: React State setter function
  */
 interface PointSelectionContext {
-  selectedDataPoint: number | null;
+  selectedDataPoint: {
+    id: number;
+    marker: string;
+    color: string;
+    column1: string;
+    column2: string;
+    column3: number;
+    meshProps?: JSX.IntrinsicElements["mesh"];
+  } | null;
   setSelectedDataPoint: React.Dispatch<
     React.SetStateAction<PointSelectionContext["selectedDataPoint"]>
   >;
@@ -37,7 +45,16 @@ export const PointSelectionProvider = ({
     useState<PointSelectionContext["selectedDataPoint"]>(null);
 
   const setSelectedDataPoint = (
-    newValue: React.SetStateAction<number | null>,
+    newValue: React.SetStateAction< {
+      id: number;
+      marker: string;
+      color: string;
+      column1: string;
+      column2: string;
+      column3: number;
+      meshProps?: JSX.IntrinsicElements["mesh"];
+    } | null>,
+
   ) => {
     // log4js
     //   .getLogger()

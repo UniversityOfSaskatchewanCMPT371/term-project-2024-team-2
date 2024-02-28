@@ -9,12 +9,11 @@ describe("DataPoint Creation and Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} />
+          <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
         </XR>
       </PointSelectionProvider>,
     );
 
-    console.log(renderer.scene.children[1].children);
     // Expect the DataPoint component to be created, along with its two meshes with default values.
     expect(renderer.scene.children.length).toEqual(2); // + native camera component = 2
     expect(renderer.scene.children[1].children.length).toEqual(2);
@@ -24,7 +23,7 @@ describe("DataPoint Creation and Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} meshProps={{ position: [1, 2, 3] }} />
+          <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} meshProps={{ position: [1, 2, 3] }} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -41,7 +40,7 @@ describe("DataPoint Creation and Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} outlineScale={2} />
+          <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} outlineScale={2} />
         </XR>
       </PointSelectionProvider>,
     );

@@ -14,12 +14,20 @@ export default function DataPointMenu(
 
   return (
     <Billboard visible={selectedDataPoint != null} {...billboardProps}>
-      <Plane args={[1.75, 0.25]}>
-        <Text fontSize={0.1} color={"black"}>
-          Here are data point #
-          {selectedDataPoint == null ? "-" : selectedDataPoint} properties!
-        </Text>
-      </Plane>
+        <Plane args={[1.25, 0.75]}>
+
+                <Text fontSize={0.075} color={"black"}>
+                    Here are data point # {selectedDataPoint == null ? "-" : selectedDataPoint.id} properties!
+                    {"\n\n"}
+                    Marker: {selectedDataPoint == null ? "-" : selectedDataPoint.marker + "\n"}
+                    Color: {selectedDataPoint == null ? "-" : selectedDataPoint.color + "\n"}
+                    x, y, z: {selectedDataPoint == null ? "-" : selectedDataPoint.meshProps?.position + "\n"}
+                    Column 1: {selectedDataPoint == null ? "-" : selectedDataPoint.column1 + "\n"}
+                    Column 2: {selectedDataPoint == null ? "-" : selectedDataPoint.column2 + "\n"}
+                    Column 3: {selectedDataPoint == null ? "-" : selectedDataPoint.column3}
+                </Text>
+
+        </Plane>
     </Billboard>
-  );
+);
 }

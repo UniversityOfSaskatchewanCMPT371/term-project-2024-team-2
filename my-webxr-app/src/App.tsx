@@ -5,8 +5,6 @@ import './styles.css'
 import Axis from "./components/axis.tsx";
 import { Canvas } from '@react-three/fiber'
 
-
-
 import Floor from './components/Floor'
 import RotatingBox from './components/RotatingBox'
 import Button from './components/Button'
@@ -85,9 +83,9 @@ export default function App() {
 
             {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <DataPoint id={0} meshProps={{ position: [0.25, 1.75, -0.75] }} />
-            <DataPoint id={1} meshProps={{ position: [0, 1.75, -0.75] }} />
-            <DataPoint id={2} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
+            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} meshProps={{ position: [0.25, 1.75, -0.75] }} />
+            <DataPoint id={1} marker={"circle"} color={"gray"} column1={"Bob Johnson"} column2={"math 110"} column3={81} meshProps={{ position: [0, 1.75, -0.75] }} />
+            <DataPoint id={2} marker={"circle"} color={"gray"} column1={"Alice Smith"} column2={"stat 245"} column3={75} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
             <DataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
         </Canvas>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { BackSide } from "three";
 // import * as log4js from "log4js";
 import { usePointSelectionContext } from "../contexts/PointSelectionContext.tsx";
-import { SphereGeometryProps } from "@react-three/fiber";
+import {MeshProps, SphereGeometryProps} from "@react-three/fiber";
 
 /**
  * Define an interface to require an ID number to differentiate each DataPoint
@@ -11,16 +11,19 @@ import { SphereGeometryProps } from "@react-three/fiber";
  */
 interface DataPointProps {
   id: number;
+  column1: string;
+  column2: string;
+  column3: number;
+  color: string
+  marker: string
   outlineScale?: number;
   size?: SphereGeometryProps["args"];
   meshProps?: JSX.IntrinsicElements["mesh"];
 }
 
 export default function DataPoint({
-  id,
-  outlineScale,
-  size,
-  meshProps,
+  id, marker, color, column1, column2, column3, outlineScale, size, meshProps,
+
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -43,14 +46,33 @@ export default function DataPoint({
     setHoverCount(amount);
   };
 
+  // Display the point characteristics in UI
+  const printSelectedDataPointInfo = (id: number, marker: string, color: string, column1: string, column2: string, column3: number, meshProps?: MeshProps ) => {
+    console.log("Selected Data Point:");
+    console.log("ID:", id);
+    console.log("Marker:", marker);
+    console.log("Color:", color);
+    console.log("Position:", meshProps?.position);
+    console.log("Column 1:", column1);
+    console.log("Column 2:", column2);
+    console.log("Column 3:", column3);
+  }
+
   return (
     <Interactive
       onHover={() => adjustHoverCount(hoverCount + 1)}
       onBlur={() => adjustHoverCount(hoverCount - 1)}
       onSelect={() => {
-        selectedDataPoint === id
-          ? setSelectedDataPoint(null)
-          : setSelectedDataPoint(id);
+        // Clear current selection
+        if (selectedDataPoint?.id === id) {
+          setSelectedDataPoint(null);
+        }
+        // Update new selected point with its characteristics and print to UI
+        else {
+          setSelectedDataPoint({id, marker, color, column1, column2, column3, meshProps});
+          console.log(selectedDataPoint?.meshProps?.position)
+          printSelectedDataPointInfo(id, marker, color, column1, column2, column3, meshProps);
+        }
       }}
     >
       <mesh {...meshProps}>
@@ -65,11 +87,11 @@ export default function DataPoint({
       <mesh
         {...meshProps}
         scale={outlineScale || 1.25}
-        visible={hoverCount != 0 || selectedDataPoint === id}
+        visible={hoverCount != 0 || selectedDataPoint?.id === id}
       >
         <sphereGeometry args={size || [0.1, 10, 10]} />
         <meshStandardMaterial
-          color={selectedDataPoint === id ? "blue" : "aqua"}
+          color={selectedDataPoint?.id === id ? "blue" : "aqua"}
           side={BackSide}
         />
       </mesh>
