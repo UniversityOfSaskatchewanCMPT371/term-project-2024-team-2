@@ -80,10 +80,4 @@ export class DbRepository extends Dexie implements Repository {
 
         return Promise.resolve([]);
     }
-
-    // public for testing
-    async resetDatabase() {
-        this.columns.clear();
-        await this.delete();
-    }
 }
