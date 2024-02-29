@@ -75,6 +75,7 @@ export class DbRepository extends Dexie implements Repository {
     @param columnXName: the name of the column to be used as the x-axis
     @param columnYName: the name of the column to be used as the y-axis
     @param columnZName: the name of the column to be used as the z-axis
+    @pre-condition: 3 column names must be distinct and existing in the db 
     @return Promise<Array<DataPoint>>
      */
     async getPoints(qualifyingPointOnly: boolean,
