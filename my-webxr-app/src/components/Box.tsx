@@ -15,9 +15,6 @@ export default function Box({
   color, size, scale, children, ...rest
 }: BoxProps) {
   return (
-    // Justifiable argument for prop spreading here, since there are a large number of possible
-    // mesh props
-    // eslint-disable-next-line react/jsx-props-no-spreading
     <mesh scale={scale} {...rest}>
       <boxGeometry args={size} />
       <meshPhongMaterial color={color} />

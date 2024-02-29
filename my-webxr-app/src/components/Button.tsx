@@ -30,7 +30,6 @@ export default function Button(props?: JSX.IntrinsicElements['mesh']) {
         // @ts-expect-error See above comment
         scale={hover ? [2.5, 2.5, 2.5] : [1, 1, 1]}
         size={[0.4, 0.1, 0.1]}
-        /* eslint-disable-next-line react/jsx-props-no-spreading */
         {...props}
       >
         <Text

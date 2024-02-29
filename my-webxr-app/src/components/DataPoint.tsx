@@ -52,11 +52,6 @@ export default function DataPoint({
           : setSelectedDataPoint(id);
       }}
     >
-
-      {/* Spreading these props is arguably justified since it allows us to accept any number of
-       the very long list of possible mesh props. Without this, we would have to manually list
-       which ones we would and wouldn't accept */}
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <mesh {...meshProps}>
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}

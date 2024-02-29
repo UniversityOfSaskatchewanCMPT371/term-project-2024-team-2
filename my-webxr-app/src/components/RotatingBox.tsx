@@ -17,8 +17,6 @@ export default function RotatingBox(props: JSX.IntrinsicElements['mesh']) {
   return (
     <Interactive onSelect={() => click(!clicked)} onHover={() => hover(!hovered)}>
       <mesh
-        // Spreading is justified here since it is not feasible account for all possible mesh props
-        /* eslint-disable-next-line react/jsx-props-no-spreading */
         {...props}
         ref={ref}
         scale={clicked ? 0.5 : 0.8}
