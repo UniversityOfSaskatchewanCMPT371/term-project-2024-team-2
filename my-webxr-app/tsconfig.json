@@ -22,6 +22,10 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
+  "include": [
+    ".eslintrc.cjs",
+    "src",
+    "tests"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
