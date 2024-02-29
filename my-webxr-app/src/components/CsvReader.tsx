@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { validateDbAndStore, parseAndHandleLocalCsv, parseAndHandleUrlCsv } from '../utils/csvUtils.tsx';
+import { validateDbAndStore, parseAndHandleLocalCsv, parseAndHandleUrlCsv } from '../utils/CsvUtils.tsx';
 
 interface CsvReaderProps {
     dbName: string;

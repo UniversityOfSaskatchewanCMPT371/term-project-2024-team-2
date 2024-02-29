@@ -1,5 +1,5 @@
 import { openDB } from 'idb';
-import { handleParsedData, validateDbAndStore, parseAndHandleUrlCsv } from "../src/utils/csvUtils";
+import { handleParsedData, validateDbAndStore, parseAndHandleUrlCsv } from "../src/utils/CsvUtils";
 import * as Papa from "papaparse";
 
 jest.mock('idb', () => ({
