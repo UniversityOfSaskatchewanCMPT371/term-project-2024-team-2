@@ -1,11 +1,11 @@
-import ReactThreeTestRenderer from "@react-three/test-renderer";
-import { XR } from "@react-three/xr";
-import { PointSelectionProvider } from "../src/contexts/PointSelectionContext";
-import DataPoint from "../src/components/DataPoint";
-import { Vector3 } from "three";
+import ReactThreeTestRenderer from '@react-three/test-renderer';
+import { XR } from '@react-three/xr';
+import { Vector3 } from 'three';
+import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
+import DataPoint from '../src/components/DataPoint';
 
-describe("DataPoint Creation and Interaction", () => {
-  test("creating a basic DataPoint with defaults", async () => {
+describe('DataPoint Creation and Interaction', () => {
+  test('creating a basic DataPoint with defaults', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
@@ -14,13 +14,12 @@ describe("DataPoint Creation and Interaction", () => {
       </PointSelectionProvider>,
     );
 
-    console.log(renderer.scene.children[1].children);
     // Expect the DataPoint component to be created, along with its two meshes with default values.
     expect(renderer.scene.children.length).toEqual(2); // + native camera component = 2
     expect(renderer.scene.children[1].children.length).toEqual(2);
   });
 
-  test("creating a basic DataPoint and assign position", async () => {
+  test('creating a basic DataPoint and assign position', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
@@ -37,7 +36,7 @@ describe("DataPoint Creation and Interaction", () => {
     );
   });
 
-  test("creating a basic DataPoint and assign outline scale", async () => {
+  test('creating a basic DataPoint and assign outline scale', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
