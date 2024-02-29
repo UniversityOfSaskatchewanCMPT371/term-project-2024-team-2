@@ -1,6 +1,6 @@
 import { openDB } from 'idb';
 import Papa from 'papaparse';
-import * as assert from 'assert';
+import assert from '../utils/Assert';
 import React from "react";
 
 /**
@@ -13,9 +13,9 @@ import React from "react";
  */
 export const validateDbAndStore = async (dbName: string, storeName: string) => {
     const db = await openDB(dbName, 1);
-    assert.equal(db !== undefined, true, `Database "${dbName}" does not exist`);
+    assert(db !== undefined, `Database "${dbName}" does not exist`);
     const storeExists = db.objectStoreNames.contains(storeName);
-    assert.equal(storeExists, true, `Store "${storeName}" does not exist in database "${dbName}"`);
+    assert(storeExists, `Store "${storeName}" does not exist in database "${dbName}"`);
 };
 
 /**
