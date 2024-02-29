@@ -1,6 +1,6 @@
 import { openDB } from 'idb';
 import Papa from 'papaparse';
-import assert from './assert.tsx';
+import * as assert from 'assert';
 import React from "react";
 
 /**
@@ -13,10 +13,9 @@ import React from "react";
  */
 export const validateDbAndStore = async (dbName: string, storeName: string) => {
     const db = await openDB(dbName, 1);
-    const dbExists = db !== undefined;
-    assert(dbExists, `Database "${dbName}" does not exist`);
+    assert.equal(db !== undefined, true, `Database "${dbName}" does not exist`);
     const storeExists = db.objectStoreNames.contains(storeName);
-    assert(storeExists, `Store "${storeName}" does not exist in database "${dbName}"`);
+    assert.equal(storeExists, true, `Store "${storeName}" does not exist in database "${dbName}"`);
 };
 
 /**
@@ -35,12 +34,11 @@ export const handleParsedData = async (items: Array<Array<string | number | null
 
     await store.clear(); // Clean the store before adding new data
 
-    for (let i = 0; i < items.length; i++) {
-        await store.put(items[i], start + i);
-    }
+    const promises = items.map((item, i) => store.put(item, start + i));
+    await Promise.all(promises);
+
     await tx.done;
 };
-
 /**
  * Parses a local CSV file and handles the parsed data in batches of 1000 rows.
  *

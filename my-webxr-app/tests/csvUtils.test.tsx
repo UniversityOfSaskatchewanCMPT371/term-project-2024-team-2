@@ -32,7 +32,7 @@ describe('validateDbAndStore functions', () => {
 });
 
 describe('handleParsedData functions', () => {
-    it('should handle parsed data correctly', async () => {
+    it('should handle parsed data correctly, clearing the store first and then putting data', async () => {
         const results: Array<Array<string | number | null>> = [['value1', 'value2']];
         const dbName = 'testDb';
         const storeName = 'testStore';
@@ -62,7 +62,7 @@ describe('handleParsedData functions', () => {
 // This test only work on Node version 20 or higher
 
 // describe('parseAndHandleLocalCsv function', () => {
-//     it('should call Papa.parse with correct arguments', async () => {
+//     it('should call Papa.parse with correctly passed arguments', async () => {
 //         const file = new File([""], "filename.csv", { type: "text/csv" });
 //         const dbName = 'testDb';
 //         const storeName = 'testStore';
@@ -78,7 +78,7 @@ describe('handleParsedData functions', () => {
 // });
 
 describe('parseAndHandleUrlCsv function', () => {
-    it('should call Papa.parse with correct arguments', async () => {
+    it('should call Papa.parse with correctly passed arguments', async () => {
         const url = 'https://support.staffbase.com/hc/en-us/article_attachments/360009197031/username.csv';
         const dbName = 'testDb';
         const storeName = 'testStore';
