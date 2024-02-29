@@ -52,7 +52,7 @@ describe("DataPoint Creation and Interaction", () => {
 
 
 describe("DataPoint UI Interaction", () => {
-  test("create a basic DataPoint and check id", async () => {
+  test("create a basic DataPoint and check all its fields", async () => {
     const renderer = await ReactThreeTestRenderer.create(
         <PointSelectionProvider>
           <XR>
@@ -60,72 +60,21 @@ describe("DataPoint UI Interaction", () => {
           </XR>
         </PointSelectionProvider>,
     );
+
+    // renderer.scene.children[1] gets the scene
+    // renderer.scene.children[1].children[0] gets ReactThreeTest instance
+    // renderer.scene.children[1].children[0].instance gets reference to a mesh component
 
     // Check if the point id value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.id).toBe(0)
-  });
-
-  test("create a basic DataPoint and check marker", async () => {
-    const renderer = await ReactThreeTestRenderer.create(
-        <PointSelectionProvider>
-          <XR>
-            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
-          </XR>
-        </PointSelectionProvider>,
-    );
-
     // Check if the point marker value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.marker).toBe("circle")
-  });
-
-  test("create a basic DataPoint and check color", async () => {
-    const renderer = await ReactThreeTestRenderer.create(
-        <PointSelectionProvider>
-          <XR>
-            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
-          </XR>
-        </PointSelectionProvider>,
-    );
-
     // Check if the point color value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.color).toBe("gray")
-  });
-
-  test("create a basic DataPoint and check column1", async () => {
-    const renderer = await ReactThreeTestRenderer.create(
-        <PointSelectionProvider>
-          <XR>
-            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
-          </XR>
-        </PointSelectionProvider>,
-    );
-
     // Check if the point column1 value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.column1).toBe("John Doe")
-  });
-
-  test("create a basic DataPoint and check column2", async () => {
-    const renderer = await ReactThreeTestRenderer.create(
-        <PointSelectionProvider>
-          <XR>
-            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
-          </XR>
-        </PointSelectionProvider>,
-    );
-
     // Check if the point column2 value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.column2).toBe("cmpt 145")
-  });
-
-  test("create a basic DataPoint and check column3", async () => {
-    const renderer = await ReactThreeTestRenderer.create(
-        <PointSelectionProvider>
-          <XR>
-            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
-          </XR>
-        </PointSelectionProvider>,
-    );
-
     // Check if the point column3 value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.column3).toBe(97)
   });

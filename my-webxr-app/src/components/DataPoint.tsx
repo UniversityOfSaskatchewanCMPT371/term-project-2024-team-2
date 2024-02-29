@@ -9,7 +9,7 @@ import {MeshProps, SphereGeometryProps} from "@react-three/fiber";
  * Define an interface to require an ID number to differentiate each DataPoint
  * and allow other mesh properties to be set.
  */
-interface DataPointProps {
+export interface DataPointProps {
   id: number;
   column1: string;
   column2: string;
@@ -63,14 +63,13 @@ export default function DataPoint({
       onHover={() => adjustHoverCount(hoverCount + 1)}
       onBlur={() => adjustHoverCount(hoverCount - 1)}
       onSelect={() => {
-        // Clear current selection
+        // If currently selected point selected again, de-select by clearing current selection
         if (selectedDataPoint?.id === id) {
           setSelectedDataPoint(null);
         }
-        // Update new selected point with its characteristics and print to UI
+        // Update point to be selected and set its fields
         else {
           setSelectedDataPoint({id, marker, color, column1, column2, column3, meshProps});
-          console.log(selectedDataPoint?.meshProps?.position)
           showSelectedDataPointInfo(id, marker, color, column1, column2, column3, meshProps);
         }
       }}

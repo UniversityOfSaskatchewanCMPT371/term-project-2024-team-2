@@ -1,24 +1,18 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
+import { DataPointProps } from "../components/DataPoint.tsx";
 
 // import * as log4js from "log4js";
 
 /**
  * Create an interface for the return state values of the Context.
  *
- * selectedDataPoint: either the id number of the selected DataPoint,
+ * selectedDataPoint: either the prop of the selected DataPoint,
  *                    or null if one isn't selected.
  * setSelectedDataPoint: React State setter function
  */
 interface PointSelectionContext {
-  selectedDataPoint: {
-    id: number;
-    marker: string;
-    color: string;
-    column1: string;
-    column2: string;
-    column3: number;
-    meshProps?: JSX.IntrinsicElements["mesh"];
-  } | null;
+  selectedDataPoint:
+      DataPointProps | null;
   setSelectedDataPoint: React.Dispatch<
     React.SetStateAction<PointSelectionContext["selectedDataPoint"]>
   >;
@@ -45,23 +39,9 @@ export const PointSelectionProvider = ({
     useState<PointSelectionContext["selectedDataPoint"]>(null);
 
   const setSelectedDataPoint = (
-    newValue: React.SetStateAction< {
-      id: number;
-      marker: string;
-      color: string;
-      column1: string;
-      column2: string;
-      column3: number;
-      meshProps?: JSX.IntrinsicElements["mesh"];
-    } | null>,
-
+    newValue: React.SetStateAction<
+        DataPointProps | null>,
   ) => {
-    // log4js
-    //   .getLogger()
-    //   .debug(
-    //     "PointSelectionContext: updating selectedDataPoint state to " +
-    //       newValue,
-    //   );
     _setSelectedDataPoint(newValue);
   };
 
