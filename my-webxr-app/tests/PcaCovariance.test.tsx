@@ -4,7 +4,7 @@ import {
     computeEigenvaluesFromCovarianceMatrix, 
     computeEigenvectorsFromCovarianceMatrix, 
     computeCovariancePCA 
-} from '../src/utils/PCA-covariance';
+} from '../src/utils/PcaCovariance';
 
 let matrix: Matrix;
 let covarianceMatrix: Matrix;

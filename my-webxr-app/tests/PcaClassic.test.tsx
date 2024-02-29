@@ -1,5 +1,5 @@
 import { Matrix } from 'ml-matrix';
-import { getRightSingularVectors, computeClassicPCA } from '../src/utils/PCA-classic';
+import { getRightSingularVectors, computeClassicPCA } from '../src/utils/PcaClassic';
 
 describe('getRightSingularVectors', () => {
     it('should return the first k right singular vectors', () => {

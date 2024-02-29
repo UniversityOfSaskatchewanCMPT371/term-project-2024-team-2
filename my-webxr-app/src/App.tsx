@@ -16,8 +16,8 @@ import { UrlCsvReader } from './components/UrlCsvReader.tsx';
 import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";
-import { computeCovariancePCA } from './utils/PCA-covariance.tsx';
-import { computeClassicPCA } from './utils/PCA-classic.tsx';
+import { computeCovariancePCA } from './utils/PcaCovariance.tsx';
+import { computeClassicPCA } from './utils/PcaClassic.tsx';
 import Matrix from 'ml-matrix';
 
 

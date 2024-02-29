@@ -1,5 +1,5 @@
 import {Matrix, SVD} from 'ml-matrix';
-import {standardizeDataset} from "./standardizeDataset.tsx"
+import {standardizeDataset} from "./StandardizeDataset.tsx"
 import * as assert from "assert";
 
 /**
