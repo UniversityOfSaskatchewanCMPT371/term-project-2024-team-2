@@ -1,9 +1,9 @@
-import { Interactive } from "@react-three/xr";
-import { useState } from "react";
-import { BackSide } from "three";
+import { Interactive } from '@react-three/xr';
+import { useState } from 'react';
+import { BackSide } from 'three';
 // import * as log4js from "log4js";
-import { usePointSelectionContext } from "../contexts/PointSelectionContext.tsx";
-import {MeshProps, SphereGeometryProps} from "@react-three/fiber";
+import {MeshProps, SphereGeometryProps} from '@react-three/fiber';
+import { usePointSelectionContext } from '../contexts/PointSelectionContext.tsx';
 
 /**
  * Define an interface to require an ID number to differentiate each DataPoint
@@ -17,8 +17,8 @@ export interface DataPointProps {
   color: string
   marker: string
   outlineScale?: number;
-  size?: SphereGeometryProps["args"];
-  meshProps?: JSX.IntrinsicElements["mesh"];
+  size?: SphereGeometryProps['args'];
+  meshProps?: JSX.IntrinsicElements['mesh'];
 }
 
 export default function DataPoint({
@@ -28,13 +28,12 @@ export default function DataPoint({
   /* State for the count of controllers hovering over the DataPoint */
   const [hoverCount, setHoverCount] = useState(0);
   /* Access the selected DataPoint State from the shared PointSelectionContext */
-  const { selectedDataPoint, setSelectedDataPoint } =
-    usePointSelectionContext();
+  const { selectedDataPoint, setSelectedDataPoint } = usePointSelectionContext();
 
   const adjustHoverCount = (amount: number) => {
     if (amount < 0 || amount > 2) {
       throw new Error(
-        "Assertion failed: hoverCount should never be < 0 or > 2",
+        'Assertion failed: hoverCount should never be < 0 or > 2',
       );
     }
 
@@ -91,7 +90,7 @@ export default function DataPoint({
       >
         <sphereGeometry args={size || [0.1, 10, 10]} />
         <meshStandardMaterial
-          color={selectedDataPoint?.id === id ? "blue" : "aqua"}
+          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
           side={BackSide}
         />
       </mesh>

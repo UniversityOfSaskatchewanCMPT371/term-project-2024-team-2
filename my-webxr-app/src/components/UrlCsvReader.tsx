@@ -9,9 +9,9 @@ import { openDB } from 'idb';
  * @throws {Error} Will throw an error if the URL does not end with '.csv' or is empty.
  */
 export const validateUrl = (url: string) => {
-    if (!url.endsWith('.csv')) {
-        throw new Error('URL must point to a CSV file or not empty');
-    }
+  if (!url.endsWith('.csv')) {
+    throw new Error('URL must point to a CSV file or not empty');
+  }
 };
 
 /**
@@ -23,16 +23,16 @@ export const validateUrl = (url: string) => {
  * database.
  */
 export const validateDbAndStore = async (dbName: string, storeName: string) => {
-    const db = await openDB(dbName, 1);
-    const dbExists = db !== undefined;
-    if (!dbExists) {
-        throw new Error(`Database "${dbName}" does not exist`);
-    }
+  const db = await openDB(dbName, 1);
+  const dbExists = db !== undefined;
+  if (!dbExists) {
+    throw new Error(`Database "${dbName}" does not exist`);
+  }
 
-    const storeExists = db.objectStoreNames.contains(storeName);
-    if (!storeExists) {
-        throw new Error(`Store "${storeName}" does not exist in database "${dbName}"`);
-    }
+  const storeExists = db.objectStoreNames.contains(storeName);
+  if (!storeExists) {
+    throw new Error(`Store "${storeName}" does not exist in database "${dbName}"`);
+  }
 };
 
 /**
@@ -44,24 +44,24 @@ export const validateDbAndStore = async (dbName: string, storeName: string) => {
  * @throws {Error} Will throw an error if the 'data' property of the results object is not an array.
  */
 export const handleParsedData = async (results: any, dbName: string, storeName: string) => {
-    if (!Array.isArray(results.data)) {
-        throw new Error('Parsed data must be an array');
-    }
+  if (!Array.isArray(results.data)) {
+    throw new Error('Parsed data must be an array');
+  }
 
-    const db = await openDB(dbName, 1);
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    await store.clear(); 
-    for (let i = 0; i < results.data.length; i++) {
-        const item = results.data[i];
-        await store.put(item, i);
-    }
-    await tx.done;
+  const db = await openDB(dbName, 1);
+  const tx = db.transaction(storeName, 'readwrite');
+  const store = tx.objectStore(storeName);
+  await store.clear();
+  for (let i = 0; i < results.data.length; i++) {
+    const item = results.data[i];
+    await store.put(item, i);
+  }
+  await tx.done;
 };
 
 interface UrlCsvReaderProps {
-    dbName: string;
-    storeName: string;
+  dbName: string;
+  storeName: string;
 }
 
 /**
@@ -75,33 +75,33 @@ interface UrlCsvReaderProps {
  * loading, a success message is displayed.
  */
 export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps) {
-    const [showPopup, setShowPopup] = useState(false);
-    const [url, setUrl] = useState(''); 
+  const [showPopup, setShowPopup] = useState(false);
+  const [url, setUrl] = useState('');
 
-    const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUrl(event.target.value); 
-    };
+  const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUrl(event.target.value);
+  };
 
-    const handleButtonClick = async () => {
-        validateUrl(url);
-        await validateDbAndStore(dbName, storeName);
+  const handleButtonClick = async () => {
+    validateUrl(url);
+    await validateDbAndStore(dbName, storeName);
 
-        Papa.parse(url, {
-            download: true,
-            header: true,
-            dynamicTyping: true, // Convert data to number type if applicable
-            complete: async (results) => {
-                await handleParsedData(results, dbName, storeName);
-                setShowPopup(true);
-            },
-        });
-    };
+    Papa.parse(url, {
+      download: true,
+      header: true,
+      dynamicTyping: true, // Convert data to number type if applicable
+      complete: async (results) => {
+        await handleParsedData(results, dbName, storeName);
+        setShowPopup(true);
+      },
+    });
+  };
 
-    return (
-        <div>
-            <input type="text" placeholder="Enter CSV URL" onChange={handleUrlChange} />
-            <button onClick={handleButtonClick}>Load CSV</button>
-            {showPopup && <div>Read in successfully</div>}
-        </div>
-    );
+  return (
+    <div>
+      <input type="text" placeholder="Enter CSV URL" onChange={handleUrlChange} />
+      <button onClick={handleButtonClick}>Load CSV</button>
+      {showPopup && <div>Read in successfully</div>}
+    </div>
+  );
 }

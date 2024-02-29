@@ -9,9 +9,9 @@ import { openDB } from 'idb';
  * @throws {Error} Will throw an error if the File object is not a CSV file or is undefined.
  */
 export const validateFile = (file: File) => {
-    if (!file || file.type !== 'text/csv') {
-        throw new Error('File must be a CSV file or not empty');
-    }
+  if (!file || file.type !== 'text/csv') {
+    throw new Error('File must be a CSV file or not empty');
+  }
 };
 
 /**
@@ -23,16 +23,16 @@ export const validateFile = (file: File) => {
  * database.
  */
 export const validateDbAndStore = async (dbName: string, storeName: string) => {
-    const db = await openDB(dbName, 1);
-    const dbExists = db !== undefined;
-    if (!dbExists) {
-        throw new Error(`Database "${dbName}" does not exist`);
-    }
+  const db = await openDB(dbName, 1);
+  const dbExists = db !== undefined;
+  if (!dbExists) {
+    throw new Error(`Database "${dbName}" does not exist`);
+  }
 
-    const storeExists = db.objectStoreNames.contains(storeName);
-    if (!storeExists) {
-        throw new Error(`Store "${storeName}" does not exist in database "${dbName}"`);
-    }
+  const storeExists = db.objectStoreNames.contains(storeName);
+  if (!storeExists) {
+    throw new Error(`Store "${storeName}" does not exist in database "${dbName}"`);
+  }
 };
 
 /**
@@ -44,24 +44,24 @@ export const validateDbAndStore = async (dbName: string, storeName: string) => {
  * @throws {Error} Will throw an error if the 'data' property of the results object is not an array.
  */
 export const handleParsedData = async (results: any, dbName: string, storeName: string) => {
-    if (!Array.isArray(results.data)) {
-        throw new Error('Parsed data must be an array');
-    }
+  if (!Array.isArray(results.data)) {
+    throw new Error('Parsed data must be an array');
+  }
 
-    const db = await openDB(dbName, 1);
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    await store.clear(); 
-    for (let i = 0; i < results.data.length; i++) {
-        const item = results.data[i];
-        await store.put(item, i);
-    }
-    await tx.done;
+  const db = await openDB(dbName, 1);
+  const tx = db.transaction(storeName, 'readwrite');
+  const store = tx.objectStore(storeName);
+  await store.clear();
+  for (let i = 0; i < results.data.length; i++) {
+    const item = results.data[i];
+    await store.put(item, i);
+  }
+  await tx.done;
 };
 
 interface LocalCsvReaderProps {
-    dbName: string;
-    storeName: string;
+  dbName: string;
+  storeName: string;
 }
 /**
  * A React component that reads data from a local CSV file and stores it in a specified database and store.
@@ -74,34 +74,34 @@ interface LocalCsvReaderProps {
  * loading.
  */
 export function LocalCsvReader({ dbName, storeName }: LocalCsvReaderProps) {
-    const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
 
-        // Check if a file has been selected
-        if (!file) {
-            console.log('No file selected');
-            return;
-        }
+    // Check if a file has been selected
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
 
-        validateFile(file);
-        await validateDbAndStore(dbName, storeName);
+    validateFile(file);
+    await validateDbAndStore(dbName, storeName);
 
-        Papa.parse(file, {
-            header: true,
-            dynamicTyping: true, // Convert data to number type if applicable
-            complete: async (results) => {
-                await handleParsedData(results, dbName, storeName);
-                setShowPopup(true);
-            },
-        });
-    };
+    Papa.parse(file, {
+      header: true,
+      dynamicTyping: true, // Convert data to number type if applicable
+      complete: async (results) => {
+        await handleParsedData(results, dbName, storeName);
+        setShowPopup(true);
+      },
+    });
+  };
 
-    return (
-        <div>
-            <input type="file" accept=".csv" onChange={handleFileChange} />
-            {showPopup && <div>Data loaded successfully</div>}
-        </div>
-    );
+  return (
+    <div>
+      <input type="file" accept=".csv" onChange={handleFileChange} />
+      {showPopup && <div>Data loaded successfully</div>}
+    </div>
+  );
 }
