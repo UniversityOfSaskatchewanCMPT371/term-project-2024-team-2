@@ -1,13 +1,13 @@
-import { Matrix, SVD } from 'ml-matrix';
-import assert from "./assert.tsx";
+import {Matrix, SVD} from 'ml-matrix';
 import {standardizeDataset} from "./standardizeDataset.tsx"
+import * as assert from "assert";
 
 /**
  * Inspired by: https://jonathan-hui.medium.com/machine-learning-singular-value-decomposition-svd-principal-component-analysis-pca-1d45e885e491
  * 
  * Steps involved in this method of PCA
  *    1: Standardize the dataset.
- *    2: Calulate the k-th right singular vectors by performming singular value decomposition on dataset.
+ *    2: Calculate the k-th right singular vectors by performing singular value decomposition on dataset.
  *    3: Take product of dataset and k-th right singular vectors to form PCA matrix.
  */
 
@@ -19,7 +19,7 @@ import {standardizeDataset} from "./standardizeDataset.tsx"
  * @return {Matrix} - The first k right singular vectors (has k-columns).
  */
 export function getRightSingularVectors(datasetMatrix: Matrix, kComponents: number): Matrix {
-    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value:" + kComponents);
+    assert.equal(kComponents > 0 && kComponents <= datasetMatrix.columns, true, "Invalid kComponents value:" + kComponents);
     const svd = new SVD(datasetMatrix, {
         computeLeftSingularVectors: false,
         computeRightSingularVectors: true,
@@ -44,13 +44,12 @@ export function getRightSingularVectors(datasetMatrix: Matrix, kComponents: numb
  * @throws {Error} If kComponents is less than 1 or greater than the number of features in the dataset.
  */
 export function computeClassicPCA(datasetMatrix: Matrix, kComponents: number): Matrix {
-    assert(kComponents > 0 && kComponents <= datasetMatrix.columns, "Invalid kComponents value: " +kComponents);
+    assert.equal(kComponents > 0 && kComponents <= datasetMatrix.columns, true, "Invalid kComponents value: " +kComponents);
     try {
         datasetMatrix = standardizeDataset(datasetMatrix);
         const rightSingularVectors = getRightSingularVectors(datasetMatrix, kComponents);
-        assert(kComponents == rightSingularVectors.columns, "Right Singular Vectors must have k-columns.")
-        const PCA = datasetMatrix.mmul(rightSingularVectors);
-        return PCA;
+        assert.equal(kComponents == rightSingularVectors.columns, true, "Right Singular Vectors must have k-columns.")
+        return datasetMatrix.mmul(rightSingularVectors);
     } catch (e) {
         console.log(`An error occurred during classic PCA computation: ${e}`);
         return new Matrix(0, 0);

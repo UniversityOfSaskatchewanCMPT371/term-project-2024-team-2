@@ -1,4 +1,4 @@
-import {standardizeDataset} from "../src/utils/standardizeDataset.tsx";
+import { standardizeDataset } from '../src/utils/standardizeDataset';
 import {Matrix} from 'ml-matrix';
 
 describe('standardizeDataset', () => {
