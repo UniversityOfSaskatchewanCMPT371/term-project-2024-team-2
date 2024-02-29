@@ -10,7 +10,13 @@ jest.mock('papaparse', () => ({
 }));
 
 describe('validateDbAndStore functions', () => {
-    test('throws an error when the store does not exist', async () => {
+    it('should throw an error if the database does not exist', async () => {
+        (openDB as jest.Mock).mockResolvedValueOnce(undefined);
+
+        await expect(validateDbAndStore('testDb', 'testStore')).rejects.toThrow(`Database "testDb" does not exist`);
+    });
+
+    it('should throws an error when the store does not exist within database', async () => {
         (openDB as jest.Mock).mockResolvedValueOnce({
             objectStoreNames: {
                 contains: () => false,
@@ -19,8 +25,8 @@ describe('validateDbAndStore functions', () => {
 
         await expect(validateDbAndStore('testDb', 'testStore')).rejects.toThrow(`Store "testStore" does not exist in database "testDb"`);
     });
-    
-    test('does not throw an error when the store exists', async () => {
+
+    it('should not throw an error if the database and store exist', async () => {
         (openDB as jest.Mock).mockResolvedValueOnce({
             objectStoreNames: {
                 contains: () => true,
@@ -56,6 +62,30 @@ describe('handleParsedData functions', () => {
         results.forEach((item, index) => {
             expect(mockPut).toHaveBeenCalledWith(item, index);
         });
+    });
+
+    it('should clear the store but no put is called due to empty array', async () => {
+        const items: Array<Array<string | number | null>> = [];
+        const dbName = 'testDb';
+        const storeName = 'testStore';
+
+        const mockClear = jest.fn().mockResolvedValue(undefined);
+        const mockPut = jest.fn().mockResolvedValue(undefined);
+
+        (openDB as jest.Mock).mockResolvedValueOnce({
+            transaction: () => ({
+                objectStore: () => ({
+                    clear: mockClear,
+                    put: mockPut,
+                }),
+                done: Promise.resolve(),
+            }),
+        });
+
+        await handleParsedData(items, dbName, storeName, 0);
+
+        expect(mockClear).toHaveBeenCalled();
+        expect(mockPut).not.toHaveBeenCalled();
     });
 });
 
