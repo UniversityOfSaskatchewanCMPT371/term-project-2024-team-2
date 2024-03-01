@@ -22,10 +22,6 @@ export default function Box({
     </mesh>
   );
 }
-Box.defaultProps = {
-  children: [],
-  rest: {},
-};
 
 Box.defaultProps = {
   children: [],
