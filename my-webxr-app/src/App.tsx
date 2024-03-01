@@ -5,9 +5,6 @@ import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
 
-import { Matrix } from 'ml-matrix';
-import { computeCovariancePCA } from './utils/PcaCovariance';
-import { computeClassicPCA } from './utils/PcaClassic';
 import Axis from './components/Axis';
 
 import Floor from './components/Floor';
@@ -36,19 +33,6 @@ const endPoint: number = 1;
 const radius: number = 0.002;
 
 export default function App() {
-  // PCA run check
-  const dataset = new Matrix([
-    [1, 2, 3, 4],
-    [5, 5, 6, 7],
-    [1, 4, 2, 3],
-    [5, 3, 2, 1],
-    [8, 1, 2, 2],
-  ]);
-  // eslint-disable-next-line
-  console.log('Covariance PCA:', computeCovariancePCA(dataset, 4));
-  // eslint-disable-next-line
-  console.log('Classic PCA', computeClassicPCA(dataset, 4));
-
   // Database name and store name will be pass as prop to reader components,
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
