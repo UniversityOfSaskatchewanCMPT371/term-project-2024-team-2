@@ -2,25 +2,12 @@ import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
 import { BackSide } from 'three';
 // import * as log4js from "log4js";
-import { SphereGeometryProps } from '@react-three/fiber';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
-
-/**
- * Define an interface to require an ID number to differentiate each DataPoint
- * and allow other mesh properties to be set.
- */
-type DataPointProps = {
-  id: number;
-  outlineScale?: number;
-  size?: SphereGeometryProps['args'];
-  meshProps?: JSX.IntrinsicElements['mesh'];
-};
+import { DataPointProps } from '../types/DataPointTypes';
 
 export default function DataPoint({
-  id,
-  outlineScale,
-  size,
-  meshProps,
+  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps,
+
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -47,12 +34,25 @@ export default function DataPoint({
       onHover={() => adjustHoverCount(hoverCount + 1)}
       onBlur={() => adjustHoverCount(hoverCount - 1)}
       onSelect={() => {
-        selectedDataPoint === id
-          ? setSelectedDataPoint(null)
-          : setSelectedDataPoint(id);
+        // If currently selected point selected again, de-select by clearing current selection
+        if (selectedDataPoint?.id === id) {
+          setSelectedDataPoint(null);
+
+        // Update point to be selected and set its fields
+        } else {
+          setSelectedDataPoint({
+            id, marker, color, columnX, columnY, columnZ, meshProps,
+          });
+        }
       }}
     >
-      <mesh {...meshProps}>
+      {/* This first mesh stores custom data about the DataPoint */}
+      <mesh
+        userData={{
+          id, columnX, columnY, columnZ, marker, color,
+        }}
+        {...meshProps}
+      >
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
         <sphereGeometry args={size} />
@@ -62,14 +62,13 @@ export default function DataPoint({
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
       <mesh
-        /* eslint-disable-next-line react/jsx-props-no-spreading */
         {...meshProps}
         scale={outlineScale}
-        visible={hoverCount !== 0 || selectedDataPoint === id}
+        visible={hoverCount !== 0 || selectedDataPoint?.id === id}
       >
         <sphereGeometry args={size} />
         <meshStandardMaterial
-          color={selectedDataPoint === id ? 'blue' : 'aqua'}
+          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
           side={BackSide}
         />
       </mesh>

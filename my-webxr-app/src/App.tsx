@@ -95,9 +95,9 @@ export default function App() {
 
             {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <DataPoint id={0} meshProps={{ position: [0.25, 1.75, -0.75] }} />
-            <DataPoint id={1} meshProps={{ position: [0, 1.75, -0.75] }} />
-            <DataPoint id={2} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
+            <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [0.25, 1.75, -0.75] }} />
+            <DataPoint id={1} marker="circle" color="gray" columnX="Bob Johnson" columnY="math 110" columnZ={81} meshProps={{ position: [0, 1.75, -0.75] }} />
+            <DataPoint id={2} marker="circle" color="gray" columnX="Alice Smith" columnY="stat 245" columnZ={75} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
             <DataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
         </Canvas>

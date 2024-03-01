@@ -2,6 +2,8 @@ import React, {
   createContext, useContext, useMemo, useState,
 } from 'react';
 
+import { DataPointProps } from '../types/DataPointTypes';
+
 // import * as log4js from "log4js";
 
 /**
@@ -12,7 +14,7 @@ import React, {
  * setSelectedDataPoint: React State setter function
  */
 interface PointSelectionContextType {
-  selectedDataPoint: number | null;
+  selectedDataPoint: DataPointProps | null;
   setSelectedDataPoint: React.Dispatch<
   React.SetStateAction<PointSelectionContextType['selectedDataPoint']>
   >;
@@ -37,7 +39,7 @@ export function PointSelectionProvider({
   const [selectedDataPoint, setSelectedDataPointInternal] = useState<PointSelectionContextType['selectedDataPoint']>(null);
 
   const setSelectedDataPoint = (
-    newValue: React.SetStateAction<number | null>,
+    newValue: React.SetStateAction<DataPointProps | null>,
   ) => {
     // log4js
     //   .getLogger()
