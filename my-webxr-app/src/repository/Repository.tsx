@@ -8,5 +8,5 @@ export interface Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string) => Promise<Array<DataPoint>>;
-  addColumn: (column : Column) => Promise<void>;
+  addColumn: (column : Column) => Promise<string>;
 }

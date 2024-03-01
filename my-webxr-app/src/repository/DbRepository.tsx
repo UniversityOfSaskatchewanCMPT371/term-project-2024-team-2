@@ -31,15 +31,10 @@ export default class DbRepository extends Dexie implements Repository {
   /*
         addColumn adds a column to the database
         @param column: the column to be added to the database
-        @return Promise<void>
+        @return Promise<string>: the primary key of the column aka the name of the column
          */
   async addColumn(column: Column) {
-    return this.columns.add(column)
-      .then(() => console.log(`Column ${column.name} added to the database`))
-      .catch((err) => {
-        console.error(`Error when adding column ${column.name} to the database.`);
-        throw err;
-      });
+    return this.columns.add(column);
   }
 
   /*
