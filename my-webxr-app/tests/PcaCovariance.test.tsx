@@ -17,12 +17,10 @@ beforeEach(() => {
 
 describe('calculateCovarianceMatrix', () => {
   test('returns a Matrix', () => {
-    const covarianceMatrix = calculateCovarianceMatrix(matrix);
     expect(covarianceMatrix).toBeInstanceOf(Matrix);
   });
 
   test('returns a symmetric Matrix', () => {
-    const covarianceMatrix = calculateCovarianceMatrix(matrix);
     expect(covarianceMatrix.isSymmetric()).toBe(true);
   });
 
@@ -79,8 +77,8 @@ describe('computePCA', () => {
       [-1.5798608599203967, -1.2289165024864557, 0.24222982589933767, 0.1266926853399502],
     ]);
     const covariancePCA = computeCovariancePCA(dataset, 4);
-    for (let i = 0; i < covariancePCA.rows; i++) {
-      for (let j = 0; j < covariancePCA.columns; j++) {
+    for (let i = 0; i < covariancePCA.rows; i += 1) {
+      for (let j = 0; j < covariancePCA.columns; j += 1) {
         expect(covariancePCA.get(i, j)).toBeCloseTo(expected.get(i, j), 12);
       }
     }
@@ -95,20 +93,20 @@ describe('computePCA', () => {
     const datasetMatrix = new Matrix(1, 1);
     const kComponents = 1;
     const result = computeCovariancePCA(datasetMatrix, kComponents);
-    expect(() => result.columns == 0 && result.rows == 0);
+    expect(() => result.columns === 0 && result.rows === 0);
   });
 
   it('should return empty Matrix if datasetMatrix is 1 by 2', () => {
     const datasetMatrix = new Matrix(1, 2);
     const kComponents = 1;
     const result = computeCovariancePCA(datasetMatrix, kComponents);
-    expect(() => result.columns == 0 && result.rows == 0);
+    expect(() => result.columns === 0 && result.rows === 0);
   });
 
   it('should return empty Matrix if datasetMatrix is 2 by 1', () => {
     const datasetMatrix = new Matrix(2, 1);
     const kComponents = 1;
     const result = computeCovariancePCA(datasetMatrix, kComponents);
-    expect(() => result.columns == 0 && result.rows == 0);
+    expect(() => result.columns === 0 && result.rows === 0);
   });
 });

@@ -91,8 +91,8 @@ describe('computeClassicPCA', () => {
       [1.5798608599203976, -1.2289165024864566, -0.24222982589933784, -0.12669268533995032],
     ]);
     const PCA = computeClassicPCA(dataset, 4);
-    for (let i = 0; i < PCA.rows; i++) {
-      for (let j = 0; j < PCA.columns; j++) {
+    for (let i = 0; i < PCA.rows; i += 1) {
+      for (let j = 0; j < PCA.columns; j += 1) {
         expect(PCA.get(i, j)).toBeCloseTo(expected.get(i, j), 12);
       }
     }
@@ -112,20 +112,20 @@ describe('computeClassicPCA', () => {
     const datasetMatrix = new Matrix(1, 1);
     const kComponents = 1;
     const result = computeClassicPCA(datasetMatrix, kComponents);
-    expect(() => result.columns == 0 && result.rows == 0);
+    expect(() => result.columns === 0 && result.rows === 0);
   });
 
   it('should return empty Matrix if datasetMatrix is 1 by 2', () => {
     const datasetMatrix = new Matrix(1, 2);
     const kComponents = 1;
     const result = computeClassicPCA(datasetMatrix, kComponents);
-    expect(() => result.columns == 0 && result.rows == 0);
+    expect(() => result.columns === 0 && result.rows === 0);
   });
 
   it('should return empty Matrix if datasetMatrix is 2 by 1', () => {
     const datasetMatrix = new Matrix(2, 1);
     const kComponents = 1;
     const result = computeClassicPCA(datasetMatrix, kComponents);
-    expect(() => result.columns == 0 && result.rows == 0);
+    expect(() => result.columns === 0 && result.rows === 0);
   });
 });

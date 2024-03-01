@@ -44,7 +44,9 @@ export default function App() {
     [5, 3, 2, 1],
     [8, 1, 2, 2],
   ]);
+  // eslint-disable-next-line
   console.log('Covariance PCA:', computeCovariancePCA(dataset, 4));
+  // eslint-disable-next-line
   console.log('Classic PCA', computeClassicPCA(dataset, 4));
 
   // Database name and store name will be pass as prop to reader components,
