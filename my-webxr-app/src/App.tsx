@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
+
 import Axis from './components/Axis';
 import Floor from './components/Floor';
 import RotatingBox from './components/RotatingBox';
