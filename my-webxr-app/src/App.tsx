@@ -5,12 +5,10 @@ import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
 import Axis from './components/Axis';
-
 import Floor from './components/Floor';
 import RotatingBox from './components/RotatingBox';
 import Button from './components/Button';
-import { LocalCsvReader } from './components/LocalCsvReader';
-import { UrlCsvReader } from './components/UrlCsvReader';
+import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
