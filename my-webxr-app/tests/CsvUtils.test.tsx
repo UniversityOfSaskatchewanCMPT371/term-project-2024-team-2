@@ -89,24 +89,6 @@ describe('handleParsedData functions', () => {
   });
 });
 
-// This test only work on Node version 20 or higher
-
-// describe('parseAndHandleLocalCsv function', () => {
-//     it('should call Papa.parse with correctly passed arguments', async () => {
-//         const file = new File([""], "filename.csv", { type: "text/csv" });
-//         const dbName = 'testDb';
-//         const storeName = 'testStore';
-//         const setMessage = jest.fn();
-//
-//         await parseAndHandleLocalCsv(file, dbName, storeName, setMessage);
-//
-//         expect(Papa.parse).toHaveBeenCalledWith(file, expect.objectContaining({
-//             dynamicTyping: true,
-//             complete: expect.any(Function),
-//         }));
-//     });
-// });
-
 describe('parseAndHandleUrlCsv function', () => {
   it('should call Papa.parse with correctly passed arguments', async () => {
     const url = 'https://support.staffbase.com/hc/en-us/article_attachments/360009197031/username.csv';
