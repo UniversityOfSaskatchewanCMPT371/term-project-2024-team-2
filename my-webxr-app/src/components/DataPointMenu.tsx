@@ -16,12 +16,32 @@ export default function DataPointMenu(
 
   return (
     <Billboard visible={selectedDataPoint != null} {...billboardProps}>
-      <Plane args={[1.75, 0.25]}>
-        <Text fontSize={0.1} color="black">
+      <Plane args={[1.25, 0.75]}>
+        <Text fontSize={0.075} color="black">
           Here are data point #
-          {selectedDataPoint == null ? '-' : selectedDataPoint}
+          {' '}
+          {selectedDataPoint?.id ?? '-'}
           {' '}
           properties!
+          {'\n\n'}
+          Marker:
+          {' '}
+          {`${selectedDataPoint?.marker ?? '-'}\n`}
+          Color:
+          {' '}
+          {`${selectedDataPoint?.color ?? '-'}\n`}
+          x, y, z:
+          {' '}
+          {`${selectedDataPoint?.meshProps?.position ?? '-'}\n`}
+          Column X:
+          {' '}
+          {`${selectedDataPoint?.columnX ?? '-'}\n`}
+          Column Y:
+          {' '}
+          {`${selectedDataPoint?.columnY ?? '-'}\n`}
+          Column Z:
+          {' '}
+          {selectedDataPoint?.columnZ ?? '-'}
         </Text>
       </Plane>
     </Billboard>
