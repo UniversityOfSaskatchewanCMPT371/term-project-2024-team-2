@@ -28,6 +28,7 @@ export default function DataPoint({
     //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
+
   return (
     <Interactive
       onHover={() => adjustHoverCount(hoverCount + 1)}
@@ -36,9 +37,9 @@ export default function DataPoint({
         // If currently selected point selected again, de-select by clearing current selection
         if (selectedDataPoint?.id === id) {
           setSelectedDataPoint(null);
-        }
+
         // Update point to be selected and set its fields
-        else {
+        } else {
           setSelectedDataPoint({
             id, marker, color, columnX, columnY, columnZ, meshProps,
           });
@@ -54,7 +55,7 @@ export default function DataPoint({
       >
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
-        <sphereGeometry args={size || [0.1, 10, 10]} />
+        <sphereGeometry args={size} />
         <meshStandardMaterial />
       </mesh>
 
@@ -62,10 +63,10 @@ export default function DataPoint({
       {/* only the BackSide of the mesh material */}
       <mesh
         {...meshProps}
-        scale={outlineScale || 1.25}
+        scale={outlineScale}
         visible={hoverCount !== 0 || selectedDataPoint?.id === id}
       >
-        <sphereGeometry args={size || [0.1, 10, 10]} />
+        <sphereGeometry args={size} />
         <meshStandardMaterial
           color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
           side={BackSide}
@@ -74,3 +75,12 @@ export default function DataPoint({
     </Interactive>
   );
 }
+
+/**
+ * Specify default values for DataPoint's optional props.
+ */
+DataPoint.defaultProps = {
+  outlineScale: 1.25,
+  size: [0.1, 10, 10],
+  meshProps: {},
+};

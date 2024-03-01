@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { useXREvent } from '@react-three/xr';
 import { Mesh } from 'three';
 import * as THREE from 'three';
 
-const InteractiveButton: React.FC = () => {
+export default function InteractiveButton() {
   const ref = useRef<Mesh>(null); // Provide initial value
   const { scene } = useThree();
 
@@ -22,6 +22,4 @@ const InteractiveButton: React.FC = () => {
       <meshBasicMaterial attach="material" color="red" />
     </mesh>
   );
-};
-
-export default InteractiveButton;
+}

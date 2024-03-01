@@ -13,10 +13,10 @@ import { DataPointProps } from '../types/DataPointTypes';
  *                    or null if one isn't selected.
  * setSelectedDataPoint: React State setter function
  */
-interface PointSelectionContext {
+interface PointSelectionContextType {
   selectedDataPoint: DataPointProps | null;
   setSelectedDataPoint: React.Dispatch<
-  React.SetStateAction<PointSelectionContext['selectedDataPoint']>
+  React.SetStateAction<PointSelectionContextType['selectedDataPoint']>
   >;
 }
 
@@ -25,7 +25,7 @@ interface PointSelectionContext {
  * There is a default value of null when it used outside a PointSelectionProvider.
  * Otherwise, it is the selectedDataPoint state.
  */
-export const pointSelectionContext = createContext<PointSelectionContext | null>(null);
+export const PointSelectionContext = createContext<PointSelectionContextType | null>(null);
 
 /**
  * Create the Context Provider element for the React tree.
@@ -36,7 +36,7 @@ export function PointSelectionProvider({
   children,
 }: React.PropsWithChildren) {
   /* Create the internal selected DataPoint State */
-  const [selectedDataPoint, SetSelectedDataPoint] = useState<PointSelectionContext['selectedDataPoint']>(null);
+  const [selectedDataPoint, setSelectedDataPointInternal] = useState<PointSelectionContextType['selectedDataPoint']>(null);
 
   const setSelectedDataPoint = (
     newValue: React.SetStateAction<DataPointProps | null>,
@@ -47,7 +47,7 @@ export function PointSelectionProvider({
     //     "PointSelectionContext: updating selectedDataPoint state to " +
     //       newValue,
     //   );
-    SetSelectedDataPoint(newValue);
+    setSelectedDataPointInternal(newValue);
   };
 
   /* Cache the value to prevent unnecessary re-renders. */
@@ -57,9 +57,9 @@ export function PointSelectionProvider({
   );
 
   return (
-    <pointSelectionContext.Provider value={value}>
+    <PointSelectionContext.Provider value={value}>
       {children}
-    </pointSelectionContext.Provider>
+    </PointSelectionContext.Provider>
   );
 }
 
@@ -69,7 +69,7 @@ export function PointSelectionProvider({
  */
 export const usePointSelectionContext = () => {
   // This context will only be null if called from outside a PointSelectionProvider.
-  const context = useContext(pointSelectionContext);
+  const context = useContext(PointSelectionContext);
   if (!context) {
     throw new Error(
       'Assertion failed: You must use this context within a PointSelectionProvider!',

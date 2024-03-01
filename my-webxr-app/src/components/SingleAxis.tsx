@@ -1,8 +1,7 @@
-import React from 'react';
 import * as THREE from 'three';
-import { GenerateTicks } from './createTicks';
+import GenerateTicks from './CreateTicks';
 
-interface singleAxisProps {
+interface SingleAxisProps {
   startX: number;
   startY: number;
   startZ: number;
@@ -14,11 +13,10 @@ interface singleAxisProps {
   labelOffset: number;
   minValue: number;
   maxValue: number;
-  labelIncrement: number;
 }
 
 // this function will create an axis and call GenerateTicks to put ticks and labels on the axis
-const SingleAxis: React.FC<singleAxisProps> = ({
+export default function SingleAxis({
   startX,
   startY,
   startZ,
@@ -30,15 +28,14 @@ const SingleAxis: React.FC<singleAxisProps> = ({
   scaleFactor,
   minValue,
   maxValue,
-  labelIncrement,
-}) => {
+}: SingleAxisProps) {
   // Calculate the range in positive and negative directions
   const maxNum: number = Math.abs(maxValue);
   const minNum: number = Math.abs(minValue);
 
   // Determine the label increment based on the ranges
   // adjust these to change increment of the labels that appear under the ticks
-  labelIncrement = 0;
+  let labelIncrement = 0;
   if (maxNum <= 10 && minNum <= 10) {
     labelIncrement = 1;
   } else if (maxNum <= 20 && minNum <= 20) {
@@ -64,7 +61,7 @@ const SingleAxis: React.FC<singleAxisProps> = ({
   // The number of labels on each side of the axis
   const numLabels: number = 10;
   // fill axisTicks with the range of tick labels
-  for (let i = -numLabels; i <= numLabels; i++) {
+  for (let i = -numLabels; i <= numLabels; i += 1) {
     axisTicks.push(i);
   }
 
@@ -108,6 +105,4 @@ const SingleAxis: React.FC<singleAxisProps> = ({
       {axisTicks.map((label) => GenerateTicks(startX, startY, startZ, labelOffset, scaleFactor, radius, label, labelIncrement, 'z'))}
     </>
   );
-};
-
-export default SingleAxis;
+}

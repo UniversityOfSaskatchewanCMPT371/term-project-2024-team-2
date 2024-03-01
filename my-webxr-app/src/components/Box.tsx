@@ -26,3 +26,8 @@ Box.defaultProps = {
   children: [],
   rest: {},
 };
+
+Box.defaultProps = {
+  children: [],
+  rest: {},
+};
