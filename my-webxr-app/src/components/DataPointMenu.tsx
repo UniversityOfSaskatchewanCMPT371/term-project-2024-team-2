@@ -20,28 +20,28 @@ export default function DataPointMenu(
         <Text fontSize={0.075} color="black">
           Here are data point #
           {' '}
-          {selectedDataPoint == null ? '-' : selectedDataPoint.id}
+          {selectedDataPoint?.id ?? '-'}
           {' '}
           properties!
           {'\n\n'}
           Marker:
           {' '}
-          {selectedDataPoint == null ? '-' : `${selectedDataPoint.marker}\n`}
+          {`${selectedDataPoint?.marker ?? '-'}\n`}
           Color:
           {' '}
-          {selectedDataPoint == null ? '-' : `${selectedDataPoint.color}\n`}
+          {`${selectedDataPoint?.color ?? '-'}\n`}
           x, y, z:
           {' '}
-          {selectedDataPoint == null ? '-' : `${selectedDataPoint.meshProps?.position}\n`}
+          {`${selectedDataPoint?.meshProps?.position ?? '-'}\n`}
           Column X:
           {' '}
-          {selectedDataPoint == null ? '-' : `${selectedDataPoint.columnX}\n`}
+          {`${selectedDataPoint?.columnX ?? '-'}\n`}
           Column Y:
           {' '}
-          {selectedDataPoint == null ? '-' : `${selectedDataPoint.columnY}\n`}
+          {`${selectedDataPoint?.columnY ?? '-'}\n`}
           Column Z:
           {' '}
-          {selectedDataPoint == null ? '-' : selectedDataPoint.columnZ}
+          {selectedDataPoint?.columnZ ?? '-'}
         </Text>
       </Plane>
     </Billboard>
