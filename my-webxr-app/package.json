@@ -17,10 +17,12 @@
     "@react-three/xr": "^5.7.1",
     "idb": "^8.0.0",
     "log4js": "^6.9.1",
+    "ml-matrix": "^6.11.0",
     "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.160.1"
+    "three": "^0.160.1",
+    "dexie": "^3.2.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.9",
@@ -46,6 +48,9 @@
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "fake-indexeddb": "^5.0.2",
+    "uuid": "^8.3.2",
+    "@types/uuid": "^9.0.8"
   }
 }
