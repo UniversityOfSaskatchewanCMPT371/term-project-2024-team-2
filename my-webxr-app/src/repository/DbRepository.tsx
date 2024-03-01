@@ -94,7 +94,7 @@ export default class DbRepository extends Dexie implements Repository {
             + `column ${columnYName} has ${columnY.values.length} values, and `
             + `column ${columnZName} has ${columnZ.values.length} values!`);
 
-    const dataPoints = this.convertColumnsIntoDataPoints(
+    const dataPoints = DbRepository.convertColumnsIntoDataPoints(
       qualifyingPointOnly,
       columnX,
       columnY,
@@ -111,7 +111,7 @@ export default class DbRepository extends Dexie implements Repository {
         @param columnZ: the column to be used as the z-axis
         @return Array<DataPoint>
          */
-  private convertColumnsIntoDataPoints(
+  static convertColumnsIntoDataPoints(
     qualifyingPointOnly: boolean,
     columnX: Column,
     columnY: Column,

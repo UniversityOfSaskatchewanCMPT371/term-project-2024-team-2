@@ -1,5 +1,5 @@
 import DataPoint from './DataPoint';
-import { Column } from './Column';
+import Column from './Column';
 
 // The repository interface defines operations that can be
 // done to/on the db.
