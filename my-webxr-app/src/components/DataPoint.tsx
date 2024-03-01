@@ -2,27 +2,11 @@ import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
 import { BackSide } from 'three';
 // import * as log4js from "log4js";
-import {MeshProps, SphereGeometryProps} from '@react-three/fiber';
-import { usePointSelectionContext } from '../contexts/PointSelectionContext.tsx';
-
-/**
- * Define an interface to require an ID number to differentiate each DataPoint
- * and allow other mesh properties to be set.
- */
-export interface DataPointProps {
-  id: number;
-  column1: string;
-  column2: string;
-  column3: number;
-  color: string
-  marker: string
-  outlineScale?: number;
-  size?: SphereGeometryProps['args'];
-  meshProps?: JSX.IntrinsicElements['mesh'];
-}
+import { usePointSelectionContext } from '../contexts/PointSelectionContext';
+import { DataPointProps } from '../types/DataPointTypes';
 
 export default function DataPoint({
-  id, marker, color, column1, column2, column3, outlineScale, size, meshProps
+  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps,
 
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
@@ -44,19 +28,6 @@ export default function DataPoint({
     //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
-
-  // Display the point characteristics in console
-  const showSelectedDataPointInfo = (id: number, marker: string, color: string, column1: string, column2: string, column3: number, meshProps?: MeshProps ) => {
-    console.log("Selected Data Point:");
-    console.log("ID:", id);
-    console.log("Marker:", marker);
-    console.log("Color:", color);
-    console.log("Position:", meshProps?.position);
-    console.log("Column 1:", column1);
-    console.log("Column 2:", column2);
-    console.log("Column 3:", column3);
-  }
-
   return (
     <Interactive
       onHover={() => adjustHoverCount(hoverCount + 1)}
@@ -68,14 +39,20 @@ export default function DataPoint({
         }
         // Update point to be selected and set its fields
         else {
-          setSelectedDataPoint({id, marker, color, column1, column2, column3, meshProps});
-          showSelectedDataPointInfo(id, marker, color, column1, column2, column3, meshProps);
+          setSelectedDataPoint({
+            id, marker, color, columnX, columnY, columnZ, meshProps,
+          });
         }
       }}
     >
       {/* This first mesh stores custom data about the DataPoint */}
-      <mesh userData={{ id, column1, column2, column3, marker, color }} {...meshProps}>
-        {/* Low numbers to try to minimize the number of faces we need to render*/}
+      <mesh
+        userData={{
+          id, columnX, columnY, columnZ, marker, color,
+        }}
+        {...meshProps}
+      >
+        {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
         <sphereGeometry args={size || [0.1, 10, 10]} />
         <meshStandardMaterial />
@@ -86,7 +63,7 @@ export default function DataPoint({
       <mesh
         {...meshProps}
         scale={outlineScale || 1.25}
-        visible={hoverCount != 0 || selectedDataPoint?.id === id}
+        visible={hoverCount !== 0 || selectedDataPoint?.id === id}
       >
         <sphereGeometry args={size || [0.1, 10, 10]} />
         <meshStandardMaterial

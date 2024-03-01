@@ -4,7 +4,7 @@ import {
 import { RefAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { Group } from 'three';
-import { usePointSelectionContext } from '../contexts/PointSelectionContext.tsx';
+import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 
 export default function DataPointMenu(
   billboardProps: JSX.IntrinsicAttributes &
@@ -16,18 +16,34 @@ export default function DataPointMenu(
 
   return (
     <Billboard visible={selectedDataPoint != null} {...billboardProps}>
-        <Plane args={[1.25, 0.75]}>
-                <Text fontSize={0.075} color="black">
-                    Here are data point # {selectedDataPoint == null ? '-' : selectedDataPoint.id} properties!
-                    {"\n\n"}
-                    Marker: {selectedDataPoint == null ? '-' : selectedDataPoint.marker + "\n"}
-                    Color: {selectedDataPoint == null ? '-' : selectedDataPoint.color + "\n"}
-                    x, y, z: {selectedDataPoint == null ? '-' : selectedDataPoint.meshProps?.position + "\n"}
-                    Column 1: {selectedDataPoint == null ? '-' : selectedDataPoint.column1 + "\n"}
-                    Column 2: {selectedDataPoint == null ? '-' : selectedDataPoint.column2 + "\n"}
-                    Column 3: {selectedDataPoint == null ? '-' : selectedDataPoint.column3}
-                </Text>
-        </Plane>
+      <Plane args={[1.25, 0.75]}>
+        <Text fontSize={0.075} color="black">
+          Here are data point #
+          {' '}
+          {selectedDataPoint == null ? '-' : selectedDataPoint.id}
+          {' '}
+          properties!
+          {'\n\n'}
+          Marker:
+          {' '}
+          {selectedDataPoint == null ? '-' : `${selectedDataPoint.marker}\n`}
+          Color:
+          {' '}
+          {selectedDataPoint == null ? '-' : `${selectedDataPoint.color}\n`}
+          x, y, z:
+          {' '}
+          {selectedDataPoint == null ? '-' : `${selectedDataPoint.meshProps?.position}\n`}
+          Column X:
+          {' '}
+          {selectedDataPoint == null ? '-' : `${selectedDataPoint.columnX}\n`}
+          Column Y:
+          {' '}
+          {selectedDataPoint == null ? '-' : `${selectedDataPoint.columnY}\n`}
+          Column Z:
+          {' '}
+          {selectedDataPoint == null ? '-' : selectedDataPoint.columnZ}
+        </Text>
+      </Plane>
     </Billboard>
   );
 }

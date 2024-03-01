@@ -4,16 +4,16 @@ import { Canvas } from '@react-three/fiber';
 import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import Axis from './components/axis.tsx';
+import Axis from './components/axis';
 
 import Floor from './components/Floor';
 import RotatingBox from './components/RotatingBox';
 import Button from './components/Button';
-import { LocalCsvReader } from './components/LocalCsvReader.tsx';
-import { UrlCsvReader } from './components/UrlCsvReader.tsx';
-import DataPoint from './components/DataPoint.tsx';
-import { PointSelectionProvider } from './contexts/PointSelectionContext.tsx';
-import DataPointMenu from './components/DataPointMenu.tsx';
+import { LocalCsvReader } from './components/LocalCsvReader';
+import { UrlCsvReader } from './components/UrlCsvReader';
+import DataPoint from './components/DataPoint';
+import { PointSelectionProvider } from './contexts/PointSelectionContext';
+import DataPointMenu from './components/DataPointMenu';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -92,9 +92,9 @@ export default function App() {
 
             {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} meshProps={{ position: [0.25, 1.75, -0.75] }} />
-            <DataPoint id={1} marker={"circle"} color={"gray"} column1={"Bob Johnson"} column2={"math 110"} column3={81} meshProps={{ position: [0, 1.75, -0.75] }} />
-            <DataPoint id={2} marker={"circle"} color={"gray"} column1={"Alice Smith"} column2={"stat 245"} column3={75} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
+            <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [0.25, 1.75, -0.75] }} />
+            <DataPoint id={1} marker="circle" color="gray" columnX="Bob Johnson" columnY="math 110" columnZ={81} meshProps={{ position: [0, 1.75, -0.75] }} />
+            <DataPoint id={2} marker="circle" color="gray" columnX="Alice Smith" columnY="stat 245" columnZ={75} meshProps={{ position: [-0.25, 1.75, -0.75] }} />
             <DataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
         </Canvas>

@@ -9,7 +9,7 @@ describe("DataPoint Creation and Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
+            <DataPoint id={0} marker={"circle"} color={"gray"} columnX={"John Doe"} columnY={"cmpt 145"} columnZ={97} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -23,7 +23,7 @@ describe("DataPoint Creation and Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} meshProps={{ position: [1, 2, 3] }} />
+            <DataPoint id={0} marker={"circle"} color={"gray"} columnX={"John Doe"} columnY={"cmpt 145"} columnZ={97} meshProps={{ position: [1, 2, 3] }} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -38,7 +38,7 @@ describe("DataPoint Creation and Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} outlineScale={2} />
+            <DataPoint id={0} marker={"circle"} color={"gray"} columnX={"John Doe"} columnY={"cmpt 145"} columnZ={97} outlineScale={2} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -56,7 +56,7 @@ describe("DataPoint UI Interaction", () => {
     const renderer = await ReactThreeTestRenderer.create(
         <PointSelectionProvider>
           <XR>
-            <DataPoint id={0} marker={"circle"} color={"gray"} column1={"John Doe"} column2={"cmpt 145"} column3={97} />
+            <DataPoint id={0} marker={"circle"} color={"gray"} columnX={"John Doe"} columnY={"cmpt 145"} columnZ={97} />
           </XR>
         </PointSelectionProvider>,
     );
@@ -72,10 +72,10 @@ describe("DataPoint UI Interaction", () => {
     // Check if the point color value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.color).toBe("gray")
     // Check if the point column1 value is accurate.
-    expect(renderer.scene.children[1].children[0].instance.userData.column1).toBe("John Doe")
+    expect(renderer.scene.children[1].children[0].instance.userData.columnX).toBe("John Doe")
     // Check if the point column2 value is accurate.
-    expect(renderer.scene.children[1].children[0].instance.userData.column2).toBe("cmpt 145")
+    expect(renderer.scene.children[1].children[0].instance.userData.columnY).toBe("cmpt 145")
     // Check if the point column3 value is accurate.
-    expect(renderer.scene.children[1].children[0].instance.userData.column3).toBe(97)
+    expect(renderer.scene.children[1].children[0].instance.userData.columnZ).toBe(97)
   });
 });
