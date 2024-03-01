@@ -1,4 +1,4 @@
-export class DataPoint {
+export default class DataPoint {
   hasMissingData: boolean;
 
   xValue: number | string | null;

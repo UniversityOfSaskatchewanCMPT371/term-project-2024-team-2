@@ -1,24 +1,12 @@
 import Dexie from 'dexie';
 import * as assert from 'assert';
-import { Repository } from './Repository.tsx';
-import { DataPoint } from './DataPoint.tsx';
+import { Repository } from './Repository';
+import DataPoint from './DataPoint';
+import Column from './Column';
 
-// the Column class represents a column in the csv file
-// we will store csv data in the indexedDB as columns
-export class Column {
-  name: string;
-
-  values: Array<number | string | null>;
-
-  constructor(name: string, values: Array<number | string | null>) {
-    this.name = name;
-    this.values = values;
-  }
-}
-
-export class DbRepository extends Dexie implements Repository {
+export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
-  // just to inform Typescript of the object type stored in the table. Instantiated by Dexie in stores() method)
+  // just to inform Typescript of the object type stored in the table.
   private columns!: Dexie.Table<Column, string>; // string = type of the primary key
 
   constructor(dbName: string) {
@@ -41,10 +29,10 @@ export class DbRepository extends Dexie implements Repository {
   }
 
   /*
-    addColumn adds a column to the database
-    @param column: the column to be added to the database
-    @return Promise<void>
-     */
+        addColumn adds a column to the database
+        @param column: the column to be added to the database
+        @return Promise<void>
+         */
   async addColumn(column: Column) {
     return this.columns.add(column)
       .then(() => console.log(`Column ${column.name} added to the database`))
@@ -55,10 +43,10 @@ export class DbRepository extends Dexie implements Repository {
   }
 
   /*
-    getColumn gets a column from the database
-    @param columnName: the name of the column to be retrieved
-    @return Promise<Column>
-     */
+        getColumn gets a column from the database
+        @param columnName: the name of the column to be retrieved
+        @return Promise<Column>
+         */
   private async getColumn(columnName: string) {
     const column = await this.columns
       .where('name')
@@ -71,14 +59,14 @@ export class DbRepository extends Dexie implements Repository {
   }
 
   /*
-    getPoints gets the points from the database
-    @param qualifyingPointOnly: if true, only return points that have no missing data
-    @param columnXName: the name of the column to be used as the x-axis
-    @param columnYName: the name of the column to be used as the y-axis
-    @param columnZName: the name of the column to be used as the z-axis
-    @pre-condition: 3 column names must be distinct and existing in the db
-    @return Promise<Array<DataPoint>>
-     */
+        getPoints gets the points from the database
+        @param qualifyingPointOnly: if true, only return points that have no missing data
+        @param columnXName: the name of the column to be used as the x-axis
+        @param columnYName: the name of the column to be used as the y-axis
+        @param columnZName: the name of the column to be used as the z-axis
+        @pre-condition: 3 column names must be distinct and existing in the db
+        @return Promise<Array<DataPoint>>
+         */
   async getPoints(
     qualifyingPointOnly: boolean,
     columnXName: string,
@@ -98,24 +86,31 @@ export class DbRepository extends Dexie implements Repository {
     const columnY = await this.getColumn(columnYName);
     const columnZ = await this.getColumn(columnZName);
 
-    const sameLength = new Set([columnX.values.length, columnY.values.length, columnZ.values.length]);
+    const sameLength = new Set([columnX.values.length,
+      columnY.values.length,
+      columnZ.values.length]);
     assert.equal(sameLength.size, 1, 'The number of values in the given columns must be the same, but '
             + `column ${columnXName} has ${columnX.values.length} values, `
             + `column ${columnYName} has ${columnY.values.length} values, and `
             + `column ${columnZName} has ${columnZ.values.length} values!`);
 
-    const dataPoints = this.convertColumnsIntoDataPoints(qualifyingPointOnly, columnX, columnY, columnZ);
+    const dataPoints = this.convertColumnsIntoDataPoints(
+      qualifyingPointOnly,
+      columnX,
+      columnY,
+      columnZ,
+    );
     return Promise.resolve(dataPoints);
   }
 
   /*
-    convertColumnsIntoDataPoints converts the columns into an array of DataPoints
-    @param qualifyingPointOnly: if true, only return points that have no missing data
-    @param columnX: the column to be used as the x-axis
-    @param columnY: the column to be used as the y-axis
-    @param columnZ: the column to be used as the z-axis
-    @return Array<DataPoint>
-     */
+        convertColumnsIntoDataPoints converts the columns into an array of DataPoints
+        @param qualifyingPointOnly: if true, only return points that have no missing data
+        @param columnX: the column to be used as the x-axis
+        @param columnY: the column to be used as the y-axis
+        @param columnZ: the column to be used as the z-axis
+        @return Array<DataPoint>
+         */
   private convertColumnsIntoDataPoints(
     qualifyingPointOnly: boolean,
     columnX: Column,
@@ -124,7 +119,7 @@ export class DbRepository extends Dexie implements Repository {
   ): Array<DataPoint> {
     const dataPoints: Array<DataPoint> = [];
 
-    for (let i = 0; i < columnX.values.length; i++) {
+    for (let i = 0; i < columnX.values.length; i += 1) {
       const xValue = columnX.values[i];
       const yValue = columnY.values[i];
       const zValue = columnZ.values[i];
@@ -139,8 +134,8 @@ export class DbRepository extends Dexie implements Repository {
   }
 
   /*
-    closeConnection closes the connection to the database
-     */
+        closeConnection closes the connection to the database
+         */
   closeConnection() {
     this.close();
   }

@@ -3,8 +3,9 @@ import 'fake-indexeddb/auto';
 import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 import * as assert from 'assert';
-import { Column, DbRepository } from '../../src/repository/DbRepository';
-import { DataPoint } from '../../src/repository/DataPoint';
+import DbRepository from '../../src/repository/DbRepository';
+import DataPoint from '../../src/repository/DataPoint';
+import Column from '../../src/repository/Column';
 
 describe('DbRepository Test', () => {
   let repository: DbRepository;
@@ -12,7 +13,7 @@ describe('DbRepository Test', () => {
 
   beforeEach(() => {
     // create a new unique db name for each test
-    const testDbName = `TestDb${uuidv4()}`;
+    testDbName = `TestDb${uuidv4()}`;
     // confirm this db does not exist yet
     expect(Dexie.exists(testDbName)).resolves.toBe(false);
 
