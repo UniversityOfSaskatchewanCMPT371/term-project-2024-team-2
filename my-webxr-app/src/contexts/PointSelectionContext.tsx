@@ -65,6 +65,7 @@ export const PointSelectionProvider = ({
  * Provide a type-guaranteed context (not null) for use within components.
  * Call this function instead of useContext(PointSelectionContext).
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const usePointSelectionContext = () => {
   // This context will only be null if called from outside a PointSelectionProvider.
   const context = useContext(PointSelectionContext);

@@ -7,8 +7,7 @@ import { Canvas } from '@react-three/fiber'
 import Floor from './components/Floor'
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import { LocalCsvReader } from './components/LocalCsvReader.tsx';
-import { UrlCsvReader } from './components/UrlCsvReader.tsx';
+
 import DataPoint from "./components/DataPoint.tsx";
 import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
 import DataPointMenu from "./components/DataPointMenu.tsx";
@@ -97,9 +96,6 @@ export default function App() {
   return (
     <>
         <div>
-            {/* Sample URL box and button */}
-            <UrlCsvReader dbName={dbName} storeName={storeName} />
-            <LocalCsvReader dbName={dbName} storeName={storeName} />
             <button onClick={async () => {
                 const db = await openDB(dbName, 1);
                 const data = await db.getAll(storeName);
