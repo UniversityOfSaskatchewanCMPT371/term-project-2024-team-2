@@ -5,7 +5,6 @@ import './styles.css'
 import Axis from "./components/axis.tsx";
 import { Canvas } from '@react-three/fiber'
 import Floor from './components/Floor'
-
 import { useEffect } from 'react';
 import { openDB } from 'idb';
 import { LocalCsvReader } from './components/LocalCsvReader.tsx';
@@ -41,12 +40,44 @@ export default function App() {
     const dbName = 'CsvDataBase';
     const storeName = 'CsvData';
 
-    const exampleData= [[-1,-1,-1],[2,3,0],[4,3,0],[1,1,1],[3,2,2]]
-    const datapoint1 = createPosition(exampleData[0],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
-    const datapoint2 = createPosition(exampleData[1],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
-    const datapoint3 = createPosition(exampleData[2],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
-    const datapoint4 = createPosition(exampleData[3],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
-    const datapoint5 = createPosition(exampleData[4],[startPointX,startPointY,startPointZ],Length,scaleFactor,maxNum)
+    // ** hard coded data for displaying the points. example data would be replaced with the PCA results for coordinates
+    // also would like to switch out the axis part of the parameters for a Axis/graph Data type, allowing for easier use **
+    const exampleData= [[-1,-1,-1],[2,3,0],[4,3,0],[1,1,1],[3,2,2]];
+    const datapoint1 = createPosition({
+        data: exampleData[0],
+        AxisStartPoints: [startPointX, startPointY, startPointZ],
+        length: Length,
+        scale: scaleFactor,
+        max: maxNum
+    });
+    const datapoint2 = createPosition({
+        data: exampleData[1],
+        AxisStartPoints: [startPointX, startPointY, startPointZ],
+        length: Length,
+        scale: scaleFactor,
+        max: maxNum
+    });
+    const datapoint3 = createPosition({
+        data: exampleData[2],
+        AxisStartPoints: [startPointX, startPointY, startPointZ],
+        length: Length,
+        scale: scaleFactor,
+        max: maxNum
+    });
+    const datapoint4 = createPosition({
+        data: exampleData[3],
+        AxisStartPoints: [startPointX, startPointY, startPointZ],
+        length: Length,
+        scale: scaleFactor,
+        max: maxNum
+    });
+    const datapoint5 = createPosition({
+        data: exampleData[4],
+        AxisStartPoints: [startPointX, startPointY, startPointZ],
+        length: Length,
+        scale: scaleFactor,
+        max: maxNum
+    });
 
     console.log(datapoint1)
     // Initialize the database and store for csv data
