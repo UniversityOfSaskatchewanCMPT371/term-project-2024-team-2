@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [ 18.x, 20.x ]
 
     steps:
       - name: Checkout Branch
@@ -55,6 +55,7 @@ jobs:
     needs: build
     permissions:
       checks: write
+      pull-requests: write
     uses: ./.github/workflows/deployment_staging.yml
     secrets: inherit
 
@@ -64,5 +65,6 @@ jobs:
     needs: build
     permissions:
       checks: write
+      pull-requests: write
     uses: ./.github/workflows/deployment_prod.yml
     secrets: inherit

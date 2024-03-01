@@ -19,8 +19,8 @@ export const validateUrl = (url: string) => {
  *
  * @param {string} dbName - The name of the database to validate.
  * @param {string} storeName - The name of the store to validate.
- * @throws {Error} Will throw an error if the database does not exist, or if the store does not exist within the
- * database.
+ * @throws {Error} Will throw an error if the database does not exist, or if the store does not
+ * exist within the database.
  */
 export const validateDbAndStore = async (dbName: string, storeName: string) => {
   const db = await openDB(dbName, 1);
@@ -38,12 +38,18 @@ export const validateDbAndStore = async (dbName: string, storeName: string) => {
 /**
  * Handles the parsed data from a CSV file and stores it in a database.
  *
- * @param {any} results - The results object returned by Papa.parse. The object data should be an array.
+ * @param {any} results - The results object returned by Papa.parse. The object data should be an
+ * array.
  * @param {string} dbName - The name of the database where the data should be stored.
- * @param {string} storeName - The name of the store within the database where the data should be stored.
+ * @param {string} storeName - The name of the store within the database where the data should be
+ * stored.
  * @throws {Error} Will throw an error if the 'data' property of the results object is not an array.
  */
-export const handleParsedData = async (results: any, dbName: string, storeName: string) => {
+export const handleParsedData = async (
+  results: Papa.ParseResult<unknown>,
+  dbName: string,
+  storeName: string,
+) => {
   if (!Array.isArray(results.data)) {
     throw new Error('Parsed data must be an array');
   }
@@ -52,10 +58,14 @@ export const handleParsedData = async (results: any, dbName: string, storeName: 
   const tx = db.transaction(storeName, 'readwrite');
   const store = tx.objectStore(storeName);
   await store.clear();
-  for (let i = 0; i < results.data.length; i++) {
+
+  // Concurrently process each Database push
+  const operations = [];
+  for (let i = 0; i < results.data.length; i += 1) {
     const item = results.data[i];
-    await store.put(item, i);
+    operations.push(store.put(item, i));
   }
+  await Promise.all(operations);
   await tx.done;
 };
 
@@ -65,14 +75,16 @@ interface UrlCsvReaderProps {
 }
 
 /**
- * A React component that reads data from a CSV file at a given URL and stores it in a specified database and store.
+ * A React component that reads data from a CSV file at a given URL and stores it in a specified
+ * database and store.
  *
  * @param {object} props - The properties passed to the component.
  * @param {string} props.dbName - The name of the database where the data should be stored.
- * @param {string} props.storeName - The name of the store within the database where the data should be stored.
+ * @param {string} props.storeName - The name of the store within the database where the data
+ * should be stored.
  *
- * @returns {JSX.Element} A form with an input field for the CSV URL and a button to load the CSV data. After successful
- * loading, a success message is displayed.
+ * @returns {JSX.Element} A form with an input field for the CSV URL and a button to load the CSV
+ * data. After successful loading, a success message is displayed.
  */
 export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps) {
   const [showPopup, setShowPopup] = useState(false);
@@ -100,7 +112,7 @@ export function UrlCsvReader({ dbName, storeName }: UrlCsvReaderProps) {
   return (
     <div>
       <input type="text" placeholder="Enter CSV URL" onChange={handleUrlChange} />
-      <button onClick={handleButtonClick}>Load CSV</button>
+      <button type="button" onClick={handleButtonClick}>Load CSV</button>
       {showPopup && <div>Read in successfully</div>}
     </div>
   );

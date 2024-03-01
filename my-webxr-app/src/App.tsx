@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import Axis from './components/axis';
+import Axis from './components/Axis';
 
 import Floor from './components/Floor';
 import RotatingBox from './components/RotatingBox';
@@ -57,11 +57,14 @@ export default function App() {
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
-        <button onClick={async () => {
-          const db = await openDB(dbName, 1);
-          const data = await db.getAll(storeName);
-          console.table(data);
-        }}
+        <button
+          type="button"
+          onClick={async () => {
+            const db = await openDB(dbName, 1);
+            const data = await db.getAll(storeName);
+            /* eslint-disable-next-line no-console */
+            console.table(data);
+          }}
         >
           Print Data to Console
         </button>

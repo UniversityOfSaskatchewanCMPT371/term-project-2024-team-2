@@ -10,7 +10,9 @@ export default function RotatingBox(props: JSX.IntrinsicElements['mesh']) {
   const ref = useRef<THREE.Mesh>(null!);
   const [hovered, hover] = useState(false);
   const [clicked, click] = useState(false);
-  useFrame(() => (ref.current.rotation.x += 0.01));
+  useFrame(() => {
+    ref.current.rotation.x += 0.01;
+  });
 
   return (
     <Interactive onSelect={() => click(!clicked)} onHover={() => hover(!hovered)}>
