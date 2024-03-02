@@ -2,17 +2,16 @@ import {XR, Controllers, VRButton} from '@react-three/xr'
 import {Sky} from '@react-three/drei'
 import '@react-three/fiber'
 import './styles.css'
-import Axis from "./components/axis.tsx";
 import { Canvas } from '@react-three/fiber'
 import Floor from './components/Floor'
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-
-import DataPoint from "./components/DataPoint.tsx";
-import { PointSelectionProvider } from "./contexts/PointSelectionContext.tsx";
-import DataPointMenu from "./components/DataPointMenu.tsx";
-import {createPosition} from "./components/Positions.tsx";
-
+import { createPosition } from './components/Positions.tsx';
+import Axis from './components/Axis';
+import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
+import DataPoint from './components/DataPoint';
+import { PointSelectionProvider } from './contexts/PointSelectionContext';
+import DataPointMenu from './components/DataPointMenu';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -33,11 +32,10 @@ const Length: number = 1;
 const radius: number = 0.002;
 
 export default function App() {
-
-    // Database name and store name will be pass as prop to reader components,
-    // this is to ensure the consistency of the database name and store name.
-    const dbName = 'CsvDataBase';
-    const storeName = 'CsvData';
+  // Database name and store name will be pass as prop to reader components,
+  // this is to ensure the consistency of the database name and store name.
+  const dbName = 'CsvDataBase';
+  const storeName = 'CsvData';
 
     // ** hard coded data for displaying the points. example data would be replaced with the PCA results for coordinates
     // also would like to switch out the axis part of the parameters for a Axis/graph Data type, allowing for easier use **
@@ -79,29 +77,38 @@ export default function App() {
     });
 
     console.log(datapoint1)
-    // Initialize the database and store for csv data
-    useEffect(() => {
-        const initializeDB = async () => {
-            await openDB(dbName, 1, {
-                upgrade(db) {
-                    if (db.objectStoreNames.contains(storeName)) {
-                        db.deleteObjectStore(storeName);
-                    }
-                    db.createObjectStore(storeName);
-                },
-            });
-        };
-        initializeDB();
-    }, [dbName, storeName]);
+  // Initialize the database and store for csv data
+  useEffect(() => {
+    const initializeDB = async () => {
+      await openDB(dbName, 1, {
+        upgrade(db) {
+          if (db.objectStoreNames.contains(storeName)) {
+            db.deleteObjectStore(storeName);
+          }
+          db.createObjectStore(storeName);
+        },
+      });
+    };
+    initializeDB();
+  }, [dbName, storeName]);
   return (
     <>
-        <div>
-            <button onClick={async () => {
-                const db = await openDB(dbName, 1);
-                const data = await db.getAll(storeName);
-                console.table(data);
-            }}>Print Data to Console</button>
-        </div>
+      <div>
+        {/* Sample URL box and button */}
+        <UrlCsvReader dbName={dbName} storeName={storeName} />
+        <LocalCsvReader dbName={dbName} storeName={storeName} />
+        <button
+          type="button"
+          onClick={async () => {
+            const db = await openDB(dbName, 1);
+            const data = await db.getAll(storeName);
+            /* eslint-disable-next-line no-console */
+            console.table(data);
+          }}
+        >
+          Print Data to Console
+        </button>
+      </div>
       <VRButton />
       <PointSelectionProvider>
         <Canvas>
@@ -118,11 +125,11 @@ export default function App() {
 
             {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <DataPoint id={0} meshProps={{ position: datapoint1 } } />
-            <DataPoint id={1} meshProps={{ position: datapoint2 } } />
-            <DataPoint id={2} meshProps={{ position: datapoint3 } } />
-            <DataPoint id={3} meshProps={{ position: datapoint4 } } />
-            <DataPoint id={4} meshProps={{ position: datapoint5 } } />
+            <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint1 } } />
+            <DataPoint id={1} marker="circle" color="gray" columnX="Bob Johnson" columnY="math 110" columnZ={81} meshProps={{ position: datapoint2 } } />
+            <DataPoint id={2} marker="circle" color="gray" columnX="Bob John" columnY="math 116" columnZ={87} meshProps={{ position: datapoint3 } } />
+            <DataPoint id={3} marker="circle" color="gray" columnX="Alice Smith" columnY="stat 245" columnZ={75} meshProps={{ position: datapoint4 } } />
+            <DataPoint id={4} marker="circle" color="gray" columnX="Bob Smith" columnY="math 115" columnZ={85} meshProps={{ position: datapoint5 } } />
 
               <DataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
