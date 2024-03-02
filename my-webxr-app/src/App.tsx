@@ -1,13 +1,12 @@
-import {XR, Controllers, VRButton} from '@react-three/xr'
-import {Sky} from '@react-three/drei'
-import '@react-three/fiber'
-import './styles.css'
-import { Canvas } from '@react-three/fiber'
-import Floor from './components/Floor'
+import { XR, Controllers, VRButton } from '@react-three/xr';
+import { Sky } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import { createPosition } from './components/Positions.tsx';
-import Axis from './components/Axis.tsx';
+import Floor from './components/Floor';
+import { createPosition } from './components/Positions';
+import Axis from './components/Axis';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
@@ -20,10 +19,10 @@ const maxNum: number = 10;
 const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
-//starting point of the axis
-const startPointX: number = -.2;
+// starting point of the axis
+const startPointX: number = -0.2;
 const startPointY: number = 1.6;
-const startPointZ: number = -.5;
+const startPointZ: number = -0.5;
 // const startPointY: number = 0;
 // const startPointZ: number = 0;
 // endPoint is used to determine what axis is being calculated, should not need to change
@@ -37,46 +36,45 @@ export default function App() {
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
 
-    // ** hard coded data for displaying the points. example data would be replaced with the PCA results for coordinates
-    // also would like to switch out the axis part of the parameters for a Axis/graph Data type, allowing for easier use **
-    const exampleData= [[-1,-1,-1],[2,3,0],[4,3,0],[1,1,1],[3,2,2]];
-    const datapoint1 = createPosition({
-        data: exampleData[0],
-        AxisStartPoints: [startPointX, startPointY, startPointZ],
-        length: Length,
-        scale: scaleFactor,
-        max: maxNum
-    });
-    const datapoint2 = createPosition({
-        data: exampleData[1],
-        AxisStartPoints: [startPointX, startPointY, startPointZ],
-        length: Length,
-        scale: scaleFactor,
-        max: maxNum
-    });
-    const datapoint3 = createPosition({
-        data: exampleData[2],
-        AxisStartPoints: [startPointX, startPointY, startPointZ],
-        length: Length,
-        scale: scaleFactor,
-        max: maxNum
-    });
-    const datapoint4 = createPosition({
-        data: exampleData[3],
-        AxisStartPoints: [startPointX, startPointY, startPointZ],
-        length: Length,
-        scale: scaleFactor,
-        max: maxNum
-    });
-    const datapoint5 = createPosition({
-        data: exampleData[4],
-        AxisStartPoints: [startPointX, startPointY, startPointZ],
-        length: Length,
-        scale: scaleFactor,
-        max: maxNum
-    });
+  // hard coded data. example data would be replaced with PCA results for coordinates
+  // also would like to make a new type for Axis info, allowing for easier use
+  const exampleData = [[-1, -1, -1], [2, 3, 0], [4, 3, 0], [1, 1, 1], [3, 2, 2]];
+  const datapoint1 = createPosition({
+    data: exampleData[0],
+    AxisStartPoints: [startPointX, startPointY, startPointZ],
+    length: Length,
+    scale: scaleFactor,
+    max: maxNum,
+  });
+  const datapoint2 = createPosition({
+    data: exampleData[1],
+    AxisStartPoints: [startPointX, startPointY, startPointZ],
+    length: Length,
+    scale: scaleFactor,
+    max: maxNum,
+  });
+  const datapoint3 = createPosition({
+    data: exampleData[2],
+    AxisStartPoints: [startPointX, startPointY, startPointZ],
+    length: Length,
+    scale: scaleFactor,
+    max: maxNum,
+  });
+  const datapoint4 = createPosition({
+    data: exampleData[3],
+    AxisStartPoints: [startPointX, startPointY, startPointZ],
+    length: Length,
+    scale: scaleFactor,
+    max: maxNum,
+  });
+  const datapoint5 = createPosition({
+    data: exampleData[4],
+    AxisStartPoints: [startPointX, startPointY, startPointZ],
+    length: Length,
+    scale: scaleFactor,
+    max: maxNum,
+  });
 
-    console.log(datapoint1)
   // Initialize the database and store for csv data
   useEffect(() => {
     const initializeDB = async () => {
@@ -119,19 +117,67 @@ export default function App() {
             <pointLight position={[10, 10, 10]} />
             <Controllers />
 
-            <Axis minValue={minNum} maxValue={maxNum} scaleFactor={scaleFactor} startX={startPointX}
-            startY={startPointY} startZ={startPointZ} endPoint={Length} radius={radius}
-            labelOffset={labelOffset}/>
+            <Axis
+              minValue={minNum}
+              maxValue={maxNum}
+              scaleFactor={scaleFactor}
+              startX={startPointX}
+              startY={startPointY}
+              startZ={startPointZ}
+              endPoint={Length}
+              radius={radius}
+              labelOffset={labelOffset}
+            />
 
             {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint1 } } />
-            <DataPoint id={1} marker="circle" color="gray" columnX="Bob Johnson" columnY="math 110" columnZ={81} meshProps={{ position: datapoint2 } } />
-            <DataPoint id={2} marker="circle" color="gray" columnX="Bob John" columnY="math 116" columnZ={87} meshProps={{ position: datapoint3 } } />
-            <DataPoint id={3} marker="circle" color="gray" columnX="Alice Smith" columnY="stat 245" columnZ={75} meshProps={{ position: datapoint4 } } />
-            <DataPoint id={4} marker="circle" color="gray" columnX="Bob Smith" columnY="math 115" columnZ={85} meshProps={{ position: datapoint5 } } />
+            <DataPoint
+              id={0}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              meshProps={{ position: datapoint1 }}
+            />
+            <DataPoint
+              id={1}
+              marker="circle"
+              color="gray"
+              columnX="Bob Johnson"
+              columnY="math 110"
+              columnZ={81}
+              meshProps={{ position: datapoint2 }}
+            />
+            <DataPoint
+              id={2}
+              marker="circle"
+              color="gray"
+              columnX="Bob John"
+              columnY="math 116"
+              columnZ={87}
+              meshProps={{ position: datapoint3 }}
+            />
+            <DataPoint
+              id={3}
+              marker="circle"
+              color="gray"
+              columnX="Alice Smith"
+              columnY="stat 245"
+              columnZ={75}
+              meshProps={{ position: datapoint4 }}
+            />
+            <DataPoint
+              id={4}
+              marker="circle"
+              color="gray"
+              columnX="Bob Smith"
+              columnY="math 115"
+              columnZ={85}
+              meshProps={{ position: datapoint5 }}
+            />
 
-              <DataPointMenu position={[0, 2.2, -0.75]} />
+            <DataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
         </Canvas>
       </PointSelectionProvider>
