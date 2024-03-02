@@ -4,6 +4,7 @@ import {
 import { RefAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { Group } from 'three';
+import * as THREE from 'three';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 
 export default function DataPointMenu(
@@ -32,8 +33,11 @@ export default function DataPointMenu(
           {`${selectedDataPoint?.color ?? '-'}\n`}
           x, y, z:
           {' '}
-          {`${selectedDataPoint?.meshProps?.position ?? '-'}\n`}
-          Column X:
+          {`${selectedDataPoint?.meshProps?.position
+            ? `${(selectedDataPoint.meshProps.position as THREE.Vector3).x.toFixed(2)}, 
+            ${(selectedDataPoint.meshProps.position as THREE.Vector3).y.toFixed(2)}, 
+            ${(selectedDataPoint.meshProps.position as THREE.Vector3).z.toFixed(2)}`
+            : '-'}\n`}
           {' '}
           {`${selectedDataPoint?.columnX ?? '-'}\n`}
           Column Y:
