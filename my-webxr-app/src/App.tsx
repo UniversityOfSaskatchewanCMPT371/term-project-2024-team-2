@@ -7,7 +7,7 @@ import Floor from './components/Floor'
 import { useEffect } from 'react';
 import { openDB } from 'idb';
 import { createPosition } from './components/Positions.tsx';
-import Axis from './components/Axis';
+import Axis from './components/Axis.tsx';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';

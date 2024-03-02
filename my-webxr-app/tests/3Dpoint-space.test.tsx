@@ -3,7 +3,7 @@ import { XR } from "@react-three/xr";
 import { PointSelectionProvider } from "../src/contexts/PointSelectionContext";
 import DataPoint from "../src/components/DataPoint";
 import { Vector3 } from "three";
-import Axis from "../src/components/axis";
+import Axis from "../src/components/Axis";
 import {createPosition} from "../src/components/Positions";
 
 
