@@ -2,9 +2,9 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import { createPosition } from '../src/components/Positions';
 import DataPoint from '../src/components/DataPoint';
 import Axis from '../src/components/Axis';
+import createPosition from '../src/components/Positions';
 
 const minNum: number = -10;
 const maxNum: number = 10;

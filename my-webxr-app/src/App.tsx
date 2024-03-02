@@ -5,12 +5,12 @@ import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
 import Floor from './components/Floor';
-import { createPosition } from './components/Positions';
 import Axis from './components/Axis';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
+import createPosition from './components/Positions';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;

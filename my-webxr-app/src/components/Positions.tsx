@@ -1,6 +1,6 @@
 import { Vector3 } from 'three';
 // import assert from "../utils/Assert";
-import * as assert from 'assert';
+import assert from '../utils/Assert';
 /**
   Creates a Vector for the points position relative to the size of the Axis and the Data
     given to the point ( would eventually want to create
@@ -24,33 +24,28 @@ const createPosition = ({
   scale: number,
   max: number
 }) => {
-  assert.equal(
+  assert(
     data.length === 3,
-    true,
+
     'Error in Positions.tsx, should be 3 entries of data to be mapped, [x,y,z]',
   );
-  assert.equal(
+  assert(
     AxisStartPoints.length === 3,
-    true,
     'Error in Positions.tsx, should be 3 start points, [x,y,z]',
   );
-  assert.equal(
+  assert(
     length !== undefined && length > 0,
-    true,
     'Error in Position.tsx, length of Axis should never be 0 or less ',
   );
-  assert.equal(
+  assert(
     scale !== undefined && scale > 0,
-    true,
     'Error in Position.tsx, Scale should never be 0 or less',
   );
-  assert.equal(
+  assert(
     data[0] <= max || data[1] <= max || data[2] <= max,
-    true,
     'Error in Positions.tsx: Trying to map Data that does not exist within the domain '
            + 'of the graph, please check',
   );
-  assert.equal(true, true, 'fail');
 
   const xPosition = (((data[0] / max) * (scale * length)) / 2) + AxisStartPoints[0];
   const yPosition = (((data[1] / max) * (scale * length)) / 2) + AxisStartPoints[1];
