@@ -14,7 +14,9 @@ export default function GenerateTicks(
   axis: string,
 ) {
   let positionTicks: [number, number, number] | undefined;
-  // let positionLabels: [number, number, number] | undefined;
+  // @ts-expect-error Temporary removal of drei
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let positionLabels: [number, number, number] | undefined;
   let ticksShape: [number, number, number] | undefined;
 
   // conditional to check which axis we want the ticks and labels to be on
@@ -25,12 +27,12 @@ export default function GenerateTicks(
       startY,
       startZ,
     ];
-    // positionLabels = [
-    //   // this calculation gives the correct space between each label
-    //   startX + (labelOffset * label * scaleFactor) / 2,
-    //   startY - 0.02,
-    //   startZ,
-    // ];
+    positionLabels = [
+      // this calculation gives the correct space between each label
+      startX + (labelOffset * label * scaleFactor) / 2,
+      startY - 0.02,
+      startZ,
+    ];
     ticksShape = [0.002, radius * 7, radius * 2];
   } else if (axis === 'y') {
     positionTicks = [
@@ -38,11 +40,11 @@ export default function GenerateTicks(
       startY + (labelOffset * label * scaleFactor) / 2,
       startZ,
     ];
-    // positionLabels = [
-    //   startX + 0.03,
-    //   startY + (labelOffset * label * scaleFactor) / 2,
-    //   startZ,
-    // ];
+    positionLabels = [
+      startX + 0.03,
+      startY + (labelOffset * label * scaleFactor) / 2,
+      startZ,
+    ];
     ticksShape = [radius * 7, 0.002, radius * 2];
   } else if (axis === 'z') {
     positionTicks = [
@@ -51,12 +53,12 @@ export default function GenerateTicks(
       startZ + (labelOffset * label * scaleFactor) / 2,
     ];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // positionLabels = [
-    //   startX,
-    //   startY - 0.02,
-    //   startZ + (labelOffset * label * scaleFactor) / 2,
-    // ];
-    // ticksShape = [0.002, radius * 7, radius * 2];
+    positionLabels = [
+      startX,
+      startY - 0.02,
+      startZ + (labelOffset * label * scaleFactor) / 2,
+    ];
+    ticksShape = [0.002, radius * 7, radius * 2];
   }
 
   /* Text from drei breaks the jest testing, so need the disables */

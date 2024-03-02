@@ -60,7 +60,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint1 }} />
+          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
           <Axis
             minValue={minNum}
             maxValue={maxNum}
