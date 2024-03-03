@@ -105,6 +105,16 @@ We got close to a fuyll happy-path. We can diplay plotted points, scaled appropr
 #### Backend Componenets
 We were able to finish implementing the PCA analysis, though it is currently stand-alone and not connected to our data pipeline, that is coming in the next itteration. Out data filtering is implemented in our data pipeline, and is controlled by a boolena flag so that if we wanted to integrate special data handling for empy values, we can.
 
+#### UI updates
+No work was done on refreshing the UI design this print. Now that we are on the edge of a full happy path, we will be taking a closer look at improving and refining our UI/UX designs.
+
+#### New Wiki Documents
+- [Data Layer Abstraction (DAL) Design](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#5-data-access-layer-dal-abstraction-design)
+- [User Flow Diagram](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#6-flow-diagram)
+- [Artifact Inspection - Zander](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-zander)
+- [Artifact Inspection - Jesse](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Artifact-Inspections#artifact-inspection-jesse-haug)
+- [Risk Plan ID3](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Risk-Plan-ID3)
+
 ### Class Standup Attendance
 #### Februrary 13th, 2024
 ##### In Attendance
