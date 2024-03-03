@@ -15,7 +15,7 @@ export default function DataPointMenu(
   /* Access the selected DataPoint State from the shared PointSelectionContext */
   const { selectedDataPoint } = usePointSelectionContext();
 
-return (
+  return (
   <Billboard visible={selectedDataPoint != null} {...billboardProps}>
       <Plane args={[1.25, 0.8]}>
         <Text fontSize={0.075} color="black">
