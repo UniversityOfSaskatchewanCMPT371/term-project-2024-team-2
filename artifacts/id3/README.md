@@ -20,16 +20,66 @@
 ### Knowledge Sharing and Pairing Sessions:
 We have a group shared calendar to book meetings, standups, and pairing sessions.
 
+#### Artifact Inspection - Zander
+- Duration: 1hr
+- Attended by: Zander, Aesha, Jesse, Mitchell
+- Inspected Zander's EsLint integration
+
+#### Artifact Inspection - Jesse
+- Duration: 1hr
+- Attended by: Jesse, Mitchell, Joe, Trang
+- Inspected Jesse's integration for displaying points in 3D space
+
 #### PM Pairing Session
 - Duration: 2.5hrs
 - Attended by: Trang, Matthew
 - Paried on tasks for backlog refinement, sprint planning and backlog grooming for ID2, and preparing the ID1 presentation.
 
 #### Design Jam
-- Duration: 4.5hr
+- Duration: 4.5hrs
 - Attended by: Aesha, Trang, Quinn, Tony, Jesse, Matt
 - Caught up the team on what is in the repo, and worked on a data layer design as a team. This served as a 
 meeting to ground everyone and ensure that we have a firm footings going into the last half of the term.
+
+#### Assertion and Design Pairing
+- Duration: 3hrs
+- Attended by: Tony, Matt
+- Met to discuss the implementation of assertions, and general logic abstractions to facilitate the implementation of out CSV readers.
+
+#### Synchronous Code Review
+- Duration: 1.5hrs
+- Attended by: Trang, Tony, Matt
+- Met after standup to address and discuss some finer points related to a couple PRs and organizing the DAL implementation.
+
+#### Axis design
+- Duration: 1hr
+- Attended by: Jesse, Quinn
+- Met to discuss the implementation of the 3D axes and placing data points within them
+
+#### General Code Overview
+- Duration: 1hr
+- Attended by: Trang, Aesha
+- Looked at the code in general
+
+#### Unit Testing Pairing
+- Duration: 1hr
+- Attended by: Trang, Aesha
+- Looked at data point unit testing
+
+#### Datapoint debugging
+- Duration: 1hr
+- Attended by: Aesha, Zander
+- debug datapoint fields, review unit tests
+
+#### Risk plan update
+- Duration: 1hr
+- Attended by: Aesha, Quinn
+- updated risk plan
+
+#### Gherkin Pairing
+- Duration: 1hr
+- Attended by: Mitchell, Quinn
+- Walked through how to create and review gherkin
 
 
 ### Card and Work Summary
