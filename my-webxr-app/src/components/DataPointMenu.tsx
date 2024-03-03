@@ -15,38 +15,21 @@ export default function DataPointMenu(
   /* Access the selected DataPoint State from the shared PointSelectionContext */
   const { selectedDataPoint } = usePointSelectionContext();
 
-  return (
+return (
     <Billboard visible={selectedDataPoint != null} {...billboardProps}>
-      <Plane args={[1.25, 0.75]}>
+      <Plane args={[1.25, 0.8]}>
         <Text fontSize={0.075} color="black">
-          Here are data point #
-          {' '}
-          {selectedDataPoint?.id ?? '-'}
-          {' '}
-          properties!
-          {'\n\n'}
-          Marker:
-          {' '}
-          {`${selectedDataPoint?.marker ?? '-'}\n`}
-          Color:
-          {' '}
-          {`${selectedDataPoint?.color ?? '-'}\n`}
-          x, y, z:
-          {' '}
-          {`${selectedDataPoint?.meshProps?.position
-            ? `${(selectedDataPoint.meshProps.position as THREE.Vector3).x.toFixed(2)}, 
-            ${(selectedDataPoint.meshProps.position as THREE.Vector3).y.toFixed(2)}, 
-            ${(selectedDataPoint.meshProps.position as THREE.Vector3).z.toFixed(2)}`
-            : '-'}\n`}
-          Column X:
-          {' '}
-          {`${selectedDataPoint?.columnX ?? '-'}\n`}
-          Column Y:
-          {' '}
-          {`${selectedDataPoint?.columnY ?? '-'}\n`}
-          Column Z:
-          {' '}
-          {selectedDataPoint?.columnZ ?? '-'}
+          {`Here are data point # ${selectedDataPoint?.id ?? '-'} properties!\n\n`}
+          {`Marker: ${selectedDataPoint?.marker ?? '-'}\n`}
+          {`Color: ${selectedDataPoint?.color ?? '-'}\n`}
+          {`x, y, z: ${selectedDataPoint?.meshProps?.position ? (
+            `${(selectedDataPoint.meshProps.position as THREE.Vector3).x.toFixed(2)}, ${
+              (selectedDataPoint.meshProps.position as THREE.Vector3).y.toFixed(2)}, ${
+              (selectedDataPoint.meshProps.position as THREE.Vector3).z.toFixed(2)}`
+          ) : '-'}\n`}
+          {`Column X: ${selectedDataPoint?.columnX ?? '-'}\n`}
+          {`Column Y: ${selectedDataPoint?.columnY ?? '-'}\n`}
+          {`Column Z: ${selectedDataPoint?.columnZ ?? '-'}`}
         </Text>
       </Plane>
     </Billboard>
