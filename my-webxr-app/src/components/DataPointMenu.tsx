@@ -16,7 +16,7 @@ export default function DataPointMenu(
   const { selectedDataPoint } = usePointSelectionContext();
 
   return (
-  <Billboard visible={selectedDataPoint != null} {...billboardProps}>
+    <Billboard visible={selectedDataPoint != null} {...billboardProps}>
       <Plane args={[1.25, 0.8]}>
         <Text fontSize={0.075} color="black">
           {`Here are data point # ${selectedDataPoint?.id ?? '-'} properties!\n\n`}
