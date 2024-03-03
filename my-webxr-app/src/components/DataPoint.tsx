@@ -81,6 +81,6 @@ export default function DataPoint({
  */
 DataPoint.defaultProps = {
   outlineScale: 1.25,
-  size: [0.1, 10, 10],
+  size: [0.01, 10, 10],
   meshProps: {},
 };

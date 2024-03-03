@@ -15,6 +15,7 @@ export default function GenerateTicks(
 ) {
   let positionTicks: [number, number, number] | undefined;
   // @ts-expect-error Temporary removal of drei
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let positionLabels: [number, number, number] | undefined;
   let ticksShape: [number, number, number] | undefined;
 
