@@ -38,6 +38,7 @@ export default function DataPointMenu(
             ${(selectedDataPoint.meshProps.position as THREE.Vector3).y.toFixed(2)}, 
             ${(selectedDataPoint.meshProps.position as THREE.Vector3).z.toFixed(2)}`
             : '-'}\n`}
+          Column X:
           {' '}
           {`${selectedDataPoint?.columnX ?? '-'}\n`}
           Column Y:
