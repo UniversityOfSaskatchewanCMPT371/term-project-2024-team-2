@@ -11,3 +11,4 @@ Feature: Data processing backend of the PCA analysis
     When the user utilizes of the PCA analysis
     Then the system should return an error message indicating insufficient data
     And the system should not calculate any PCAs
+
