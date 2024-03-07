@@ -1,6 +1,6 @@
 Feature: Data processing backend of the PCA analysis
 
-  Write and run the integration tests for the data processing backend of the PCA analysis
+  Write and run the integration tests for the data processing backend of the PCA analysis. 
   A principal component analysis (PCA) plot shows similarities between groups of samples in a data set
 
   Background:
