@@ -1,8 +1,18 @@
+/** @jest-environment jsdom */
 import ReactThreeTestRenderer from '@react-three/test-renderer';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'jest-canvas-mock';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import Axis from '../src/components/Axis';
-// import SingleAxis from '../src/components/singleAxis';
+// import {newServer} from 'mock-xmlhttprequest';
+// import SingleAxis from '../src/components/SingleAxis';
+
+beforeAll(() => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+});
 
 describe('Axis Tests', () => {
   test('Create 3D axis with random values', async () => {

@@ -1,5 +1,6 @@
 /* Text from drei breaks the jest testing, so we comment them out to pass the test */
-// import {Text} from "@react-three/drei";
+import { Text } from '@react-three/drei';
+import { Suspense } from 'react';
 
 // this function creates the ticks and labels for the axes
 export default function GenerateTicks(
@@ -14,7 +15,6 @@ export default function GenerateTicks(
   axis: string,
 ) {
   let positionTicks: [number, number, number] | undefined;
-  // @ts-expect-error Temporary removal of drei
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let positionLabels: [number, number, number] | undefined;
   let ticksShape: [number, number, number] | undefined;
@@ -63,7 +63,6 @@ export default function GenerateTicks(
 
   /* Text from drei breaks the jest testing, so need the disables */
   // labelText is assigned the correct label by multiplying by the increment
-  // @ts-expect-error Temporary removal of drei
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const labelText: string = `${label * increment}`;
 
@@ -74,15 +73,16 @@ export default function GenerateTicks(
         <boxGeometry args={ticksShape} />
         <meshStandardMaterial color="black" />
       </mesh>
-      {/* Text from drei breaks the jest testing, so we comment them out to pass the test */}
-      {/* this Text contains the position and size of labels */}
-      {/* <Text */}
-      {/*    position={positionLabels} */}
-      {/*    fontSize={0.02} */}
-      {/*    color="black" */}
-      {/* > */}
-      {/*    {labelText} */}
-      {/* </Text> */}
+      <Suspense>
+        <Text
+          position={positionLabels}
+          font="https://cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver@v1.0.1/packages/data/font-files/latin/sans-serif.normal.100.woff"
+          fontSize={0.02}
+          color="black"
+        >
+          {labelText}
+        </Text>
+      </Suspense>
     </group>
   );
 }
