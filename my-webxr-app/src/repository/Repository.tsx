@@ -4,9 +4,12 @@ import Column from './Column';
 // The repository interface defines operations that can be
 // done to/on the db.
 export interface Repository {
-  getPoints: (qualifyingPointOnly : boolean,
+  getPoints: (qualifyingPointOnly: boolean,
     columnXName: string,
     columnYName: string,
     columnZName: string) => Promise<Array<DataPoint>>;
-  addColumn: (column : Column) => Promise<string>;
+  addColumn: (column: Column) => Promise<string>;
+
+  getPossibleAxes: () => Promise<string[]>;
+
 }
