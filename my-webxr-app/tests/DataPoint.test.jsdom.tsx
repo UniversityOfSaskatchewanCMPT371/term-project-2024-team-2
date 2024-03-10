@@ -1,3 +1,4 @@
+import { setupJestCanvasMock } from 'jest-webgl-canvas-mock';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
@@ -5,6 +6,11 @@ import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
 import DataPoint from '../src/components/DataPoint';
 
 describe('DataPoint Creation and Interaction', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    setupJestCanvasMock();
+  });
+
   test('creating a basic DataPoint with defaults', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>

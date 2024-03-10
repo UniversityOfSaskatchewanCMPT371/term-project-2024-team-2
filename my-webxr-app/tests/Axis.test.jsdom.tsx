@@ -11,16 +11,15 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 // import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { http, HttpResponse } from 'msw';
-import { setupServer, SetupServerApi} from 'msw/node';
-import {openAsBlob} from 'node:fs';
+import { setupServer, SetupServerApi } from 'msw/node';
+import { openAsBlob } from 'node:fs';
 // import { createCanvas } from 'canvas';
-import {XR} from '@react-three/xr';
+import { XR } from '@react-three/xr';
 import Axis from '../src/components/Axis';
 
 async function readFile() {
   const blob = await openAsBlob('./src/assets/sans-serif.normal.100.woff');
-  const ab = await blob.arrayBuffer();
-  return ab;
+  return blob.arrayBuffer();
 }
 
 beforeAll(() => {
@@ -38,22 +37,18 @@ describe('Axis Tests', () => {
     worker = setupServer(
       http.get(
         'https://cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver@v1.0.1/packages/data/*',
-        async () => {
-          console.log(data);
-          return HttpResponse.arrayBuffer(data, {
-            headers: {
-              'Content-Type': 'font/woff',
-            },
-          });
-        },
+        async () => HttpResponse.arrayBuffer(data, {
+          headers: {
+            'Content-Type': 'font/woff',
+          },
+        }),
       ),
     );
-
-    worker.events.on('request:start', ({ request }) => {
-      console.log('MSW intercepted:', request.method, request.url);
-    });
   });
-
+  // to check if it's actually intercepting the requests
+  //   worker.events.on('request:start', ({ request }) => {
+  //     console.log('MSW intercepted:', request.method, request.url);
+  //   });
   beforeEach(() => {
     jest.resetAllMocks();
     setupJestCanvasMock();
@@ -87,7 +82,9 @@ describe('Axis Tests', () => {
     expect(renderer.scene.children[1].children[0].instance.position).toEqual(
       new Vector3(0, 0.82, -0.15),
     );
-    const what = renderer.scene.children[1].children[191].children[1].instance;
+
+    // check tick text
+    const what = renderer.scene.children[1].children[191].children[1].props.text;
     expect(what).toEqual('10');
     // console.log(what);
   }, 10000);
