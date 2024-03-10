@@ -34,7 +34,7 @@ module.exports = {
     'react',
     'check-file',
   ],
-  ignorePatterns: ['vite.config.ts', 'vite-env.d.ts', 'jest.config.js', 'dist/', 'node_modules/'],
+  ignorePatterns: ['vite.config.ts', 'vite-env.d.ts', 'jest.config.js', 'jest.polyfills.js', 'jest.resolver.cjs', 'dist/', 'node_modules/'],
   rules: {
     // Not required for React V18+
     'react/react-in-jsx-scope': 'off',

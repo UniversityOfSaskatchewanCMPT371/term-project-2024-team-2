@@ -1,6 +1,10 @@
+import { setupJestCanvasMock } from 'jest-webgl-canvas-mock';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
+import { setupServer, SetupServerApi } from 'msw/node';
+import { http, HttpResponse } from 'msw';
+import { openAsBlob } from 'node:fs';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
 import DataPoint from '../src/components/DataPoint';
 import Axis from '../src/components/Axis';
@@ -54,31 +58,69 @@ const datapoint5 = createPosition({
   max: maxNum,
 });
 
+async function readFile() {
+  const blob = await openAsBlob('./src/assets/sans-serif.normal.100.woff');
+  return blob.arrayBuffer();
+}
+
 describe("Datapoint's Location is based off of values given ", () => {
+  let worker: SetupServerApi;
+  let data: ArrayBuffer | undefined;
+  beforeAll(async () => {
+    data = await readFile();
+    // 2. Describe network behavior with request handlers.
+    worker = setupServer(
+      http.get(
+        'https://cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver@v1.0.1/packages/data/*',
+        async () => HttpResponse.arrayBuffer(data, {
+          headers: {
+            'Content-Type': 'font/woff',
+          },
+        }),
+      ),
+    );
+  });
+  // to check if it's actually intercepting the requests
+  //   worker.events.on('request:start', ({ request }) => {
+  //     console.log('MSW intercepted:', request.method, request.url);
+  //   });
+  beforeEach(() => {
+    jest.resetAllMocks();
+    setupJestCanvasMock();
+    worker.listen();
+  });
+
+  afterEach(() => worker.resetHandlers());
+  afterAll(() => worker.close());
+
   test('Test #1: Creating Datapoint with the location/coordinates 1,2,3, making sure that the positions'
         + 'actually work', async () => {
-    const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
-          <Axis
-            minValue={minNum}
-            maxValue={maxNum}
-            scaleFactor={scaleFactor}
-            startX={startPointX}
-            startY={startPointY}
-            startZ={startPointZ}
-            endPoint={endPoint}
-            radius={radius}
-            labelOffset={labelOffset}
-          />
-        </XR>
-      </PointSelectionProvider>,
-    );
+    function Element() {
+      return (
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
+            <Axis
+              minValue={minNum}
+              maxValue={maxNum}
+              scaleFactor={scaleFactor}
+              startX={startPointX}
+              startY={startPointY}
+              startZ={startPointZ}
+              endPoint={endPoint}
+              radius={radius}
+              labelOffset={labelOffset}
+            />
+          </XR>
+        </PointSelectionProvider>
+      );
+    }
+    const render = await ReactThreeTestRenderer.create(<Element />);
+    await render.update(<Element />);
     expect(render.scene.children[1].children[0].instance.position).toEqual(
       new Vector3(1, 2, 3),
     );
-  });
+  }, 10000);
 
   test(' Test #2: Giving DataPoints a repeating data set to see how it is represented', async () => {
     const render = await ReactThreeTestRenderer.create(
