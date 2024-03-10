@@ -1,6 +1,6 @@
 /* Text from drei breaks the jest testing, so we comment them out to pass the test */
 import { Text } from '@react-three/drei';
-import { Suspense } from 'react';
+// import { Suspense } from 'react';
 
 // this function creates the ticks and labels for the axes
 export default function GenerateTicks(
@@ -67,22 +67,22 @@ export default function GenerateTicks(
   const labelText: string = `${label * increment}`;
 
   return (
-    <group key={label}>
+    <group key={label} name="ticckkkk">
       {/* this mesh contains the position and shape of ticks */}
       <mesh position={positionTicks}>
         <boxGeometry args={ticksShape} />
         <meshStandardMaterial color="black" />
       </mesh>
-      <Suspense>
-        <Text
-          position={positionLabels}
-          font="https://cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver@v1.0.1/packages/data/font-files/latin/sans-serif.normal.100.woff"
-          fontSize={0.02}
-          color="black"
-        >
-          {labelText}
-        </Text>
-      </Suspense>
+      {/* <Suspense> */}
+      <Text
+        position={positionLabels}
+        font="https://cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver@v1.0.1/packages/data/font-files/latin/sans-serif.normal.100.woff"
+        fontSize={0.02}
+        color="black"
+      >
+        {labelText}
+      </Text>
+      {/* </Suspense> */}
     </group>
   );
 }
