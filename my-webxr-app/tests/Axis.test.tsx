@@ -21,8 +21,8 @@ describe('Axis Tests', () => {
         />
       </XR>,
     );
-    // check the position vector is correct
-    expect(renderer.scene.children[1].children[0].instance.position).toEqual(
+    // check the position of the axis vector is correct
+    expect(renderer.scene.children[1].instance.position).toEqual(
       new Vector3(0, 0.82, -0.15),
     );
   });
