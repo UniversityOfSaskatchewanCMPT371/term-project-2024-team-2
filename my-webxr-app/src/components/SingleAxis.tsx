@@ -96,13 +96,34 @@ export default function SingleAxis({
   const material: THREE.MeshBasicMaterial | undefined = new THREE.MeshBasicMaterial({ color });
 
   return (
-    <>
+    <group name="A Single Axis">
       {/* Create the axis and color it */}
-      <mesh geometry={axisGeometry} material={material} position={position} rotation={rotation} />
+      <mesh name="Axis Line" geometry={axisGeometry} material={material} position={position} rotation={rotation} />
       {/* call GenerateTicks for each axis */}
       {axisTicks.map((label) => GenerateTicks(startX, startY, startZ, labelOffset, scaleFactor, radius, label, labelIncrement, 'x'))}
-      {axisTicks.map((label) => GenerateTicks(startX, startY, startZ, labelOffset, scaleFactor, radius, label, labelIncrement, 'y'))}
-      {axisTicks.map((label) => GenerateTicks(startX, startY, startZ, labelOffset, scaleFactor, radius, label, labelIncrement, 'z'))}
-    </>
+      {/* TODO: A single axis should only generate ticks for itself */}
+      {/* {axisTicks.map((label) => GenerateTicks( */}
+      {/*  startX, */}
+      {/*  startY, */}
+      {/*  startZ, */}
+      {/*  labelOffset, */}
+      {/*  scaleFactor, */}
+      {/*  radius, */}
+      {/*  label, */}
+      {/*  labelIncrement, */}
+      {/*  'y', */}
+      {/* ))} */}
+      {/* {axisTicks.map((label) => GenerateTicks( */}
+      {/*  startX, */}
+      {/*  startY, */}
+      {/*  startZ, */}
+      {/*  labelOffset, */}
+      {/*  scaleFactor, */}
+      {/*  radius, */}
+      {/*  label, */}
+      {/*  labelIncrement, */}
+      {/*  'z', */}
+      {/* ))} */}
+    </group>
   );
 }
