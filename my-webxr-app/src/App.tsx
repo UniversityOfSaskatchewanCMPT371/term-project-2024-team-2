@@ -11,6 +11,7 @@ import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
 import createPosition from './components/Positions';
+import SelectAxesColumns from './components/SelectAxesMenu';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -106,6 +107,7 @@ export default function App() {
         >
           Print Data to Console
         </button>
+        <SelectAxesColumns />
       </div>
       <VRButton />
       <PointSelectionProvider>
