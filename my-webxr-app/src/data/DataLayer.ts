@@ -13,18 +13,17 @@ export default class DataLayer implements DataAbstractor {
   /**
    * Create a new Data Layer instance.
    * @param dbName (optional) the name of the Data Repository.
-   * @private
    */
-  private constructor(dbName?: string) {
+  constructor(dbName?: string) {
     this.repository = new DbRepository(dbName ?? 'DAL_DB');
   }
 
   /**
    * Transport a stream of batched data to be referenced column-wise instead of row-wise.
    * @param batchItems A 2D array of CSV data that is referenced by row.
-   * @private
+   * @protected
    */
-  private static transposeData(batchItems: Array<Array<string | number | null>>) {
+  protected static transposeData(batchItems: Array<Array<string | number | null>>) {
     const rows = batchItems.length;
     const cols = batchItems[0].length;
     const grid: Array<Array<string | number | null>> = [];
@@ -42,9 +41,9 @@ export default class DataLayer implements DataAbstractor {
   /**
    * Calculate the statistics for a set of data. Items that are not a number are treated as 0.
    * @param batchItems transposed data referenced column-wise.
-   * @private
+   * @protected
    */
-  private static calculateStatistics(batchItems: Array<Array<string | number | null>>) {
+  protected static calculateStatistics(batchItems: Array<Array<string | number | null>>) {
     const statsArray: Array<NonNullable<unknown>> = [];
     batchItems.forEach((column) => {
       const numberedItems = column.map((item) => {
