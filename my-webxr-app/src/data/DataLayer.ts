@@ -1,23 +1,66 @@
 import { DataAbstractor } from './DataAbstractor';
+import { Repository } from '../repository/Repository';
+import DbRepository from '../repository/DbRepository';
+import DataPoint from '../repository/DataPoint';
 
+/**
+ * The Data Layer provides a set of methods for working with CSV and PCA data.
+ */
 export default class DataLayer implements DataAbstractor {
-  private static instance: DataLayer;
+  // @ts-expect-error temp disable
+  private repository: Repository;
 
-  private myField: boolean;
-
-  private constructor() {
-    this.myField = true;
+  /**
+   * Create a new Data Layer instance.
+   * @param dbName (optional) the name of the Data Repository.
+   * @private
+   */
+  private constructor(dbName?: string) {
+    this.repository = new DbRepository(dbName ?? 'DAL_DB');
   }
 
-  public static getInstance(): DataLayer {
-    if (!DataLayer.instance) {
-      DataLayer.instance = new DataLayer();
-    }
-    return DataLayer.instance;
-  }
-
+  /**
+   * WIP
+   */
+  // temp disable
+  // eslint-disable-next-line class-methods-use-this
   async getAvailableFields() {
-    this.myField = false;
+    return Promise.resolve([new DataPoint(false, 1, 2, 3)]);
+  }
+
+  /**
+   * WIP
+   */
+  // temp disable
+  // eslint-disable-next-line class-methods-use-this
+  async storeCSV() {
+    return Promise.resolve(true);
+  }
+
+  /**
+   * WIP
+   */
+  // temp disable
+  // eslint-disable-next-line class-methods-use-this
+  async storePCA() {
+    return Promise.resolve(true);
+  }
+
+  /**
+   * WIP
+   */
+  // temp disable
+  // eslint-disable-next-line class-methods-use-this
+  async selectAxes() {
+    return Promise.resolve(true);
+  }
+
+  /**
+   * WIP
+   */
+  // temp disable
+  // eslint-disable-next-line class-methods-use-this
+  async selectPCA() {
     return Promise.resolve(true);
   }
 }
