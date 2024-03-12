@@ -13,7 +13,7 @@ interface AxisProps {
 }
 
 // this will create the 3d axis by calling single axis for each axis
-export default function Axis({
+export default function GenerateXYZ({
   minValue,
   maxValue,
   labelOffset,

@@ -1,14 +1,14 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
-import Axis from '../src/components/Axis';
+import GenerateXYZ from '../src/components/GenerateXYZ';
 // import SingleAxis from '../src/components/singleAxis';
 
-describe('Axis Tests', () => {
+describe('GenerateXYZ Tests', () => {
   test('Create 3D axis with random values', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <XR>
-        <Axis
+        <GenerateXYZ
           minValue={0}
           maxValue={10}
           scaleFactor={1}
