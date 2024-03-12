@@ -1,4 +1,4 @@
-import { DataAbstractor } from './DataAbstractor';
+import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import DataPoint from '../repository/DataPoint';
