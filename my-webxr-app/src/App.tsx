@@ -12,6 +12,7 @@ import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
 import createPosition from './components/Positions';
 import SelectAxesColumns from './components/SelectAxesMenu';
+import Button from './components/SelectAxesButton';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -130,6 +131,7 @@ export default function App() {
               radius={radius}
               labelOffset={labelOffset}
             />
+            <Button />
 
             {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
