@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import DbRepository from '../../src/repository/DbRepository';
 import getColumnNames, { getIntColumns, isIntColumn } from '../../src/repository/FilterAxis';
 import getMaxXYZ from '../../src/repository/GetMaxXYZRange';
+import { getColumnTitles, setRepresentingColumns } from '../../src/utils/GetColumnNames';
 
 describe('Test Functions in FilterAxis', () => {
   test('isIntColumn - Check if integer column is integers only', async () => {
@@ -162,6 +163,33 @@ describe('FilterAxis Test With Repository', () => {
       { name: 'Y', values: [-53, 53, 53] },
       { name: 'Z', values: [5, -5, 5] },
     ];
+    expect(result).toEqual(expect.arrayContaining(expected));
+  });
+
+  test('getColumnTitles - Gets all possible column names from db', async () => {
+    await repository.addColumn({ name: 'X', values: [100, 20, 3] });
+    await repository.addColumn({ name: 'Y', values: [-53, 53, 53] });
+    await repository.addColumn({ name: 'Z', values: [5, -5, 5] });
+
+    const result = await getColumnTitles(testDbName);
+    const expected = ['X', 'Y', 'Z', 'column1', 'column2', 'column3'];
+    expect(result).toEqual(expect.arrayContaining(expected));
+  });
+
+  test('getColumnTitles - Gets all possible column names from db with a string value', async () => {
+    await repository.addColumn({ name: 'X', values: ['string', 20, 3] });
+
+    const result = await getColumnTitles(testDbName);
+    const expected = ['column1', 'column2', 'column3'];
+    expect(result).toEqual(expect.arrayContaining(expected));
+  });
+
+  test('selectRepresentingColumn - Gets x, y, z columns', async () => {
+    await repository.addColumn({ name: 'X', values: ['string', 20, 3] });
+    const result = await setRepresentingColumns(testDbName, 'column1', 'column2', 'column3');
+    const expected = [{ name: 'column1', values: [1, 2, 3] },
+      { name: 'column2', values: [4, 5, 6] },
+      { name: 'column3', values: [7, 8, 9] }];
     expect(result).toEqual(expect.arrayContaining(expected));
   });
 });

@@ -12,4 +12,6 @@ export interface Repository {
 
   getPossibleAxes: () => Promise<string[]>;
 
+  selectRepresentingColumn: (xName: string, yName: string, zName: string) => Promise<Column[]>
+
 }

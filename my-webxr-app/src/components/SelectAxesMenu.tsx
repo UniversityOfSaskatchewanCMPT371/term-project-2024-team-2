@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getColumnTitles } from '../utils/GetColumnNames';
+import assert from '../utils/Assert';
 
+interface SelectAxesColumnsProps {
+  dbName: string; // Add dbName as a prop
+}
 interface DropDownProps {
   label: string;
   id: string;
@@ -28,14 +33,27 @@ function DropDown({ label, id, options }: DropDownProps) {
   );
 }
 
-export default function SelectAxesColumns() {
-  const options = [{ value: 'test', label: 'Test' }];
+export default function SelectAxesColumns({ dbName }: SelectAxesColumnsProps) {
+  assert(dbName != null, 'Database name cannot be null');
+  const [AxisOptions, setAxisOptions] = useState<{ value: string; label: string }[]>([]);
 
+  useEffect(() => {
+    async function fetchColumnTitles() {
+      try {
+        const Axes = await getColumnTitles(dbName);
+
+        setAxisOptions(Axes.map((title: string) => ({ value: title, label: title })));
+      } catch (error) {
+        console.error('Error fetching column titles:', error);
+      }
+    }
+    fetchColumnTitles();
+  }, [dbName]);
   return (
     <div>
-      <DropDown label="Select X Axis: " id="xAxis" options={options} />
-      <DropDown label="Select Y Axis: " id="yAxis" options={options} />
-      <DropDown label="Select Z Axis: " id="zAxis" options={options} />
+      <DropDown label="Select X Axis: " id="xAxis" options={AxisOptions} />
+      <DropDown label="Select Y Axis: " id="yAxis" options={AxisOptions} />
+      <DropDown label="Select Z Axis: " id="zAxis" options={AxisOptions} />
       <button type="submit">Complete Selection</button>
     </div>
   );

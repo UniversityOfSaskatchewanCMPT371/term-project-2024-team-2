@@ -142,16 +142,10 @@ export default class DbRepository extends Dexie implements Repository {
     selectRepresentingColumn gets the columns which will represent the XYZ axes
     @return an array of the XYZ axes columns
  */
-  async selectRepresentingColumn(xName: string, yName: string, zName: string) {
-    const xAxisColPromise = this.getColumn(xName);
-    const yAxisColPromise = this.getColumn(yName);
-    const zAxisColPromise = this.getColumn(zName);
-
-    // Wait for all promises to resolve
-    const [xAxisCol, yAxisCol, zAxisCol] = await Promise.all([xAxisColPromise,
-      yAxisColPromise,
-      zAxisColPromise]);
-
+  async selectRepresentingColumn(xName: string, yName: string, zName: string): Promise<Column[]> {
+    const xAxisCol = await this.getColumn(xName);
+    const yAxisCol = await this.getColumn(yName);
+    const zAxisCol = await this.getColumn(zName);
     return [xAxisCol, yAxisCol, zAxisCol];
   }
 
