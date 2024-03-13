@@ -23,18 +23,21 @@ export default class DataLayer implements DataAbstractor {
    * @param batchItems A 2D array of CSV data that is referenced by row.
    * @protected
    */
-  protected static transposeData(batchItems: Array<Array<string | number | null>>) {
+  protected static transposeData(batchItems: BatchedDataStream) {
     const rows = batchItems.length;
     const cols = batchItems[0]?.length ?? 0;
-    const grid: Array<Array<string | number | null>> = [];
+    const grid: BatchedDataStream = [];
+
     for (let j = 0; j < cols; j += 1) {
       grid[j] = Array(rows);
     }
+
     for (let i = 0; i < rows; i += 1) {
       for (let j = 0; j < cols; j += 1) {
         grid[j][i] = batchItems[i][j];
       }
     }
+
     return grid;
   }
 
@@ -43,24 +46,24 @@ export default class DataLayer implements DataAbstractor {
    * @param batchItems transposed data referenced column-wise.
    * @protected
    */
-  protected static calculateStatistics(batchItems: Array<Array<string | number | null>>) {
-    const statsArray: Array<NonNullable<unknown>> = [];
+  protected static calculateStatistics(batchItems: BatchedDataStream) {
+    const statsArray: Array<ColumnStatistics> = [];
+
     batchItems.forEach((column) => {
-      const numberedItems = column.map((item) => {
-        if (typeof item === 'number') {
-          return item;
-        }
-        return 0;
-      });
+      // Convert non-number types into 0 for the stats calculations.
+      const numberedItems = column.map((item) => ((typeof item === 'number') ? item : 0));
+
       const count = numberedItems.length - 1;
       const sampleDev = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
       const sampleStdDev = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
       const mean = sampleDev / count;
       const stdDev = Math.sqrt((sampleStdDev / count) - (mean ** 2));
+
       statsArray.push({
         columnName: column[0], sampleDev, sampleStdDev, mean, stdDev,
       });
     });
+
     return statsArray;
   }
 
@@ -78,7 +81,7 @@ export default class DataLayer implements DataAbstractor {
    */
   // temp disable
   // eslint-disable-next-line class-methods-use-this
-  async storeCSV(batchItems: Array<Array<string | number | null>>) {
+  async storeCSV(batchItems: BatchedDataStream) {
     const transposedData = DataLayer.transposeData(batchItems);
     // @ts-expect-error temp disable
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,3 +119,13 @@ export default class DataLayer implements DataAbstractor {
     return Promise.resolve(true);
   }
 }
+
+export type BatchedDataStream = Array<Array<string | number | null>>;
+
+export type ColumnStatistics = {
+  columnName: string | number | null;
+  sampleDev: number;
+  sampleStdDev: number;
+  mean: number;
+  stdDev: number;
+};

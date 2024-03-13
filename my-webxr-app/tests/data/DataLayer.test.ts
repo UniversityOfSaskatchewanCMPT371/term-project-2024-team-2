@@ -1,9 +1,10 @@
 import PrivilegedDataLayer from './PrivilegedDataLayer';
+import { BatchedDataStream } from '../../src/data/DataLayer';
 
 describe('Validate transposeData() operation', () => {
   test('transposeData with an empty data table (0x0)', async () => {
-    const rowBased: Array<Array<null>> = [];
-    const columnBased: Array<Array<null>> = [];
+    const rowBased: BatchedDataStream = [];
+    const columnBased: BatchedDataStream = [];
 
     expect(PrivilegedDataLayer.transposeData(rowBased)).toEqual(columnBased);
   });
