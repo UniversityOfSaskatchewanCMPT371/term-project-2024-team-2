@@ -44,6 +44,7 @@ export default function SelectAxesColumns({ dbName }: SelectAxesColumnsProps) {
 
         setAxisOptions(Axes.map((title: string) => ({ value: title, label: title })));
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching column titles:', error);
       }
     }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Interactive } from '@react-three/xr';
 import { Text, Html } from '@react-three/drei';
-import SelectAxesColumns from './SelectAxesMenu';
+// import SelectAxesColumns from './SelectAxesMenu';
 import Box from './Box';
 
 export default function Button(props?: JSX.IntrinsicElements['mesh']) {
@@ -9,7 +9,6 @@ export default function Button(props?: JSX.IntrinsicElements['mesh']) {
   const [menu, setMenu] = useState(false);
 
   const onSelect = () => {
-    console.log('This button is interactable and has been clicked!');
     setMenu(!menu); // Toggle menu state
   };
 
@@ -43,7 +42,7 @@ this instance. */
       {menu && (
         <Html position={[0, 8, -5]}>
           {/* Render SelectAxesColumns component */}
-          <SelectAxesColumns />
+          {/* <SelectAxesColumns /> */}
         </Html>
       )}
     </Interactive>
