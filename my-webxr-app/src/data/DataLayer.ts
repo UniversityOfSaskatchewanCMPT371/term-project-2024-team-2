@@ -8,25 +8,14 @@ import DataPoint from '../repository/DataPoint';
  */
 export default class DataLayer implements DataAbstractor {
   // @ts-expect-error temp ignore
-  private statsData: Repository;
-
-  // @ts-expect-error temp ignore
-  private rawData: Repository;
-
-  // @ts-expect-error temp ignore
-  private standardizedData: Repository;
-
-  // @ts-expect-error temp ignore
-  private PcaData: Repository;
+  private repository: Repository;
 
   /**
    * Create a new Data Layer instance.
+   * @param dbName (optional) the name of the Data Repository.
    */
-  constructor() {
-    this.statsData = new DbRepository('STATS_DATA');
-    this.rawData = new DbRepository('RAW_DATA');
-    this.standardizedData = new DbRepository('STANDARDIZED_DATA');
-    this.PcaData = new DbRepository('PCA_DATA');
+  constructor(dbName?: string) {
+    this.repository = new DbRepository(dbName ?? 'DAL_DB');
   }
 
   /**
