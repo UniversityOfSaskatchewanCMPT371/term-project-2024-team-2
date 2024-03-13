@@ -22,45 +22,51 @@ export default class DataLayer implements DataAbstractor {
    * Transport a stream of batched data to be referenced column-wise instead of row-wise.
    * @param batchItems A 2D array of CSV data that is referenced by row.
    * @protected
+   * @returns batchItems transposed to be referenced by column instead of by row.
    */
   protected static transposeData(batchItems: BatchedDataStream) {
     const rows = batchItems.length;
     const cols = batchItems[0]?.length ?? 0;
-    const grid: BatchedDataStream = [];
+    const transposedItems: BatchedDataStream = [];
 
     for (let j = 0; j < cols; j += 1) {
-      grid[j] = Array(rows);
+      transposedItems[j] = Array(rows);
     }
 
     for (let i = 0; i < rows; i += 1) {
       for (let j = 0; j < cols; j += 1) {
-        grid[j][i] = batchItems[i][j];
+        transposedItems[j][i] = batchItems[i][j];
       }
     }
 
-    return grid;
+    return transposedItems;
   }
 
   /**
    * Calculate the statistics for a set of data. Items that are not a number are treated as 0.
    * @param batchItems transposed data referenced column-wise.
    * @protected
+   * @returns an array of ColumnStatistics for each column.
    */
   protected static calculateStatistics(batchItems: BatchedDataStream) {
     const statsArray: Array<ColumnStatistics> = [];
 
     batchItems.forEach((column) => {
       // Convert non-number types into 0 for the stats calculations.
-      const numberedItems = column.map((item) => ((typeof item === 'number') ? item : 0));
+      const numberedItems = column.slice(1).map((item) => ((typeof item === 'number') ? item : 0));
 
-      const count = numberedItems.length - 1;
-      const sampleDev = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
-      const sampleStdDev = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
-      const mean = sampleDev / count;
-      const stdDev = Math.sqrt((sampleStdDev / count) - (mean ** 2));
+      const count = numberedItems.length;
+      const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
+      const sumOfSquares = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
+      const mean = sum / ((count !== 0) ? count : 1);
+      const stdDev = (
+        (count >= 2)
+          ? (Math.sqrt(((sumOfSquares / ((count !== 0) ? count : 1)) - (mean ** 2))))
+          : 0
+      );
 
       statsArray.push({
-        columnName: column[0], sampleDev, sampleStdDev, mean, stdDev,
+        columnName: column[0], sum, sumOfSquares, mean, stdDev,
       });
     });
 
@@ -120,12 +126,18 @@ export default class DataLayer implements DataAbstractor {
   }
 }
 
+/**
+ * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
+ */
 export type BatchedDataStream = Array<Array<string | number | null>>;
 
+/**
+ * The ColumnStatistics type is used to represent all the statistical values for a given column.
+ */
 export type ColumnStatistics = {
   columnName: string | number | null;
-  sampleDev: number;
-  sampleStdDev: number;
+  sum: number;
+  sumOfSquares: number;
   mean: number;
   stdDev: number;
 };
