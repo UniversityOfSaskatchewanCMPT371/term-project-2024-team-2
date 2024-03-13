@@ -5,7 +5,7 @@ import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
 import Floor from './components/Floor';
-import Axis from './components/Axis';
+import GenerateXYZ from './components/GenerateXYZ';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
@@ -39,7 +39,7 @@ export default function App() {
   const storeName = 'CsvData';
 
   // hard coded data. example data would be replaced with PCA results for coordinates
-  // also would like to make a new type for Axis info, allowing for easier use
+  // also would like to make a new type for GenerateXYZ info, allowing for easier use
   const exampleData = [[-1, -1, -1], [2, 3, 0], [4, 3, 0], [1, 1, 1], [3, 2, 2]];
   const datapoint1 = createPosition({
     data: exampleData[0],
@@ -120,7 +120,7 @@ export default function App() {
             <pointLight position={[10, 10, 10]} />
             <Controllers />
 
-            <Axis
+            <GenerateXYZ
               minValue={minNum}
               maxValue={maxNum}
               scaleFactor={scaleFactor}

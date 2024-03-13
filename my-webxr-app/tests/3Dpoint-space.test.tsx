@@ -3,7 +3,7 @@ import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
 import DataPoint from '../src/components/DataPoint';
-import Axis from '../src/components/Axis';
+import GenerateXYZ from '../src/components/GenerateXYZ';
 import createPosition from '../src/components/Positions';
 
 const minNum: number = -10;
@@ -61,7 +61,7 @@ describe("Datapoint's Location is based off of values given ", () => {
       <PointSelectionProvider>
         <XR>
           <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
-          <Axis
+          <GenerateXYZ
             minValue={minNum}
             maxValue={maxNum}
             scaleFactor={scaleFactor}
