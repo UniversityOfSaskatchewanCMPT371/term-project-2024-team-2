@@ -1,14 +1,14 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
-import Axis from '../src/components/Axis';
+import GenerateXYZ from '../src/components/GenerateXYZ';
 // import SingleAxis from '../src/components/singleAxis';
 
-describe('Axis Tests', () => {
+describe('GenerateXYZ Tests', () => {
   test('Create 3D axis with random values', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <XR>
-        <Axis
+        <GenerateXYZ
           minValue={0}
           maxValue={10}
           scaleFactor={1}
@@ -21,8 +21,8 @@ describe('Axis Tests', () => {
         />
       </XR>,
     );
-    // check the position vector is correct
-    expect(renderer.scene.children[1].children[0].instance.position).toEqual(
+    // check the position of the axis vector is correct
+    expect(renderer.scene.children[1].instance.position).toEqual(
       new Vector3(0, 0.82, -0.15),
     );
   });
