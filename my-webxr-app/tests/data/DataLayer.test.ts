@@ -1,5 +1,5 @@
 import PrivilegedDataLayer from './PrivilegedDataLayer';
-import { BatchedDataStream } from '../../src/data/DataLayer';
+import { BatchedDataStream, ColumnStatistics } from '../../src/data/DataLayer';
 
 describe('Validate transposeData() operation', () => {
   test('transposeData with an empty data table (0x0)', async () => {
@@ -68,5 +68,123 @@ describe('Validate transposeData() operation', () => {
     ];
 
     expect(PrivilegedDataLayer.transposeData(rowBased)).toEqual(columnBased);
+  });
+});
+
+describe('Validate calculateStatistics() operation', () => {
+  test('calculateStatistics on an empty table', async () => {
+    const dataStream: BatchedDataStream = [];
+    const expectedStats: Array<ColumnStatistics> = [];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
+  });
+
+  test('calculateStatistics on a single column with no values', async () => {
+    const dataStream: BatchedDataStream = [['col1']];
+    const expectedStats: Array<ColumnStatistics> = [{
+      columnName: 'col1',
+      sum: 0,
+      sumOfSquares: 0,
+      mean: 0,
+      stdDev: 0,
+    }];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
+  });
+
+  test('calculateStatistics on a single column of null', async () => {
+    const dataStream: BatchedDataStream = [[null]];
+    const expectedStats: Array<ColumnStatistics> = [{
+      columnName: null,
+      sum: 0,
+      sumOfSquares: 0,
+      mean: 0,
+      stdDev: 0,
+    }];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
+  });
+
+  test('calculateStatistics on a single column of a number', async () => {
+    const dataStream: BatchedDataStream = [[16]];
+    const expectedStats: Array<ColumnStatistics> = [{
+      columnName: 16,
+      sum: 0,
+      sumOfSquares: 0,
+      mean: 0,
+      stdDev: 0,
+    }];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
+  });
+
+  test('calculateStatistics on a single column with a single number value', async () => {
+    const dataStream: BatchedDataStream = [['col1', 5]];
+    const expectedStats: Array<ColumnStatistics> = [{
+      columnName: 'col1',
+      sum: 5,
+      sumOfSquares: 25,
+      mean: 5,
+      stdDev: 0,
+    }];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
+  });
+
+  test('calculateStatistics on a single column with two number values', async () => {
+    const dataStream: BatchedDataStream = [['col1', 5, 10]];
+    const expectedStats: Array<ColumnStatistics> = [{
+      columnName: 'col1',
+      sum: 15,
+      sumOfSquares: 125,
+      mean: 7.5,
+      stdDev: 2.5,
+    }];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
+  });
+
+  test('calculateStatistics on a single column with five mixed values', async () => {
+    const dataStream: BatchedDataStream = [['col1', 5, 10, 'a', null, 0]];
+    const expectedStats: Array<ColumnStatistics> = [{
+      columnName: 'col1',
+      sum: 15,
+      sumOfSquares: 125,
+      mean: 3,
+      stdDev: 4,
+    }];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
+  });
+
+  test('calculateStatistics on three columns with five mixed values', async () => {
+    const dataStream: BatchedDataStream = [
+      [null, 10000, 'null', 'data', null, '0'],
+      [404, 1, 2, '3', 4, 5],
+      ['topics', 'jest', 'testing', 'calculate', 'stats', 'dal'],
+    ];
+    const expectedStats: Array<ColumnStatistics> = [{
+      columnName: null,
+      sum: 10000,
+      sumOfSquares: 100000000,
+      mean: 2000,
+      stdDev: 4000,
+    },
+    {
+      columnName: 404,
+      sum: 12,
+      sumOfSquares: 46,
+      mean: 2.4,
+      stdDev: Math.sqrt(3.44),
+    },
+    {
+      columnName: 'topics',
+      sum: 0,
+      sumOfSquares: 0,
+      mean: 0,
+      stdDev: 0,
+    }];
+
+    expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
   });
 });
