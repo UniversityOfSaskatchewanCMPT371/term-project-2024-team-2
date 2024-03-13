@@ -25,7 +25,7 @@ export default class DataLayer implements DataAbstractor {
    */
   protected static transposeData(batchItems: Array<Array<string | number | null>>) {
     const rows = batchItems.length;
-    const cols = batchItems[0].length;
+    const cols = batchItems[0]?.length ?? 0;
     const grid: Array<Array<string | number | null>> = [];
     for (let j = 0; j < cols; j += 1) {
       grid[j] = Array(rows);
