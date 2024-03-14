@@ -1,37 +1,23 @@
-import { Interactive } from "@react-three/xr";
-import { useState } from "react";
-import { BackSide } from "three";
+import { Interactive } from '@react-three/xr';
+import { useState } from 'react';
+import { BackSide } from 'three';
 // import * as log4js from "log4js";
-import { usePointSelectionContext } from "../contexts/PointSelectionContext.tsx";
-import { SphereGeometryProps } from "@react-three/fiber";
-
-/**
- * Define an interface to require an ID number to differentiate each DataPoint
- * and allow other mesh properties to be set.
- */
-interface DataPointProps {
-  id: number;
-  outlineScale?: number;
-  size?: SphereGeometryProps["args"];
-  meshProps?: JSX.IntrinsicElements["mesh"];
-}
+import { usePointSelectionContext } from '../contexts/PointSelectionContext';
+import { DataPointProps } from '../types/DataPointTypes';
 
 export default function DataPoint({
-  id,
-  outlineScale,
-  size,
-  meshProps,
+  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps,
+
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
   const [hoverCount, setHoverCount] = useState(0);
   /* Access the selected DataPoint State from the shared PointSelectionContext */
-  const { selectedDataPoint, setSelectedDataPoint } =
-    usePointSelectionContext();
+  const { selectedDataPoint, setSelectedDataPoint } = usePointSelectionContext();
 
   const adjustHoverCount = (amount: number) => {
     if (amount < 0 || amount > 2) {
       throw new Error(
-        "Assertion failed: hoverCount should never be < 0 or > 2",
+        'Assertion failed: hoverCount should never be < 0 or > 2',
       );
     }
 
@@ -48,15 +34,28 @@ export default function DataPoint({
       onHover={() => adjustHoverCount(hoverCount + 1)}
       onBlur={() => adjustHoverCount(hoverCount - 1)}
       onSelect={() => {
-        selectedDataPoint === id
-          ? setSelectedDataPoint(null)
-          : setSelectedDataPoint(id);
+        // If currently selected point selected again, de-select by clearing current selection
+        if (selectedDataPoint?.id === id) {
+          setSelectedDataPoint(null);
+
+        // Update point to be selected and set its fields
+        } else {
+          setSelectedDataPoint({
+            id, marker, color, columnX, columnY, columnZ, meshProps,
+          });
+        }
       }}
     >
-      <mesh {...meshProps}>
-        {/* Low numbers to try to minimize the number of faces we need to render*/}
+      {/* This first mesh stores custom data about the DataPoint */}
+      <mesh
+        userData={{
+          id, columnX, columnY, columnZ, marker, color,
+        }}
+        {...meshProps}
+      >
+        {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
-        <sphereGeometry args={size || [0.1, 10, 10]} />
+        <sphereGeometry args={size} />
         <meshStandardMaterial />
       </mesh>
 
@@ -64,15 +63,24 @@ export default function DataPoint({
       {/* only the BackSide of the mesh material */}
       <mesh
         {...meshProps}
-        scale={outlineScale || 1.25}
-        visible={hoverCount != 0 || selectedDataPoint === id}
+        scale={outlineScale}
+        visible={hoverCount !== 0 || selectedDataPoint?.id === id}
       >
-        <sphereGeometry args={size || [0.1, 10, 10]} />
+        <sphereGeometry args={size} />
         <meshStandardMaterial
-          color={selectedDataPoint === id ? "blue" : "aqua"}
+          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
           side={BackSide}
         />
       </mesh>
     </Interactive>
   );
 }
+
+/**
+ * Specify default values for DataPoint's optional props.
+ */
+DataPoint.defaultProps = {
+  outlineScale: 1.25,
+  size: [0.01, 10, 10],
+  meshProps: {},
+};
