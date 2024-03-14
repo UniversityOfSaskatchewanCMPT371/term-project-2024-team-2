@@ -1,7 +1,9 @@
 import { openDB } from 'idb';
 import Papa from 'papaparse';
 import React from 'react';
+import Rollbar from 'rollbar';
 import assert from './Assert';
+import { rollbarConfig } from './LoggingUtils';
 
 /**
  * Validates the existence of a database and a store within that database.
@@ -79,6 +81,8 @@ export async function parseAndHandleLocalCsv(
       if (batch.length > 0) {
         await handleParsedData(batch, dbName, storeName, i);
       }
+      const rollbar = new Rollbar(rollbarConfig);
+      rollbar.debug('Loaded CSV successfully');
       setMessage('Local CSV loaded successfully');
     },
   });

@@ -5,7 +5,6 @@ import { Provider } from '@rollbar/react';
 import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
-import Rollbar from 'rollbar';
 import Floor from './components/Floor';
 import GenerateXYZ from './components/GenerateXYZ';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
@@ -13,7 +12,7 @@ import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
 import createPosition from './components/Positions';
-import LogAppender from './utils/LoggingUtils';
+import { rollbarConfig } from './utils/LoggingUtils';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -92,38 +91,6 @@ export default function App() {
     };
     initializeDB();
   }, [dbName, storeName]);
-
-  const logger = new LogAppender();
-  const rollbarConfig: Rollbar.Configuration = {
-    accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
-    environment: import.meta.env.VITE_ROLLBAR_ENVIRONMENT,
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-    payload: {
-      client: {
-        javascript: {
-          // Set code_version to the project's release version to see it reflected in Rollbar.
-          code_version: 'ID4.0.0',
-          source_map_enabled: true,
-        },
-      },
-    },
-    transmit: import.meta.env.VITE_ROLLBAR_ENVIRONMENT === 'production',
-    reportLevel: (import.meta.env.VITE_ROLLBAR_ENVIRONMENT === 'production') ? 'warning' : 'debug',
-    onSendCallback: (
-      _isUncaught: boolean,
-      _args: Rollbar.LogArgument,
-      payload: Rollbar.Payload,
-    ) => {
-      if (import.meta.env.VITE_ROLLBAR_ENVIRONMENT !== 'production') {
-        logger.appendLog({
-          level: payload.level,
-          message: payload.body.message.body,
-          time: payload?.client?.timestamp,
-        });
-      }
-    },
-  };
 
   return (
     <>
