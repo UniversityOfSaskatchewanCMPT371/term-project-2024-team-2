@@ -1,9 +1,11 @@
 import { XR, Controllers, VRButton } from '@react-three/xr';
 import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
+import { Provider } from '@rollbar/react';
 import './styles.css';
 import { useEffect } from 'react';
 import { openDB } from 'idb';
+import Rollbar from 'rollbar';
 import Floor from './components/Floor';
 import GenerateXYZ from './components/GenerateXYZ';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
@@ -11,6 +13,7 @@ import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
 import createPosition from './components/Positions';
+import LogAppender from './utils/LoggingUtils.tsx';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -89,6 +92,33 @@ export default function App() {
     };
     initializeDB();
   }, [dbName, storeName]);
+
+  const logger = new LogAppender();
+  const rollbarConfig = {
+    accessToken: '2bce0bdd80824a5bbbb9590c22cc7ea7',
+    environment: 'testenv',
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+    payload: {
+      client: {
+        javascript: {
+          code_version: 'ID4.0.0',
+          source_map_enabled: true,
+        },
+      },
+    },
+    transmit: false,
+    // verbose: true,
+    // report level
+    onSendCallback: (isUncaught: boolean, args: Rollbar.LogArgument, payload: Rollbar.Payload) => {
+      logger.appendLog({
+        level: payload.level,
+        message: payload.body.message.body,
+        time: payload?.client?.timestamp,
+      });
+    },
+  };
+
   return (
     <>
       <div>
@@ -108,79 +138,81 @@ export default function App() {
         </button>
       </div>
       <VRButton />
-      <PointSelectionProvider>
-        <Canvas>
-          <XR>
-            <Sky sunPosition={[0, 1, 0]} />
-            <Floor />
-            <ambientLight />
-            <pointLight position={[10, 10, 10]} />
-            <Controllers />
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <Canvas>
+            <XR>
+              <Sky sunPosition={[0, 1, 0]} />
+              <Floor />
+              <ambientLight />
+              <pointLight position={[10, 10, 10]} />
+              <Controllers />
 
-            <GenerateXYZ
-              minValue={minNum}
-              maxValue={maxNum}
-              scaleFactor={scaleFactor}
-              startX={startPointX}
-              startY={startPointY}
-              startZ={startPointZ}
-              endPoint={Length}
-              radius={radius}
-              labelOffset={labelOffset}
-            />
+              <GenerateXYZ
+                minValue={minNum}
+                maxValue={maxNum}
+                scaleFactor={scaleFactor}
+                startX={startPointX}
+                startY={startPointY}
+                startZ={startPointZ}
+                endPoint={Length}
+                radius={radius}
+                labelOffset={labelOffset}
+              />
 
-            {/* Temporary display/test of the data points.
+              {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <DataPoint
-              id={0}
-              marker="circle"
-              color="gray"
-              columnX="John Doe"
-              columnY="cmpt 145"
-              columnZ={97}
-              meshProps={{ position: datapoint1 }}
-            />
-            <DataPoint
-              id={1}
-              marker="circle"
-              color="gray"
-              columnX="Bob Johnson"
-              columnY="math 110"
-              columnZ={81}
-              meshProps={{ position: datapoint2 }}
-            />
-            <DataPoint
-              id={2}
-              marker="circle"
-              color="gray"
-              columnX="Bob John"
-              columnY="math 116"
-              columnZ={87}
-              meshProps={{ position: datapoint3 }}
-            />
-            <DataPoint
-              id={3}
-              marker="circle"
-              color="gray"
-              columnX="Alice Smith"
-              columnY="stat 245"
-              columnZ={75}
-              meshProps={{ position: datapoint4 }}
-            />
-            <DataPoint
-              id={4}
-              marker="circle"
-              color="gray"
-              columnX="Bob Smith"
-              columnY="math 115"
-              columnZ={85}
-              meshProps={{ position: datapoint5 }}
-            />
+              <DataPoint
+                id={0}
+                marker="circle"
+                color="gray"
+                columnX="John Doe"
+                columnY="cmpt 145"
+                columnZ={97}
+                meshProps={{ position: datapoint1 }}
+              />
+              <DataPoint
+                id={1}
+                marker="circle"
+                color="gray"
+                columnX="Bob Johnson"
+                columnY="math 110"
+                columnZ={81}
+                meshProps={{ position: datapoint2 }}
+              />
+              <DataPoint
+                id={2}
+                marker="circle"
+                color="gray"
+                columnX="Bob John"
+                columnY="math 116"
+                columnZ={87}
+                meshProps={{ position: datapoint3 }}
+              />
+              <DataPoint
+                id={3}
+                marker="circle"
+                color="gray"
+                columnX="Alice Smith"
+                columnY="stat 245"
+                columnZ={75}
+                meshProps={{ position: datapoint4 }}
+              />
+              <DataPoint
+                id={4}
+                marker="circle"
+                color="gray"
+                columnX="Bob Smith"
+                columnY="math 115"
+                columnZ={85}
+                meshProps={{ position: datapoint5 }}
+              />
 
-            <DataPointMenu position={[0, 2.2, -0.75]} />
-          </XR>
-        </Canvas>
-      </PointSelectionProvider>
+              <DataPointMenu position={[0, 2.2, -0.75]} />
+            </XR>
+          </Canvas>
+        </PointSelectionProvider>
+      </Provider>
     </>
   );
 }

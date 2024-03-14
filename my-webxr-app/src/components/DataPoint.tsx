@@ -1,7 +1,7 @@
 import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
 import { BackSide } from 'three';
-// import * as log4js from "log4js";
+import { useRollbar } from '@rollbar/react';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 
@@ -13,6 +13,7 @@ export default function DataPoint({
   const [hoverCount, setHoverCount] = useState(0);
   /* Access the selected DataPoint State from the shared PointSelectionContext */
   const { selectedDataPoint, setSelectedDataPoint } = usePointSelectionContext();
+  const rollbar = useRollbar();
 
   const adjustHoverCount = (amount: number) => {
     if (amount < 0 || amount > 2) {
@@ -21,11 +22,7 @@ export default function DataPoint({
       );
     }
 
-    // Critical Failure: log4js accesses process.env() which vite removes.
-    // We will have to find a way around this.
-    // log4js
-    //   .getLogger()
-    //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
+    rollbar.debug(`DataPoint #" + id + ": setting hover count to ${amount}`);
     setHoverCount(amount);
   };
 

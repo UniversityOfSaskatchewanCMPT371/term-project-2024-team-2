@@ -1,10 +1,9 @@
 import React, {
   createContext, useContext, useMemo, useState,
 } from 'react';
-
+import { useRollbar } from '@rollbar/react';
 import { DataPointProps } from '../types/DataPointTypes';
-
-// import * as log4js from "log4js";
+import assert from '../utils/Assert';
 
 /**
  * Create an interface for the return state values of the Context.
@@ -37,16 +36,12 @@ export function PointSelectionProvider({
 }: React.PropsWithChildren) {
   /* Create the internal selected DataPoint State */
   const [selectedDataPoint, setSelectedDataPointInternal] = useState<PointSelectionContextType['selectedDataPoint']>(null);
+  const rollbar = useRollbar();
 
   const setSelectedDataPoint = (
     newValue: React.SetStateAction<DataPointProps | null>,
   ) => {
-    // log4js
-    //   .getLogger()
-    //   .debug(
-    //     "PointSelectionContext: updating selectedDataPoint state to " +
-    //       newValue,
-    //   );
+    rollbar.debug(`PointSelectionContext: updating selectedDataPoint state to ${newValue}`);
     setSelectedDataPointInternal(newValue);
   };
 
@@ -67,13 +62,13 @@ export function PointSelectionProvider({
  * Provide a type-guaranteed context (not null) for use within components.
  * Call this function instead of useContext(PointSelectionContext).
  */
-export const usePointSelectionContext = () => {
+export const usePointSelectionContext = (): PointSelectionContextType => {
   // This context will only be null if called from outside a PointSelectionProvider.
   const context = useContext(PointSelectionContext);
-  if (!context) {
-    throw new Error(
-      'Assertion failed: You must use this context within a PointSelectionProvider!',
-    );
-  }
-  return context;
+  assert(!!context, `Assertion failed: You must use this context within a
+  PointSelectionProvider! context = ${context}`);
+
+  // context cannot be null because of the assertion, but TypeScript does not realise that, so
+  // we must force cast it to PointSelectionContextType.
+  return context as unknown as PointSelectionContextType;
 };
