@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { validateDbAndStore, parseAndHandleLocalCsv, parseAndHandleUrlCsv } from '../utils/CsvUtils';
+import {
+  validateDbAndStore, parseAndHandleLocalCsv, parseAndHandleUrlCsv, handleParsedData,
+} from '../utils/CsvUtils';
 
 interface CsvReaderProps {
   dbName: string;
@@ -24,11 +26,49 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
   const [message, setMessage] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setMessage(null); // Clear the message when a new file is selected
-    }
+    const selectedFile = event.target.files?.[0] || null;
+
+    // if (selectedFile) {
+    //   setFile(selectedFile);
+    //   setMessage(null); // Clear the message when a new file is selected
+    // }
+    const stream = selectedFile?.stream();
+    const reader = stream?.getReader();
+    const decoder = new TextDecoder();
+    const BATCHSIZE = 100;
+
+    let batch: Array<Array<string | number | null>> = [];
+    let counter = 0;
+    const readStream = async () => {
+      await validateDbAndStore(dbName, storeName);
+
+      try {
+        let chunk;
+        while (!((chunk = await reader?.read())?.done)) {
+          const textChunk = decoder.decode(chunk?.value, { stream: true });
+          const lines = textChunk.split('\n');
+          for (const line of lines) {
+            batch.push(line.split(','));
+            counter += 1;
+            if (batch.length >= BATCHSIZE) {
+              handleParsedData(batch, dbName, storeName, counter);
+              batch = [];
+            }
+          }
+        }
+        decoder.decode();
+        if (batch.length > 0) {
+          console.log('Final BATCH\n:');
+          console.log(storeName);
+          handleParsedData(batch, dbName, storeName, counter);
+        }
+      } catch (e) {
+        console.error(`An error occurred: ${e}`);
+      }
+    };
+    (async () => {
+      await readStream();
+    })();
   };
 
   const handleButtonClick = async () => {
@@ -36,10 +76,10 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
       setMessage('No file selected');
       return;
     }
-    if (file?.type !== 'text/csv') {
-      setMessage('File must be a CSV file');
-      return;
-    }
+    // if (file?.type !== 'text/csv') {
+    //   setMessage('File must be a CSV file');
+    //   return;
+    // }
     try {
       await validateDbAndStore(dbName, storeName);
       await parseAndHandleLocalCsv(file, dbName, storeName, setMessage);

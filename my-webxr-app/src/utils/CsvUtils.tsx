@@ -38,13 +38,11 @@ export const handleParsedData = async (
   const db = await openDB(dbName, 1);
   const tx = db.transaction(storeName, 'readwrite');
   const store = tx.objectStore(storeName);
-
-  await store.clear(); // Clean the store before adding new data
-
+  // await store.clear(); // Clean the store before adding new data
   const promises = items.map((item, i) => store.put(item, start + i));
   await Promise.all(promises);
-
   await tx.done;
+
 };
 /**
  * Parses a local CSV file and handles the parsed data in batches of 1000 rows.
@@ -65,8 +63,10 @@ export async function parseAndHandleLocalCsv(
   let i = 0;
   let batch :Array<Array<string | number | null>> = [];
   const batchSize = 1000; // # of rows per batch
+
   Papa.parse(file, {
     dynamicTyping: true, // Convert data to number type if applicable
+    download: true,
     step: async (results) => {
       batch.push(results.data as Array<string | number | null>);
       if (batch.length >= batchSize) {
