@@ -2,12 +2,14 @@ import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import DataPoint from '../repository/DataPoint';
+import Column, {
+  ColumnType, DataColumn, DataRow, StatsColumn,
+} from '../repository/Column';
 
 /**
  * The Data Layer provides a set of methods for working with CSV and PCA data.
  */
 export default class DataLayer implements DataAbstractor {
-  // @ts-expect-error temp ignore
   private repository: Repository;
 
   /**
@@ -45,11 +47,11 @@ export default class DataLayer implements DataAbstractor {
   /**
    * Calculate the statistics for a set of data. Items that are not a number are treated as 0.
    * @param batchItems transposed data referenced column-wise.
-   * @returns an array of ColumnStatistics for each column.
+   * @returns an array of StatsColumn for each column.
    * @protected
    */
   protected static calculateStatistics(batchItems: BatchedDataStream) {
-    const statsArray: Array<ColumnStatistics> = [];
+    const statsArray: Array<StatsColumn> = [];
 
     batchItems.forEach((column) => {
       // Convert non-number types into 0 for the stats calculations.
@@ -94,7 +96,15 @@ export default class DataLayer implements DataAbstractor {
     const itemsStats = DataLayer.calculateStatistics(transposedData);
 
     // TODO: Find a way to deal with partial columns
-    // this.repository.addColumn();
+    transposedData.forEach((column) => {
+      this.repository.addColumn(
+        new Column<DataColumn>(
+          String(column[0]),
+          column.slice(1),
+        ),
+        ColumnType.RAW,
+      );
+    });
     return Promise.resolve(true);
   }
 
@@ -129,15 +139,4 @@ export default class DataLayer implements DataAbstractor {
 /**
  * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
  */
-export type BatchedDataStream = Array<Array<string | number | null>>;
-
-/**
- * The ColumnStatistics type is used to represent all the statistical values for a given column.
- */
-export type ColumnStatistics = {
-  columnName: string | number | null;
-  sum: number;
-  sumOfSquares: number;
-  mean: number;
-  stdDev: number;
-};
+export type BatchedDataStream = Array<DataRow>;

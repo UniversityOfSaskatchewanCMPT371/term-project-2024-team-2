@@ -2,12 +2,20 @@ import Dexie from 'dexie';
 import * as assert from 'assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
-import Column from './Column';
+import Column, { ColumnType, DataColumn, StatsColumn } from './Column';
 
 export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
   // just to inform Typescript of the object type stored in the table.
-  private columns!: Dexie.Table<Column, string>; // string = type of the primary key
+  private columns!: Dexie.Table<Column<DataColumn>, string>; // string = type of the primary key
+
+  private statsColumns!: Dexie.Table<Column<StatsColumn>, string>;
+
+  private rawColumns!: Dexie.Table<Column<DataColumn>, string>;
+
+  private standardizedColumns!: Dexie.Table<Column<DataColumn>, string>;
+
+  private pcaColumns!: Dexie.Table<Column<DataColumn>, string>;
 
   constructor(dbName: string) {
     // create a db instance
@@ -20,7 +28,10 @@ export default class DbRepository extends Dexie implements Repository {
     this.version(1).stores({
       // Declare tables, IDs and indexes
       // set the attribute 'name' as the primary key
-      columns: 'name',
+      statsColumns: 'name',
+      rawColumns: 'name',
+      standardizedColumns: 'name',
+      pcaColumns: 'name',
     });
 
     // explicitly open connection to the database
@@ -28,20 +39,44 @@ export default class DbRepository extends Dexie implements Repository {
     this.open();
   }
 
-  /*
-        addColumn adds a column to the database
-        @param column: the column to be added to the database
-        @return Promise<string>: the primary key of the column aka the name of the column
-         */
-  async addColumn(column: Column) {
-    return this.columns.add(column);
+  /**
+   * addColumn adds a column to the database
+   * @param column the column to be added to the database
+   * @param columnType the type of column to be added
+   * @return Promise<string> the primary key of the column aka the name of the column
+   */
+  async addColumn(column: Column<DataColumn | StatsColumn>, columnType: ColumnType) {
+    switch (columnType) {
+      case ColumnType.STATS:
+        return this.statsColumns.add(column as Column<StatsColumn>);
+      case ColumnType.RAW:
+        return this.rawColumns.add(column as Column<DataColumn>);
+      case ColumnType.STANDARDIZED:
+        return this.standardizedColumns.add(column as Column<DataColumn>);
+      case ColumnType.PCA:
+        return this.pcaColumns.add(column as Column<DataColumn>);
+      default: // This shouldn't ever occur because of the Enum usage
+        throw new Error(`Invalid columnType: ${columnType}`);
+    }
   }
 
-  /*
-        getColumn gets a column from the database
-        @param columnName: the name of the column to be retrieved
-        @return Promise<Column>
-         */
+  /**
+   *
+   * @param column
+   */
+  // temp disable
+  // eslint-disable-next-line class-methods-use-this
+  async addToExistingColumn(column: Column<DataColumn | StatsColumn>): Promise<string> {
+    // const column = await this.columns.where('name').equals('columnName');
+    return Promise.resolve(column.name);
+  }
+
+  /**
+   * getColumn gets a column from the database
+   * @param columnName the name of the column to be retrieved
+   * @return Promise<Column>
+   * @private
+   */
   private async getColumn(columnName: string) {
     const column = await this.columns
       .where('name')
@@ -53,15 +88,15 @@ export default class DbRepository extends Dexie implements Repository {
     return column[0];
   }
 
-  /*
-        getPoints gets the points from the database
-        @param qualifyingPointOnly: if true, only return points that have no missing data
-        @param columnXName: the name of the column to be used as the x-axis
-        @param columnYName: the name of the column to be used as the y-axis
-        @param columnZName: the name of the column to be used as the z-axis
-        @pre-condition: 3 column names must be distinct and existing in the db
-        @return Promise<Array<DataPoint>>
-         */
+  /**
+   * getPoints gets the points from the database
+   * @param qualifyingPointOnly if true, only return points that have no missing data
+   * @param columnXName the name of the column to be used as the x-axis
+   * @param columnYName the name of the column to be used as the y-axis
+   * @param columnZName the name of the column to be used as the z-axis
+   * @pre-condition 3 column names must be distinct and existing in the db
+   * @return Promise<Array<DataPoint>>
+   */
   async getPoints(
     qualifyingPointOnly: boolean,
     columnXName: string,
@@ -98,26 +133,28 @@ export default class DbRepository extends Dexie implements Repository {
     return Promise.resolve(dataPoints);
   }
 
-  /*
-        convertColumnsIntoDataPoints converts the columns into an array of DataPoints
-        @param qualifyingPointOnly: if true, only return points that have no missing data
-        @param columnX: the column to be used as the x-axis
-        @param columnY: the column to be used as the y-axis
-        @param columnZ: the column to be used as the z-axis
-        @return Array<DataPoint>
-         */
+  /**
+   * convertColumnsIntoDataPoints converts the columns into an array of DataPoints
+   * @param qualifyingPointOnly if true, only return points that have no missing data
+   * @param columnX the column to be used as the x-axis
+   * @param columnY the column to be used as the y-axis
+   * @param columnZ the column to be used as the z-axis
+   * @return Array<DataPoint>
+   */
   static convertColumnsIntoDataPoints(
     qualifyingPointOnly: boolean,
-    columnX: Column,
-    columnY: Column,
-    columnZ: Column,
+    columnX: Column<DataColumn>,
+    columnY: Column<DataColumn>,
+    columnZ: Column<DataColumn>,
   ): Array<DataPoint> {
     const dataPoints: Array<DataPoint> = [];
 
     for (let i = 0; i < columnX.values.length; i += 1) {
-      const xValue = columnX.values[i];
-      const yValue = columnY.values[i];
-      const zValue = columnZ.values[i];
+      // Force type cast to string | number | null.
+      // We can guarantee this, given the DataColumn generic consists of these types.
+      const xValue = (columnX.values[i] as unknown as string | number | null);
+      const yValue = (columnY.values[i] as unknown as string | number | null);
+      const zValue = (columnZ.values[i] as unknown as string | number | null);
       const hasMissingData = xValue === null || yValue === null || zValue === null;
 
       // if only qualifying points are requested, add the point only if it has no missing data
@@ -128,9 +165,9 @@ export default class DbRepository extends Dexie implements Repository {
     return dataPoints;
   }
 
-  /*
-        closeConnection closes the connection to the database
-         */
+  /**
+   * closeConnection closes the connection to the database
+   */
   closeConnection() {
     this.close();
   }

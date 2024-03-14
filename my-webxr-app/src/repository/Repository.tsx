@@ -1,5 +1,5 @@
 import DataPoint from './DataPoint';
-import Column from './Column';
+import Column, { ColumnType, DataColumn, StatsColumn } from './Column';
 
 // The repository interface defines operations that can be
 // done to/on the db.
@@ -8,5 +8,6 @@ export interface Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string) => Promise<Array<DataPoint>>;
-  addColumn: (column : Column) => Promise<string>;
+  addColumn: (column: Column<DataColumn | StatsColumn>, columnType: ColumnType) => Promise<string>;
+  addToExistingColumn: (column: Column<DataColumn | StatsColumn>) => Promise<string>;
 }

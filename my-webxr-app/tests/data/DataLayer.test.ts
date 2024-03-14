@@ -1,5 +1,6 @@
 import PrivilegedDataLayer from './PrivilegedDataLayer';
-import { BatchedDataStream, ColumnStatistics } from '../../src/data/DataLayer';
+import { BatchedDataStream } from '../../src/data/DataLayer';
+import { StatsColumn } from '../../src/repository/Column';
 
 describe('Validate transposeData() operation', () => {
   test('transposeData with an empty data table (0x0)', async () => {
@@ -74,14 +75,14 @@ describe('Validate transposeData() operation', () => {
 describe('Validate calculateStatistics() operation', () => {
   test('calculateStatistics on an empty table', async () => {
     const dataStream: BatchedDataStream = [];
-    const expectedStats: Array<ColumnStatistics> = [];
+    const expectedStats: Array<StatsColumn> = [];
 
     expect(PrivilegedDataLayer.calculateStatistics(dataStream)).toEqual(expectedStats);
   });
 
   test('calculateStatistics on a single column with no values', async () => {
     const dataStream: BatchedDataStream = [['col1']];
-    const expectedStats: Array<ColumnStatistics> = [{
+    const expectedStats: Array<StatsColumn> = [{
       columnName: 'col1',
       sum: 0,
       sumOfSquares: 0,
@@ -94,7 +95,7 @@ describe('Validate calculateStatistics() operation', () => {
 
   test('calculateStatistics on a single column of null', async () => {
     const dataStream: BatchedDataStream = [[null]];
-    const expectedStats: Array<ColumnStatistics> = [{
+    const expectedStats: Array<StatsColumn> = [{
       columnName: null,
       sum: 0,
       sumOfSquares: 0,
@@ -107,7 +108,7 @@ describe('Validate calculateStatistics() operation', () => {
 
   test('calculateStatistics on a single column of a number', async () => {
     const dataStream: BatchedDataStream = [[16]];
-    const expectedStats: Array<ColumnStatistics> = [{
+    const expectedStats: Array<StatsColumn> = [{
       columnName: 16,
       sum: 0,
       sumOfSquares: 0,
@@ -120,7 +121,7 @@ describe('Validate calculateStatistics() operation', () => {
 
   test('calculateStatistics on a single column with a single number value', async () => {
     const dataStream: BatchedDataStream = [['col1', 5]];
-    const expectedStats: Array<ColumnStatistics> = [{
+    const expectedStats: Array<StatsColumn> = [{
       columnName: 'col1',
       sum: 5,
       sumOfSquares: 25,
@@ -133,7 +134,7 @@ describe('Validate calculateStatistics() operation', () => {
 
   test('calculateStatistics on a single column with two number values', async () => {
     const dataStream: BatchedDataStream = [['col1', 5, 10]];
-    const expectedStats: Array<ColumnStatistics> = [{
+    const expectedStats: Array<StatsColumn> = [{
       columnName: 'col1',
       sum: 15,
       sumOfSquares: 125,
@@ -146,7 +147,7 @@ describe('Validate calculateStatistics() operation', () => {
 
   test('calculateStatistics on a single column with five mixed values', async () => {
     const dataStream: BatchedDataStream = [['col1', 5, 10, 'a', null, 0]];
-    const expectedStats: Array<ColumnStatistics> = [{
+    const expectedStats: Array<StatsColumn> = [{
       columnName: 'col1',
       sum: 15,
       sumOfSquares: 125,
@@ -163,7 +164,7 @@ describe('Validate calculateStatistics() operation', () => {
       [404, 1, 2, '3', 4, 5],
       ['topics', 'jest', 'testing', 'calculate', 'stats', 'dal'],
     ];
-    const expectedStats: Array<ColumnStatistics> = [{
+    const expectedStats: Array<StatsColumn> = [{
       columnName: null,
       sum: 10000,
       sumOfSquares: 100000000,

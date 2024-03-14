@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as assert from 'assert';
 import DbRepository from '../../src/repository/DbRepository';
 import DataPoint from '../../src/repository/DataPoint';
-import Column from '../../src/repository/Column';
+import Column, { ColumnType, DataColumn } from '../../src/repository/Column';
 
 describe('DbRepository Test', () => {
   let repository: DbRepository;
@@ -29,18 +29,18 @@ describe('DbRepository Test', () => {
   });
 
   test('addColumn - add points when db has duplicate columns - expect Exception', async () => {
-    const column = new Column('test', ['CMPT371', 'Osgood', 'Oculus']);
-    const dup = new Column('test', [1, 2, 3]);
-    await repository.addColumn(column);
+    const column = new Column<DataColumn>('test', ['CMPT371', 'Osgood', 'Oculus']);
+    const dup = new Column<DataColumn>('test', [1, 2, 3]);
+    await repository.addColumn(column, ColumnType.RAW);
 
-    await expect(repository.addColumn(dup))
+    await expect(repository.addColumn(dup, ColumnType.RAW))
       .rejects
       .toBeInstanceOf(Error);
   });
 
   test('getPoints - Given duplicate column name - expect Exception', async () => {
-    const column = new Column('test', [1, 2]);
-    await repository.addColumn(column);
+    const column = new Column<DataColumn>('test', [1, 2]);
+    await repository.addColumn(column, ColumnType.RAW);
 
     await expect(repository.getPoints(
       false,
@@ -54,8 +54,8 @@ describe('DbRepository Test', () => {
   });
 
   test('getPoints - Given non-existent column name - expect Exception', async () => {
-    const column = new Column('test', [1, 2]);
-    await repository.addColumn(column);
+    const column = new Column<DataColumn>('test', [1, 2]);
+    await repository.addColumn(column, ColumnType.RAW);
 
     await expect(repository.getPoints(
       false,
@@ -68,12 +68,12 @@ describe('DbRepository Test', () => {
   });
 
   test('getPoints - Get all points of 3 given columns', async () => {
-    const column1 = new Column('column1', [1.1, null, 3.3]);
-    const column2 = new Column('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
-    const column3 = new Column('column3', [-1.1, -2.2, -3.3]);
-    repository.addColumn(column1);
-    repository.addColumn(column2);
-    repository.addColumn(column3);
+    const column1 = new Column<DataColumn>('column1', [1.1, null, 3.3]);
+    const column2 = new Column<DataColumn>('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
+    const column3 = new Column<DataColumn>('column3', [-1.1, -2.2, -3.3]);
+    repository.addColumn(column1, ColumnType.RAW);
+    repository.addColumn(column2, ColumnType.RAW);
+    repository.addColumn(column3, ColumnType.RAW);
 
     const result = await repository.getPoints(false, 'column1', 'column2', 'column3');
 
@@ -85,12 +85,12 @@ describe('DbRepository Test', () => {
   });
 
   test('getPoints - Get points of 3 given columns - filter out points missing data', async () => {
-    const column1 = new Column('column1', [1.1, null, 3.3]);
-    const column2 = new Column('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
-    const column3 = new Column('column3', [-1.1, -2.2, -3.3]);
-    repository.addColumn(column1);
-    repository.addColumn(column2);
-    repository.addColumn(column3);
+    const column1 = new Column<DataColumn>('column1', [1.1, null, 3.3]);
+    const column2 = new Column<DataColumn>('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
+    const column3 = new Column<DataColumn>('column3', [-1.1, -2.2, -3.3]);
+    repository.addColumn(column1, ColumnType.RAW);
+    repository.addColumn(column2, ColumnType.RAW);
+    repository.addColumn(column3, ColumnType.RAW);
 
     const result = await repository.getPoints(true, 'column1', 'column2', 'column3');
 
