@@ -1,16 +1,16 @@
-import { XR, Controllers, VRButton } from '@react-three/xr';
 import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import './styles.css';
-import { useEffect } from 'react';
+import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
-import Floor from './components/Floor';
-import GenerateXYZ from './components/GenerateXYZ';
+import { useEffect } from 'react';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import DataPoint from './components/DataPoint';
-import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
+import Floor from './components/Floor';
+import GenerateXYZ from './components/GenerateXYZ';
 import createPosition from './components/Positions';
+import { PointSelectionProvider } from './contexts/PointSelectionContext';
+import './styles.css';
 import TestingOptions from './testing/TestingOptions';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
@@ -30,9 +30,6 @@ const startPointZ: number = -0.5;
 const Length: number = 1;
 // adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
-
-// setting testing mode
-localStorage.setItem('isTesting', JSON.stringify(true));
 
 export default function App() {
   // getting is testing variable
@@ -100,7 +97,7 @@ export default function App() {
   return (
     <>
       <div>
-        {isTesting && <TestingOptions />}
+        {process.env.IS_TESTING && <TestingOptions />}
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
