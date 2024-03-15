@@ -8,15 +8,15 @@
     "test": "NODE_ENV=test jest",
     "build": "NODE_ENV=production tsc -p tsconfig.prod.json && vite build",
     "lint": "eslint . --fix --max-warnings 0",
-    "preview": "vite preview",
-    "smoke": "IS_TESTING=true npm run dev"
-    },
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@react-three/drei": "^9.96.1",
     "@react-three/fiber": "^8.15.14",
     "@react-three/test-renderer": "^8.2.1",
     "@react-three/xr": "^5.7.1",
     "dexie": "^3.2.5",
+    "dotenv": "^16.4.5",
     "idb": "^8.0.0",
     "log4js": "^6.9.1",
     "ml-matrix": "^6.11.0",

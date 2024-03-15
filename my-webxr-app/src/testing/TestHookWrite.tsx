@@ -1,6 +1,8 @@
+// import * as dotenv from "dotenv";
+// dotenv.config({ path:'.env' });
+
 export default function WriteHook(text: string): boolean {
-  console.log(process.env.IS_TESTING)
-  if (process.env.IS_TESTING) {
+  if (import.meta.env.VITE_IS_TESTING) {
     try {
       const existingText = localStorage.getItem('myText') || '';
       const updatedText = existingText + text;
