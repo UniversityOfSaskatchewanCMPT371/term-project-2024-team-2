@@ -7,8 +7,6 @@ import Column, { ColumnType, DataColumn, StatsColumn } from './Column';
 export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
   // just to inform Typescript of the object type stored in the table.
-  private columns!: Dexie.Table<Column<DataColumn>, string>; // string = type of the primary key
-
   private statsColumns!: Dexie.Table<Column<StatsColumn>, string>;
 
   private rawColumns!: Dexie.Table<Column<DataColumn>, string>;
@@ -21,9 +19,13 @@ export default class DbRepository extends Dexie implements Repository {
     // create a db instance
     super(dbName);
 
-    if (this.columns) {
-      this.columns.clear();
-    }
+    [this.statsColumns, this.rawColumns, this.standardizedColumns, this.pcaColumns].forEach(
+      (table) => {
+        if (table) {
+          table.clear();
+        }
+      },
+    );
 
     this.version(1).stores({
       // Declare tables, IDs and indexes
@@ -60,25 +62,39 @@ export default class DbRepository extends Dexie implements Repository {
     }
   }
 
-  /**
-   *
-   * @param column
-   */
-  // temp disable
+  // TODO: complete this function
   // eslint-disable-next-line class-methods-use-this
   async addToExistingColumn(column: Column<DataColumn | StatsColumn>): Promise<string> {
-    // const column = await this.columns.where('name').equals('columnName');
     return Promise.resolve(column.name);
   }
 
   /**
    * getColumn gets a column from the database
    * @param columnName the name of the column to be retrieved
+   * @param columnType the type of the column to be retrieved
    * @return Promise<Column>
    * @private
    */
-  private async getColumn(columnName: string) {
-    const column = await this.columns
+  private async getColumn(columnName: string, columnType: ColumnType) {
+    let columnsTable;
+    switch (columnType) {
+      case ColumnType.STATS:
+        columnsTable = this.statsColumns;
+        break;
+      case ColumnType.RAW:
+        columnsTable = this.rawColumns;
+        break;
+      case ColumnType.STANDARDIZED:
+        columnsTable = this.standardizedColumns;
+        break;
+      case ColumnType.PCA:
+        columnsTable = this.pcaColumns;
+        break;
+      default: // This shouldn't ever occur because of the Enum usage
+        throw new Error(`Invalid columnType: ${columnType}`);
+    }
+
+    const column = await columnsTable
       .where('name')
       .equals(columnName)
       .toArray();
@@ -112,9 +128,9 @@ export default class DbRepository extends Dexie implements Repository {
     );
 
     // get the three columns
-    const columnX = await this.getColumn(columnXName);
-    const columnY = await this.getColumn(columnYName);
-    const columnZ = await this.getColumn(columnZName);
+    const columnX = (await this.getColumn(columnXName, ColumnType.RAW)) as Column<DataColumn>;
+    const columnY = (await this.getColumn(columnYName, ColumnType.RAW)) as Column<DataColumn>;
+    const columnZ = (await this.getColumn(columnZName, ColumnType.RAW)) as Column<DataColumn>;
 
     const sameLength = new Set([columnX.values.length,
       columnY.values.length,
