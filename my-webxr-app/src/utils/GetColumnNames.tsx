@@ -4,6 +4,7 @@ import assert from './Assert';
 export async function getColumnTitles(dbName: string): Promise<string[]> {
   assert(dbName != null, 'Database name cannot be null');
   try {
+    // instead of new repository, will need to get the instance from the DAL
     const dbRepository = new DbRepository(dbName);
     const axesArray = await dbRepository.getPossibleAxes();
     if (!Array.isArray(axesArray)) {
@@ -26,6 +27,7 @@ export async function setRepresentingColumns(
     'Parameters cannot be null to setRepresentingColumns',
   );
   try {
+    // instead of new repository, will need to get the instance from the DAL
     const dbRepository = new DbRepository(dbName);
     const xyzColumns = await dbRepository.selectRepresentingColumn(xTitle, yTitle, zTitle);
 

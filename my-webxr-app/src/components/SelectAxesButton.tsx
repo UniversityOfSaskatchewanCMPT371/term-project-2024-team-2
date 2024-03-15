@@ -1,3 +1,9 @@
+/*
+this was going to be used to try and
+implement the axis selection into the 3d scene
+not completed in any way, was a work in progress
+ */
+
 import { useState } from 'react';
 import { Interactive } from '@react-three/xr';
 import { Text, Html } from '@react-three/drei';
@@ -41,7 +47,6 @@ this instance. */
       </Box>
       {menu && (
         <Html position={[0, 8, -5]}>
-          {/* Render SelectAxesColumns component */}
           {/* <SelectAxesColumns /> */}
         </Html>
       )}
