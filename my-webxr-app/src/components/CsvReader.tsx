@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { validateDbAndStore, parseAndHandleLocalCsv, parseAndHandleUrlCsv } from '../utils/CsvUtils';
+import WriteHook from '../testing/TestHookWrite.tsx';
 
 interface CsvReaderProps {
   dbName: string;
@@ -32,12 +33,17 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
   };
 
   const handleButtonClick = async () => {
+    WriteHook('Triggered CSV button');
+
     if (file === null) {
       setMessage('No file selected');
+      WriteHook('Triggered no file selected');
       return;
     }
     if (file?.type !== 'text/csv') {
       setMessage('File must be a CSV file');
+      WriteHook('Triggered must be a CSV file');
+
       return;
     }
     try {

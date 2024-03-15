@@ -11,6 +11,7 @@ import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPointMenu from './components/DataPointMenu';
 import createPosition from './components/Positions';
+import TestingOptions from './testing/TestingOptions';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -30,7 +31,14 @@ const Length: number = 1;
 // adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
 
+// setting testing mode
+localStorage.setItem('isTesting', JSON.stringify(true));
+
 export default function App() {
+  // getting is testing variable
+  const isTestingStored = localStorage.getItem('isTesting');
+  const isTesting = isTestingStored ? JSON.parse(isTestingStored) : false;
+
   // Database name and store name will be pass as prop to reader components,
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
@@ -92,6 +100,7 @@ export default function App() {
   return (
     <>
       <div>
+        {isTesting && <TestingOptions />}
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
