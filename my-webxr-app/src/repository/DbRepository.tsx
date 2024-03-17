@@ -128,6 +128,39 @@ export default class DbRepository extends Dexie implements Repository {
     return dataPoints;
   }
 
+  // /*
+  //     Fetches the correct entry from the IndexedDB, and append the batch onto the end of it
+  //     @param columnNames: an array of all fields, for example ("names", "age"..etc)
+  //     @param dataRows: an array of arrays, holding the actual data that will be stored
+  //     @pre-condition: non-empty columnNames and dataRows
+  //     @post-condition: a added entry to the IndexedDB
+  //  */
+  // This is my attempt at adding a function to the DBRepository class that will add a batch of
+  // data to the IndexedDB after transforming the data into a map of column names and their
+  // respective data to be added to the IndexedDB
+
+  // async addBatch(columnNames: string[], dataRows: Array<Array<string | number | null>>) {
+  //   const dataMap = new Map<string, Array<string | number | null>>();
+
+  //   console.log(columnNames, dataRows);
+  //   // transpose the data column wise
+  //   columnNames.forEach((name, i) => {
+  //     dataMap.set(name, []);
+
+  //     dataRows.forEach((row) => {
+  //       dataMap.get(name)?.push(row[i]);
+  //     });
+  //   });
+
+  //   // dataMap.forEach((value: Array<string | number | null>, key: string) => {
+  //   //   this.columns.get(key).then((old_col) => {
+  //   //     old_col?.values.
+  //   //   });
+
+  //   // });
+  //   return true;
+  // }
+
   /*
         closeConnection closes the connection to the database
          */

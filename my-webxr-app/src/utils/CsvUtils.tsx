@@ -38,7 +38,9 @@ export const handleParsedData = async (
   const db = await openDB(dbName, 1);
   const tx = db.transaction(storeName, 'readwrite');
   const store = tx.objectStore(storeName);
+
   // await store.clear(); // Clean the store before adding new data
+
   const promises = items.map((item, i) => store.put(item, start + i));
   await Promise.all(promises);
   await tx.done;
