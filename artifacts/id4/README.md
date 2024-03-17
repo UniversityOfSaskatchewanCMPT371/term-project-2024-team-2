@@ -7,6 +7,8 @@
   - [Included PDF Documents](#included-pdf-documents)
   - [Knowledge Sharing and Pairing Sessions](#knowledge-sharing-and-pairing-sessions)
   - [Card and Work Summary](#card-and-work-summary)
+    - [Pre- and Post-Conditions](#pre--and-post-conditions)
+    - [Multi-level Logging](#multi-level-logging)
     - [In progress PRs](#in-progress-prs)
     - [Mini-Milestones / Work Cards](#mini-milestones--work-cards)
     - [New Wiki Documents](#new-wiki-documents)
@@ -55,7 +57,7 @@ We have a group shared calendar to book meetings, standups, and pairing sessions
 - Attended by: Zander, Aesha, Quinn, Matthew
 - Inspected Aesha's updated UI designs
 
-##### Jast/Drei Pairing
+##### Jest/Drei Pairing
 - Duration: 1hr
 - Attended by: Trang, Joe
 - Joe passed off what he had done for looking at the Jest/Drei test issue
@@ -63,12 +65,12 @@ We have a group shared calendar to book meetings, standups, and pairing sessions
 ##### Matt and Jesse 1-on-1
 - Duration: 1hr
 - Attended by: Matt and Jesse
-- PM/Dev Lead check in to addrtess any issues
+- PM/Dev Lead check in to address any issues
 
 ##### Matt and Mitchell 1-on-1
 - Duration: 1hr
 - Attended by: Matt and Mitchell
-- PM/Test Lead check in to adress any issues
+- PM/Test Lead check in to address any issues
 
 ##### Matt and Trang PM pairing 
 - Duration: 1hr
@@ -93,11 +95,11 @@ We have a group shared calendar to book meetings, standups, and pairing sessions
 ##### Cross Team Pairing
 - Duration: 1hr
 - Attended by: Matt, Ardalan (Team 3)
-- Met with Ardalan to go over and dicuss PM challenges and activity log automations in Google Sheets/Excel
+- Met with Ardalan to go over and discuss PM challenges and activity log automations in Google Sheets/Excel
 
 ##### Zander and Matt Pairing
 - Duration: 2.5hrs
-- Attended by: Matt, Zander, with guest appearences of Mitchell, Aesha, and Quinn
+- Attended by: Matt, Zander, with guest appearances of Mitchell, Aesha, and Quinn
 - Met to trouble shoot Vite/Jest environment variable implementation issues.
 
 ##### DAL Pairing
@@ -113,7 +115,7 @@ We have a group shared calendar to book meetings, standups, and pairing sessions
 ##### Multi-level Logging Pairing
 - Duration: 0.5hrs
 - Attended by: Zander, Aesha
-- Reseach options for multi-level level and make proposal
+- Research options for multi-level level and make proposal
 
 ##### Rollbar Pairing
 - Duration: 4.5hrs
@@ -139,24 +141,29 @@ We have a group shared calendar to book meetings, standups, and pairing sessions
 ### Card and Work Summary
 In ID4, we planned an extension to we we wanted to achieve in ID3. By the end of ID4, we wanted to have a fully-integrated happy-path test of loading and displaying data in the 3D space. We also aimed to finish the smoke testing spike to automate our smoke testing as much as possible. We got most of the way there, but again missed our mark. 
 
-Good progress was made on the develoment front, but we discovered that our CSV loaders were not adequately load tested and crashed the browser when reading a file with half a million records and ten dimensions. That refactor, and development difficulties with transposing of the dataset to maintain within our 5Mibs of memory usage drastically slowed progress and prevented most of our dev work from getting over the finish line.
+Good progress was made on the development front, but we discovered that our CSV loaders were not adequately load tested and crashed the browser when reading a file with half a million records and ten dimensions. That refactor, and development difficulties with transposing of the dataset to maintain within our 5Mibs of memory usage drastically slowed progress and prevented most of our dev work from getting over the finish line.
 
 On the QA side, we had more success. We wrapped up two smoke testing SPIKEs and decided that creating a custom test hook to log internal states during manual testing and inspecting logs was going to be the most fruitful approach.
 
+#### Pre- and Post-Conditions
+Developers are going to be paying more attention to add pre- and post- conditions to their code, and we have an active card to go back through the code base to add them to existing code.
+
+
+#### Multi-level Logging
+It was determined that Log4js is incompatible with Vite. A decision was made to switch our logging framework to Rollbar. However, it was not merged in this deliverable as, due to how Vite and Jest reference environment variables, we were not able to get the application working and the tests passing at the same time.
+
 
 #### In progress PRs
-Due to unforseen complications and life, there were many pieces of work that had a lot of effort, but weren't able to get over the finish line. We still put them up in draft to get feedback and increase visibility.
-
-
+Due to unforeseen complications and life, there were many pieces of work that had a lot of effort, but weren't able to get over the finish line. We still put them up in draft to get feedback and increase visibility.
 
 
 #### Mini-Milestones / Work Cards
-These are the cards that we commited do and that came up in the sprint. They were estimated using planning poker at our retro meeting. Actual time tracking was done through our activity log.
+These are the cards that we committed do and that came up in the sprint. They were estimated using planning poker at our retro meeting. Actual time tracking was done through our activity log.
 
 
 #### New Wiki Documents
 - [Data Abstraction Layer Design - Updated](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#5-data-access-layer-dal-abstraction-design)
-  - We decided to store PCA columns in a seperate table, instead of with the raw data
+  - We decided to store PCA columns in a separate table, instead of with the raw data
 
 
 #### Artifact Inspections
