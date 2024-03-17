@@ -137,7 +137,11 @@ We have a group shared calendar to book meetings, standups, and pairing sessions
 
 
 ### Card and Work Summary
-The goal of ID4 was 
+In ID4, we planned an extension to we we wanted to achieve in ID3. By the end of ID4, we wanted to have a fully-integrated happy-path test of loading and displaying data in the 3D space. We also aimed to finish the smoke testing spike to automate our smoke testing as much as possible. We got most of the way there, but again missed our mark. 
+
+Good progress was made on the develoment front, but we discovered that our CSV loaders were not adequately load tested and crashed the browser when reading a file with half a million records and ten dimensions. That refactor, and development difficulties with transposing of the dataset to maintain within our 5Mibs of memory usage drastically slowed progress and prevented most of our dev work from getting over the finish line.
+
+On the QA side, we had more success. We wrapped up two smoke testing SPIKEs and decided that creating a custom test hook to log internal states during manual testing and inspecting logs was going to be the most fruitful approach.
 
 
 #### In progress PRs
