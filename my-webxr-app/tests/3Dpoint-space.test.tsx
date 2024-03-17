@@ -1,10 +1,12 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
+import { Provider } from '@rollbar/react';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
 import DataPoint from '../src/components/DataPoint';
 import GenerateXYZ from '../src/components/GenerateXYZ';
 import createPosition from '../src/components/Positions';
+import { rollbarConfig } from '../src/utils/LoggingUtils';
 
 const minNum: number = -10;
 const maxNum: number = 10;
@@ -58,22 +60,32 @@ describe("Datapoint's Location is based off of values given ", () => {
   test('Test #1: Creating Datapoint with the location/coordinates 1,2,3, making sure that the positions'
         + 'actually work', async () => {
     const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
-          <GenerateXYZ
-            minValue={minNum}
-            maxValue={maxNum}
-            scaleFactor={scaleFactor}
-            startX={startPointX}
-            startY={startPointY}
-            startZ={startPointZ}
-            endPoint={endPoint}
-            radius={radius}
-            labelOffset={labelOffset}
-          />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={0}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              meshProps={{ position: [1, 2, 3] }}
+            />
+            <GenerateXYZ
+              minValue={minNum}
+              maxValue={maxNum}
+              scaleFactor={scaleFactor}
+              startX={startPointX}
+              startY={startPointY}
+              startZ={startPointZ}
+              endPoint={endPoint}
+              radius={radius}
+              labelOffset={labelOffset}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
     );
     expect(render.scene.children[1].children[0].instance.position).toEqual(
       new Vector3(1, 2, 3),
@@ -82,11 +94,21 @@ describe("Datapoint's Location is based off of values given ", () => {
 
   test(' Test #2: Giving DataPoints a repeating data set to see how it is represented', async () => {
     const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint1 }} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={4}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              meshProps={{ position: datapoint1 }}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
 
     );
     expect(render.scene.children[1].children[0].instance.position).toEqual(
@@ -97,24 +119,45 @@ describe("Datapoint's Location is based off of values given ", () => {
   test('Test #3: Give DataPoints a dataset that contains a 0 in it to see '
         + 'how it is handled', async () => {
     const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint2 }} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={4}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              meshProps={{ position: datapoint2 }}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
 
     );
     expect(render.scene.children[1].children[0].instance.position).toEqual(
       new Vector3(-0.1, 1.75, -0.5),
     );
   });
+
   test("Test #4: testing with all 0's to make sure it behaves as intended", async () => {
     const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint3 }} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={4}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              meshProps={{ position: datapoint3 }}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
 
     );
     expect(render.scene.children[1].children[0].instance.position).toEqual(
@@ -123,11 +166,21 @@ describe("Datapoint's Location is based off of values given ", () => {
   });
   test('Test #5: Testing with the maximum values make sure it is handled ', async () => {
     const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint4 }} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={4}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              meshProps={{ position: datapoint4 }}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
 
     );
     expect(render.scene.children[1].children[0].instance.position).toEqual(
@@ -137,11 +190,13 @@ describe("Datapoint's Location is based off of values given ", () => {
   test('Test #6: Testing with all negative values to make sure that '
         + 'it behaves as it should', async () => {
     const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint5 }} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint5 }} />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
 
     );
     expect(render.scene.children[1].children[0].instance.position).toEqual(

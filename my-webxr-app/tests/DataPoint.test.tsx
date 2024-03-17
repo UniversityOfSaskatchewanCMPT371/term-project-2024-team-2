@@ -1,17 +1,28 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
+import { Provider } from '@rollbar/react';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
 import DataPoint from '../src/components/DataPoint';
+import { rollbarConfig } from '../src/utils/LoggingUtils';
 
 describe('DataPoint Creation and Interaction', () => {
   test('creating a basic DataPoint with defaults', async () => {
     const renderer = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={0}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
     );
 
     // Expect the DataPoint component to be created, along with its two meshes with default values.
@@ -21,11 +32,21 @@ describe('DataPoint Creation and Interaction', () => {
 
   test('creating a basic DataPoint and assign position', async () => {
     const renderer = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={0}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              meshProps={{ position: [1, 2, 3] }}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
     );
 
     // Check if the both mesh positions are accurate.
@@ -36,11 +57,21 @@ describe('DataPoint Creation and Interaction', () => {
 
   test('creating a basic DataPoint and assign outline scale', async () => {
     const renderer = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} outlineScale={2} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint
+              id={0}
+              marker="circle"
+              color="gray"
+              columnX="John Doe"
+              columnY="cmpt 145"
+              columnZ={97}
+              outlineScale={2}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
     );
 
     // Check if the outline mesh scale is accurate.
@@ -53,11 +84,13 @@ describe('DataPoint Creation and Interaction', () => {
 describe('DataPoint UI Interaction', () => {
   test('create a basic DataPoint and check all its fields', async () => {
     const renderer = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
     );
 
     // renderer.scene.children[1] gets the scene

@@ -41,7 +41,7 @@ export function PointSelectionProvider({
   const setSelectedDataPoint = (
     newValue: React.SetStateAction<DataPointProps | null>,
   ) => {
-    rollbar.debug(`PointSelectionContext: updating selectedDataPoint state to ${newValue}`);
+    rollbar.debug(`PointSelectionContext: updating selectedDataPoint state to ${newValue ? (newValue as DataPointProps).id : null}`);
     setSelectedDataPointInternal(newValue);
   };
 

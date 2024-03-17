@@ -22,7 +22,7 @@ export default function DataPoint({
       );
     }
 
-    rollbar.debug(`DataPoint #" + id + ": setting hover count to ${amount}`);
+    rollbar.debug(`DataPoint #${id}: setting hover count to ${amount}`);
     setHoverCount(amount);
   };
 

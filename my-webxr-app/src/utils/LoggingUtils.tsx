@@ -86,16 +86,13 @@ export default class LogAppender extends Dexie {
   async getLogs(logTableType: LogTableType) {
     switch (logTableType) {
       case LogTableType.info:
-        this.infoTable.toArray();
-        break;
+        return this.infoTable.toArray();
       case LogTableType.error:
-        this.errorTable.toArray();
-        break;
+        return this.errorTable.toArray();
       case LogTableType.test:
-        this.testTable.toArray();
-        break;
+        return this.testTable.toArray();
       default:
-        break;
+        throw new Error('Invalid LogTableType ENUM type');
     }
   }
 
