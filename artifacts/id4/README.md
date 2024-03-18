@@ -7,10 +7,11 @@
   - [Included PDF Documents](#included-pdf-documents)
   - [Knowledge Sharing and Pairing Sessions](#knowledge-sharing-and-pairing-sessions)
   - [Card and Work Summary](#card-and-work-summary)
+    - [Mini-Milestones / Work Cards](#mini-milestones--work-cards)
     - [Pre- and Post-Conditions](#pre--and-post-conditions)
     - [Multi-level Logging](#multi-level-logging)
     - [In progress PRs](#in-progress-prs)
-    - [Mini-Milestones / Work Cards](#mini-milestones--work-cards)
+    - [Activity Logging](#activity-logging)
     - [New Wiki Documents](#new-wiki-documents)
     - [Artifact Inspections](#artifact-inspections)
   - [Class Standup Attendance](#class-standup-attendance)
@@ -145,6 +146,10 @@ Good progress was made on the development front, but we discovered that our CSV 
 
 On the QA side, we had more success. We wrapped up two smoke testing SPIKEs and decided that creating a custom test hook to log internal states during manual testing and inspecting logs was going to be the most fruitful approach.
 
+
+#### Mini-Milestones / Work Cards
+These are the cards that we committed do and that came up in the sprint. They were estimated using planning poker at our retro meeting. Actual time tracking was done through our activity log.
+
 |Title                                                                        |URL                                                                                   |Assignees                 |Status     |Labels                 |Linked pull requests|Estimate (hrs)                                                                      |Actual (hrs)|
 |-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------|--------------------------|-----------|-----------------------|--------------------|------------------------------------------------------------------------------------|------------|
 |Implement Axis data choosing                                                 |https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/15 |qpb948                    |In Progress|ID4, Required          |https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/pull/174|7                                                                                   |            |
@@ -193,9 +198,36 @@ Due to unforeseen complications and life, there were many pieces of work that ha
 |Implement Smoke testing                                                      |https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/137|LongQuanNguyen, MitchWag01|In Progress|CI/CD, ID3, ID4, test  |ID 4  |https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/pull/192|
 
 
+#### Activity Logging
+A full list of Activity logs can be found [here](), but we provide the summary tables here.
 
-#### Mini-Milestones / Work Cards
-These are the cards that we committed do and that came up in the sprint. They were estimated using planning poker at our retro meeting. Actual time tracking was done through our activity log.
+##### Actual vs Expected Time
+|Team                                                                         |Expected Time                                                                         |Total Time                |Total To Est Ratio|
+|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------|--------------------------|------------------|
+|PM                                                                           |20.75                                                                                 |26.40                     |1.272             |
+|Dev                                                                          |68.50                                                                                 |70.00                     |1.022             |
+|Test                                                                         |60.50                                                                                 |78.45                     |1.297             |
+|Total                                                                        |149.75                                                                                |174.85                    |1.168             |
+
+
+|Team member                                                                  |Expected Time                                                                         |Total Time                |Total To Est Ratio|Relative Time|
+|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------|--------------------------|------------------|-------------|
+|Matthew Buglass                                                              |20.75                                                                                 |26.4                      |1.272             |135.89%      |
+|Jesse Haug                                                                   |12.5                                                                                  |18.25                     |1.460             |93.94%       |
+|Quinn Brown                                                                  |31.5                                                                                  |20.75                     |0.659             |106.81%      |
+|Zander Rommelaere                                                            |23.5                                                                                  |30.25                     |1.287             |155.70%      |
+|Joe Mbonayo                                                                  |1                                                                                     |0.75                      |0.750             |3.86%        |
+|Mitchell Wagner                                                              |22.5                                                                                  |19.75                     |0.878             |101.66%      |
+|Quan (Tony) Nguyen                                                           |10                                                                                    |12.5                      |1.250             |64.34%       |
+|Aesha Patel                                                                  |14.5                                                                                  |14.45                     |0.997             |74.38%       |
+|Trang Nguyen                                                                 |13.5                                                                                  |31.75                     |2.352             |163.43%      |
+|Average                                                                      |16.64                                                                                 |19.43                     |1.168             |100.00%      |
+
+##### Summary Charts
+
+![Actual vs. Expected](./imgs/id4_activity_actual_vs_expected.svg)
+![Work over Time](./imgs/id4_activity_timeline.svg)
+![Pareto Analysis](./imgs/id4_activity_pareto.svg)
 
 
 #### New Wiki Documents
