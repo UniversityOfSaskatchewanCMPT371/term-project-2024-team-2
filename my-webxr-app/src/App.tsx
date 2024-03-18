@@ -32,10 +32,6 @@ const Length: number = 1;
 const radius: number = 0.002;
 
 export default function App() {
-  // getting is testing variable
-  const isTestingStored = localStorage.getItem('isTesting');
-  const isTesting = isTestingStored ? JSON.parse(isTestingStored) : false;
-
   // Database name and store name will be pass as prop to reader components,
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
