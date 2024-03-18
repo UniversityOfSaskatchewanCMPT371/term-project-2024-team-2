@@ -41,7 +41,10 @@
 ### Included PDF Documents
 - [ID3 Retro Jamboard](./id3_retro_jamboard.pdf)
 - [ID3 Retro Minutes](./id3_retro_minutes.pdf)
+- [ID4 Ativity Log](./id4_ativity_log.pdf)
+- [ID4 Ativity Log Summary](./id4_ativity_log_summary.pdf)
 - [ID4 Data Abstraction Layer Update](./id4_data_abstraction_layer_update.pdf)
+- [ID4 Dev Team Update](./id4_dev_team_update.pdf)
 - [ID4 Risk Plan](./id4_risk_plan.pdf)
 - [ID4 Stakeholder Meeting Mar 14](./id4_stakeholder_meeting_mar_14.pdf)
 - [ID4 Stakeholder Meeting Mar 7](./id4_stakeholder_meeting_mar_7.pdf)
@@ -49,6 +52,8 @@
 - [ID4 Test List](./id4_test_list.pdf)
 - [ID4 Test Matrix](./id4_test_matrix.pdf)
 - [ID4 Test Team Update](./id4_test_team_update.pdf)
+- [ID4 Ui Refresh 3D Visualization](./id4_ui_refresh_3d_visualization.pdf)
+- [ID4 Ui Refresh Modal Screens](./id4_ui_refresh_modal_screens.pdf)
 
 ### Knowledge Sharing and Pairing Sessions
 We have a group shared calendar to book meetings, standups, and pairing sessions.
@@ -199,7 +204,7 @@ Due to unforeseen complications and life, there were many pieces of work that ha
 
 
 #### Activity Logging
-A full list of Activity logs can be found [here](), but we provide the summary tables here.
+A full list of Activity logs can be found [here](./id4_ativity_log.pdf), but we provide the summary tables here.
 
 ##### Actual vs Expected Time
 |Team                                                                         |Expected Time                                                                         |Total Time                |Total To Est Ratio|
@@ -233,6 +238,7 @@ A full list of Activity logs can be found [here](), but we provide the summary t
 #### New Wiki Documents
 - [Data Abstraction Layer Design - Updated](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#5-data-access-layer-dal-abstraction-design)
   - We decided to store PCA columns in a separate table, instead of with the raw data
+- [Patching Policies](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Patching-Policies)
 
 
 #### Artifact Inspections
