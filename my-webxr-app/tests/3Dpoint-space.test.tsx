@@ -75,9 +75,9 @@ describe("Datapoint's Location is based off of values given ", () => {
         </XR>
       </PointSelectionProvider>,
     );
-    expect(render.scene.children[1].children[0].instance.position).toEqual(
+    expect(render.scene.children[1].children[0].instance.position.equals(
       new Vector3(1, 2, 3),
-    );
+    )).toBe(true);
   });
 
   test(' Test #2: Giving DataPoints a repeating data set to see how it is represented', async () => {
@@ -89,9 +89,9 @@ describe("Datapoint's Location is based off of values given ", () => {
       </PointSelectionProvider>,
 
     );
-    expect(render.scene.children[1].children[0].instance.position).toEqual(
+    expect(render.scene.children[1].children[0].instance.position.equals(
       new Vector3(-0.15000000000000002, 1.6500000000000001, -0.45),
-    );
+    )).toBe(true);
   });
 
   test('Test #3: Give DataPoints a dataset that contains a 0 in it to see '
@@ -104,9 +104,9 @@ describe("Datapoint's Location is based off of values given ", () => {
       </PointSelectionProvider>,
 
     );
-    expect(render.scene.children[1].children[0].instance.position).toEqual(
+    expect(render.scene.children[1].children[0].instance.position.equals(
       new Vector3(-0.1, 1.75, -0.5),
-    );
+    )).toBe(true);
   });
   test("Test #4: testing with all 0's to make sure it behaves as intended", async () => {
     const render = await ReactThreeTestRenderer.create(
@@ -117,9 +117,9 @@ describe("Datapoint's Location is based off of values given ", () => {
       </PointSelectionProvider>,
 
     );
-    expect(render.scene.children[1].children[0].instance.position).toEqual(
+    expect(render.scene.children[1].children[0].instance.position.equals(
       new Vector3(-0.2, 1.6, -0.5),
-    );
+    )).toBe(true);
   });
   test('Test #5: Testing with the maximum values make sure it is handled ', async () => {
     const render = await ReactThreeTestRenderer.create(
@@ -130,9 +130,9 @@ describe("Datapoint's Location is based off of values given ", () => {
       </PointSelectionProvider>,
 
     );
-    expect(render.scene.children[1].children[0].instance.position).toEqual(
+    expect(render.scene.children[1].children[0].instance.position.equals(
       new Vector3(0.3, 2.1, 0),
-    );
+    )).toBe(true);
   });
   test('Test #6: Testing with all negative values to make sure that '
         + 'it behaves as it should', async () => {
@@ -144,8 +144,8 @@ describe("Datapoint's Location is based off of values given ", () => {
       </PointSelectionProvider>,
 
     );
-    expect(render.scene.children[1].children[0].instance.position).toEqual(
+    expect(render.scene.children[1].children[0].instance.position.equals(
       new Vector3(-0.25, 1.55, -0.55),
-    );
+    )).toBe(true);
   });
 });
