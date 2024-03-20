@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import WriteHook from '../testing/TestHookWrite.tsx';
+import WriteHook from '../testing/TestHookWrite';
 import { parseAndHandleLocalCsv, parseAndHandleUrlCsv, validateDbAndStore } from '../utils/CsvUtils';
 
 interface CsvReaderProps {
@@ -23,7 +23,6 @@ interface CsvReaderProps {
 export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];

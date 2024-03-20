@@ -12,5 +12,5 @@ export default function WriteHook(text: string): boolean {
       return false;
     }
   }
-  return false
+  return false;
 }
