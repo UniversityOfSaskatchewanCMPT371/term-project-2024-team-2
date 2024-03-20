@@ -18,6 +18,7 @@
     "@react-three/test-renderer": "^8.2.1",
     "@react-three/xr": "^5.7.1",
     "dexie": "^3.2.5",
+    "dotenv": "^16.4.5",
     "idb": "^8.0.0",
     "log4js": "^6.9.1",
     "ml-matrix": "^6.11.0",
