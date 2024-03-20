@@ -11,7 +11,7 @@ vi.mock('papaparse', async (importOriginal) => {
   return {
     ...mod,
     // this is not getting called
-    parse: vi.fn(() => console.log('HELLLLLLLLLLLLLOOOOOOOOOOOOOOo')),
+    parse: vi.fn(),
   };
 });
 
@@ -102,10 +102,10 @@ describe('parseAndHandleUrlCsv function', () => {
     const storeName = 'testStore';
     const setMessage = vi.fn();
 
-    const spy = vi.spyOn(Papa, 'parse');
+    const spy = vi.spyOn('papaparse', 'parse');
 
     await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
-    console.log(spy.mock.calls);
+    // console.log(spy.mock.calls);
 
     expect(spy).toHaveBeenCalledWith(url, expect.objectContaining({
       download: true,
