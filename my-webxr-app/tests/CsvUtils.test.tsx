@@ -1,19 +1,12 @@
 import { openDB } from 'idb';
 import * as Papa from 'papaparse';
 import { Mock } from 'vitest';
-import { handleParsedData, validateDbAndStore, parseAndHandleUrlCsv } from '../src/utils/CsvUtils';
+import { handleParsedData, parseAndHandleUrlCsv, validateDbAndStore } from '../src/utils/CsvUtils';
 
 vi.mock('idb', () => ({
   openDB: vi.fn(),
 }));
-vi.mock('papaparse', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('papaparse')>();
-  return {
-    ...mod,
-    // this is not getting called
-    parse: vi.fn(),
-  };
-});
+vi.mock('papaparse');
 
 describe('validateDbAndStore functions', () => {
   it('should throw an error if the database does not exist', async () => {
@@ -102,12 +95,10 @@ describe('parseAndHandleUrlCsv function', () => {
     const storeName = 'testStore';
     const setMessage = vi.fn();
 
-    const spy = vi.spyOn('papaparse', 'parse');
-
     await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
-    // console.log(spy.mock.calls);
 
-    expect(spy).toHaveBeenCalledWith(url, expect.objectContaining({
+    // @ts-expect-error The default property is external and TypeScript won't recognise it.
+    expect((Papa as object).default.parse).toHaveBeenCalledWith(url, expect.objectContaining({
       download: true,
       dynamicTyping: true,
       complete: expect.any(Function),
