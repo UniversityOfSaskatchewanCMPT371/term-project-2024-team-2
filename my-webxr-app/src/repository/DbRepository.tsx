@@ -182,6 +182,19 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
+   * Retrieves all column names from the 'statsColumns' table (look up table) in the database.
+   *
+   * @returns {Promise<string[]>} A promise resolves to an array of column names.
+   */
+  async getAllColumnNames(): Promise<string[]> {
+    const rawColumnNames: string[] = [];
+    const columns = await this.statsColumns.toArray();
+    const columnNames = columns.map((column) => column.name);
+    rawColumnNames.push(...columnNames);
+    return Promise.resolve(rawColumnNames);
+  }
+
+  /**
    * closeConnection closes the connection to the database
    */
   closeConnection() {

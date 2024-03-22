@@ -99,4 +99,23 @@ describe('DbRepository Test', () => {
       new DataPoint(false, 3.3, 'Poutine', -3.3)];
     expect(result).toEqual(expect.arrayContaining(expected));
   });
+
+  test('getAllColumnNames - Get all column names from statsColumns or the look up table', async () => {
+    const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
+    const testColumn2 = new Column<DataColumn>('column2', ['a', 'b', 'c']);
+    const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
+    repository.addColumn(testColumn1, ColumnType.STATS);
+    repository.addColumn(testColumn2, ColumnType.STATS);
+    repository.addColumn(testColumn3, ColumnType.STATS);
+
+    const columnNames = await repository.getAllColumnNames();
+
+    expect(columnNames).toEqual(['column1', 'column2', 'column3']);
+  });
+
+  test('getAllColumnNames - Get column names from empty table', async () => {
+    const columnNames = await repository.getAllColumnNames();
+
+    expect(columnNames).toEqual([]);
+  });
 });
