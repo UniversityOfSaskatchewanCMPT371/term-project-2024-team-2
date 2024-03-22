@@ -50,42 +50,40 @@ export default class DataLayer implements DataAbstractor {
  * @returns {Promise<boolean>} A promise that resolves to true if the operation was successful,
  * false otherwise.
  */
-  async calculateStatistics(): Promise<boolean> {
+  async calculateStatistics(): Promise<Array<Column<StatsColumn>>> {
     try {
       const rawColumnNames = await this.repository.getAllColumnNames();
 
-      // eslint-disable-next-line no-restricted-syntax
-      for (const columnName of rawColumnNames) {
-        // Retrieve the column data from the repository
-        // eslint-disable-next-line no-await-in-loop
-        const column = await this.repository.getDataColumn(columnName, ColumnType.RAW);
+      // eslint-disable-next-line max-len
+      const statsColumnsPromises = rawColumnNames.map((columnName) => this.repository.getDataColumn(columnName, ColumnType.RAW)
+        .then((column) => {
+          const numberedItems = column.values.map((item) => ((typeof item === 'number') ? item : 0));
 
-        const numberedItems = column.values.map((item) => ((typeof item === 'number') ? item : 0));
+          const count = numberedItems.length;
+          const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
+          const sumOfSquares = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
+          const mean = sum / ((count !== 0) ? count : 1);
+          const stdDev = (
+            (count >= 2)
+              ? (Math.sqrt(((sumOfSquares / ((count !== 0) ? count : 1)) - (mean ** 2))))
+              : 0
+          );
 
-        const count = numberedItems.length;
-        const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
-        const sumOfSquares = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
-        const mean = sum / ((count !== 0) ? count : 1);
-        const stdDev = (
-          (count >= 2)
-            ? (Math.sqrt(((sumOfSquares / ((count !== 0) ? count : 1)) - (mean ** 2))))
-            : 0
-        );
+          const statsColumn = new Column<StatsColumn>(columnName, {
+            count,
+            sum,
+            sumOfSquares,
+            mean,
+            stdDev,
+          });
 
-        const statsColumn = new Column<StatsColumn>(columnName, {
-          count,
-          sum,
-          sumOfSquares,
-          mean,
-          stdDev,
-        });
+          this.repository.addColumn(statsColumn, ColumnType.STATS);
+          return statsColumn;
+        }));
 
-        // eslint-disable-next-line no-await-in-loop
-        await this.repository.addColumn(statsColumn, ColumnType.STATS);
-      }
-      return true;
+      return await Promise.all(statsColumnsPromises);
     } catch (error) {
-      return false;
+      return [];
     }
   }
 

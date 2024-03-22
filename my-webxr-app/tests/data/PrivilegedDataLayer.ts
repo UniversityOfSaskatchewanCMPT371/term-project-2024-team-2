@@ -1,6 +1,8 @@
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
 
 /**
+ * Test Hook for DataLayer.
+ *
  * The PrivilegedDataLayer improves testability by publicising certain protected methods from
  * DataLayer that could not be tested otherwise.
  */
