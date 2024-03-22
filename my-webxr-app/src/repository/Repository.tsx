@@ -9,5 +9,7 @@ export interface Repository {
     columnYName: string,
     columnZName: string) => Promise<Array<DataPoint>>;
   addColumn: (column: Column<DataColumn | StatsColumn>, columnType: ColumnType) => Promise<string>;
-  addToExistingColumn: (column: Column<DataColumn | StatsColumn>) => Promise<string>;
+  getAllColumnNames: () => Promise<string[]>;
+  getDataColumn: (columnName: string, columnType: ColumnType) => Promise<Column<DataColumn>>;
+  getStatsColumn: (columnName: string) => Promise<Column<StatsColumn>>;
 }
