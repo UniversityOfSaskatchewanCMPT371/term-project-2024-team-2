@@ -62,25 +62,17 @@ export default class DbRepository extends Dexie implements Repository {
     }
   }
 
-  // TODO: complete this function
-  // eslint-disable-next-line class-methods-use-this
-  async addToExistingColumn(column: Column<DataColumn | StatsColumn>): Promise<string> {
-    return Promise.resolve(column.name);
-  }
-
   /**
-   * getColumn gets a column from the database
+   *Return a column object from the RawData/StandardizedData/PCAData table based on given column
+   * name and column type.
+   *
    * @param columnName the name of the column to be retrieved
    * @param columnType the type of the column to be retrieved
-   * @return Promise<Column>
-   * @private
+   * @return Promise<Column> the column object
    */
-  private async getColumn(columnName: string, columnType: ColumnType) {
+  async getDataColumn(columnName: string, columnType: ColumnType) {
     let columnsTable;
     switch (columnType) {
-      case ColumnType.STATS:
-        columnsTable = this.statsColumns;
-        break;
       case ColumnType.RAW:
         columnsTable = this.rawColumns;
         break;
@@ -101,6 +93,19 @@ export default class DbRepository extends Dexie implements Repository {
     assert.ok(column.length <= 1, `Found more than one column with name ${columnName}!`);
     assert.ok(column.length === 1, `Column ${columnName} does not exist!`);
 
+    return column[0];
+  }
+
+  /**
+    * Return a column object from the StatsData table (Look up table) based on given column name.
+   *
+   * @param columnName the name of the column to be retrieved
+   * @return Promise<Column> the column object
+   */
+  async getStatsColumn(columnName: string) {
+    const column = await this.statsColumns.where('name').equals(columnName).toArray();
+    assert.ok(column.length <= 1, `Found more than one column with name ${columnName}!`);
+    assert.ok(column.length === 1, `Column ${columnName} does not exist!`);
     return column[0];
   }
 
@@ -128,9 +133,12 @@ export default class DbRepository extends Dexie implements Repository {
     );
 
     // get the three columns
-    const columnX = (await this.getColumn(columnXName, ColumnType.RAW)) as Column<DataColumn>;
-    const columnY = (await this.getColumn(columnYName, ColumnType.RAW)) as Column<DataColumn>;
-    const columnZ = (await this.getColumn(columnZName, ColumnType.RAW)) as Column<DataColumn>;
+    const columnX = (await this.getDataColumn(columnXName, ColumnType.RAW)) as
+      Column<DataColumn>;
+    const columnY = (await this.getDataColumn(columnYName, ColumnType.RAW)) as
+      Column<DataColumn>;
+    const columnZ = (await this.getDataColumn(columnZName, ColumnType.RAW)) as
+      Column<DataColumn>;
 
     const sameLength = new Set([columnX.values.length,
       columnY.values.length,

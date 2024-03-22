@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as assert from 'assert';
 import DbRepository from '../../src/repository/DbRepository';
 import DataPoint from '../../src/repository/DataPoint';
-import Column, { ColumnType, DataColumn } from '../../src/repository/Column';
+import Column, { ColumnType, DataColumn, StatsColumn } from '../../src/repository/Column';
 
 describe('DbRepository Test', () => {
   let repository: DbRepository;
@@ -117,5 +117,39 @@ describe('DbRepository Test', () => {
     const columnNames = await repository.getAllColumnNames();
 
     expect(columnNames).toEqual([]);
+  });
+
+  test('getStatsColumn - Retrieve a stats column from the look up table', async () => {
+    const testColumn = new Column<StatsColumn>('test', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+    });
+    await repository.addColumn(testColumn, ColumnType.STATS);
+
+    const retrievedColumn = await repository.getStatsColumn('test');
+    expect(retrievedColumn).toEqual(testColumn);
+  });
+
+  test('getStatsColumn - Attempt to retrieve a non-existent stats column', async () => {
+    await expect(repository.getStatsColumn('nonExistentColumn'))
+      .rejects
+      .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
+  });
+
+  test('getDataColumn - Retrieve a data column from Raw data table', async () => {
+    const testColumn = new Column<DataColumn>('testColumn', [1, 2, 3]);
+    await repository.addColumn(testColumn, ColumnType.RAW);
+
+    const retrievedColumn = await repository.getDataColumn('testColumn', ColumnType.RAW);
+    expect(retrievedColumn).toEqual(testColumn);
+  });
+
+  test('getDataColumn - Retrieve non-existent data column', async () => {
+    await expect(repository.getDataColumn('nonExistentColumn', ColumnType.RAW))
+      .rejects
+      .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
   });
 });
