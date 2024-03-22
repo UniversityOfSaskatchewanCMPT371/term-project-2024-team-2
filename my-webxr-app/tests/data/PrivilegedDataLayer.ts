@@ -8,8 +8,4 @@ export default class PrivilegedDataLayer extends DataLayer {
   public static override transposeData(batchItems: BatchedDataStream) {
     return super.transposeData(batchItems);
   }
-
-  public static override calculateStatistics(batchItems: BatchedDataStream) {
-    return super.calculateStatistics(batchItems);
-  }
 }
