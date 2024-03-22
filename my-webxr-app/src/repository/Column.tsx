@@ -26,7 +26,7 @@ export type DataRow = DataColumn;
  * The StatsColumn type is used to represent all the statistical values for a given column.
  */
 export type StatsColumn = {
-  columnName: string | number | null;
+  count: number;
   sum: number;
   sumOfSquares: number;
   mean: number;
