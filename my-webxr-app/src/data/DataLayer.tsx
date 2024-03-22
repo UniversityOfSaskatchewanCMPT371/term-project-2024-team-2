@@ -42,48 +42,74 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
- * Calculate the statistics for a set of data. Items that are not a number are treated as 0.
- * This method retrieves all column names from the repository, then for each column, it calculates
- * the count, sum, sum of squares, mean, and standard deviation. It then creates a new StatsColumn
- * object and adds it to the repository.
- *
- * @returns {Promise<boolean>} A promise that resolves to true if the operation was successful,
- * false otherwise.
- */
-  async calculateStatistics(): Promise<Array<Column<StatsColumn>>> {
+   * Calculate the statistical values for a given column.
+   *
+   * @param {Column<DataColumn>} column The column of data to calculate statistics for.
+   * @param {string} columnName The name of the column.
+   * @returns {Column<StatsColumn>} containing the statistical values.
+   * @protected
+   */
+  protected static calculateColumnStatistics(
+    column: Column<DataColumn>,
+    columnName: string,
+  ): Column<StatsColumn> {
+    // Handle empty column case
+    if (column.values.length === 0) {
+      return new Column<StatsColumn>(columnName, {
+        count: 0,
+        sum: 0,
+        sumOfSquares: 0,
+        mean: 0,
+        stdDev: 0,
+      });
+    }
+    // Normal cases
+    const numberedItems = column.values.map((item) => ((typeof item === 'number') ? item : 0));
+    const count = numberedItems.length;
+    const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
+    const sumOfSquares = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
+    const mean = sum / ((count !== 0) ? count : 1);
+    const stdDev = (
+      (count >= 2)
+        ? (Math.sqrt(((sumOfSquares / ((count !== 0) ? count : 1)) - (mean ** 2))))
+        : 0
+    );
+
+    return new Column<StatsColumn>(columnName, {
+      count,
+      sum,
+      sumOfSquares,
+      mean,
+      stdDev,
+    });
+  }
+
+  /**
+   * Asynchronously calculates statistics for each column in the repository.
+   *
+   * This function retrieves all column names from the repository, then for each column, it
+   * retrieves the data, calculates statistics, and adds a new statistic column to the repository.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
+   * and `false` otherwise.
+   * @throws {Error} If an error occurs during the operation, the function will catch the error and
+   * return a promise that resolves to `false`.
+   */
+  async calculateStatistics(): Promise<boolean> {
     try {
       const rawColumnNames = await this.repository.getAllColumnNames();
 
-      // eslint-disable-next-line max-len
-      const statsColumnsPromises = rawColumnNames.map((columnName) => this.repository.getDataColumn(columnName, ColumnType.RAW)
-        .then((column) => {
-          const numberedItems = column.values.map((item) => ((typeof item === 'number') ? item : 0));
+      const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
+        const rawDataColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
+        const statsColumn = DataLayer.calculateColumnStatistics(rawDataColumn, columnName);
+        await this.repository.addColumn(statsColumn, ColumnType.STATS);
+        return statsColumn;
+      });
 
-          const count = numberedItems.length;
-          const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
-          const sumOfSquares = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
-          const mean = sum / ((count !== 0) ? count : 1);
-          const stdDev = (
-            (count >= 2)
-              ? (Math.sqrt(((sumOfSquares / ((count !== 0) ? count : 1)) - (mean ** 2))))
-              : 0
-          );
-
-          const statsColumn = new Column<StatsColumn>(columnName, {
-            count,
-            sum,
-            sumOfSquares,
-            mean,
-            stdDev,
-          });
-
-          this.repository.addColumn(statsColumn, ColumnType.STATS);
-          return statsColumn;
-        }));
-
-      return await Promise.all(statsColumnsPromises);
+      await Promise.all(statsColumnsPromises);
+      return true;
     } catch (error) {
-      return [];
+      return Promise.resolve(false);
     }
   }
 

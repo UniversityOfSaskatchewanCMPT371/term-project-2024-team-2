@@ -1,4 +1,5 @@
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
+import Column, { DataColumn } from '../../src/repository/Column';
 
 /**
  * Test Hook for DataLayer.
@@ -9,5 +10,12 @@ import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
 export default class PrivilegedDataLayer extends DataLayer {
   public static override transposeData(batchItems: BatchedDataStream) {
     return super.transposeData(batchItems);
+  }
+
+  public static override calculateColumnStatistics(
+    column: Column<DataColumn>,
+    columnName: string,
+  ) {
+    return super.calculateColumnStatistics(column, columnName);
   }
 }
