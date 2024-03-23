@@ -58,7 +58,6 @@ export default class DataLayer implements DataAbstractor {
    * For each column in the transposed data, it retrieves the existing column from the repository
    * and appends the new values to it. If the column doesn't exist in the repository, it creates a
    * new one.
-   * All these operations are performed concurrently for improved performance.
    *
    * If any error occurs during the operation, the method catches the error and returns `false`.
    *
@@ -157,18 +156,24 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Asynchronously calculates statistics for each column in the repository.
+   * Asynchronously calculates and stores statistics for each column in the repository.
    *
-   * This function retrieves all column names from the repository, then for each column, it
-   * retrieves the data, calculates statistics, and adds a new statistic column to the repository.
+   * This function retrieves all column names from the repository. For each raw column, it retrieves
+   * the data, calculates statistics, and adds a new statistic column to the Look-up table (stats
+   * table) in the repository.
+   *
+   * A quality column is defined as a column where all data points are of the same numeric type and
+   * there are no missing data.
    *
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
-   * @throws {Error} If an error occurs during the operation, the function will catch the error and
-   * return a promise that resolves to `false`.
+   * @throws {Error} If the raw data table in the repository is empty or if an error occurs during
+   * the operation, the function will catch the error and return a promise that resolves to `false`.
    */
   async calculateStatistics(): Promise<boolean> {
     try {
+      const isEmpty = await this.repository.isTableEmpty(ColumnType.RAW);
+      assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
       const rawColumnNames = await this.repository.getAllColumnNames();
 
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
@@ -196,6 +201,7 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
+   * Helper for storeStandardizedData()
    * This function standardizes a specified quality column in the repository.
    *
    * This function takes the name of a quality column, retrieves the corresponding raw data column
@@ -220,10 +226,29 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * TODO
+   * This function retrieves all quality columns from the Look-Up Table (Stats table), standardizes
+   * them, and writes the standardized data as column back to the standardizedDataTable.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
+   * and `false` otherwise.
+   * @throws {Error} If the stats table is empty or if an error occurs during the operation.
    */
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
-  async writeStandardizedData() {
+  async storeStandardizedData() {
+    try {
+      const isEmpty = await this.repository.isTableEmpty(ColumnType.STATS);
+      assert.ok(!isEmpty, 'Stats table is empty, can not pull quality columns.');
+      const columnNames = await this.repository.getQualityColumnNames();
+
+      const promises = columnNames.map(async (name) => {
+        const standardizedColumn = await this.standardizeQualityColumn(name);
+        await this.repository.addColumn(standardizedColumn, ColumnType.STANDARDIZED);
+      });
+
+      await Promise.all(promises);
+      return true;
+    } catch (error) {
+      return Promise.resolve(false);
+    }
   }
 
   /**

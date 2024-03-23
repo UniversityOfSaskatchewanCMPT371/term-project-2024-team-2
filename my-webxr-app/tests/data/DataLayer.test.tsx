@@ -359,3 +359,65 @@ describe('Validate standardizeQualityColumn() operation', () => {
     });
   });
 });
+
+describe('Validate writeStandardizedData() operation', () => {
+  let dataLayer: DataLayer;
+  let repository: Repository;
+  let testRawColumn: Column<DataColumn>;
+  let testStatsColumn: Column<StatsColumn>;
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase('Test_DB');
+    repository = new DbRepository('Test_DB');
+    dataLayer = new DataLayer('Test_DB');
+  });
+
+  test('writeStandardizedData - Standardize on quality column and save', async () => {
+    testRawColumn = new Column<DataColumn>('testColumn', [1, 5, 1, 5, 8]);
+    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
+    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+
+    const result = await dataLayer.storeStandardizedData();
+    expect(result).toEqual(true);
+
+    const standardizedColumn = await repository.getDataColumn('testColumn', ColumnType.STANDARDIZED);
+    const expectedValues = [-1, 0.333, -1, 0.333, 1.333];
+    standardizedColumn.values.forEach((value, index) => {
+      expect(value).toBeCloseTo(expectedValues[index], 3);
+    });
+  });
+
+  test('writeStandardizedData - Standardize all quality columns with four different columns', async () => {
+    const dataSets = [
+      { data: [1, 5, 1, 5, 8], expected: [-1, 0.333, -1, 0.333, 1.333] },
+      { data: [2, 5, 4, 3, 1], expected: [-0.632, 1.265, 0.632, 0, -1.265] },
+      { data: [3, 6, 2, 2, 2], expected: [0, 1.732, -0.577, -0.577, -0.577] },
+      { data: [4, 7, 3, 1, 2], expected: [0.261, 1.564, -0.174, -1.042, -0.608] },
+    ];
+
+    for (let i = 0; i < dataSets.length; i += 1) {
+      const dataSet = dataSets[i];
+      testRawColumn = new Column<DataColumn>(`testColumn${i}`, dataSet.data);
+      // eslint-disable-next-line no-await-in-loop
+      await repository.addColumn(testRawColumn, ColumnType.RAW);
+      testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, `testColumn${i}`);
+      // eslint-disable-next-line no-await-in-loop
+      await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    }
+
+    const result = await dataLayer.storeStandardizedData();
+    expect(result).toEqual(true);
+
+    for (let i = 0; i < dataSets.length; i += 1) {
+      const dataSet = dataSets[i];
+      // eslint-disable-next-line no-await-in-loop
+      const standardizedColumn = await repository.getDataColumn(`testColumn${i}`, ColumnType.STANDARDIZED);
+      // console.log(standardizedColumn);
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      standardizedColumn.values.forEach((value, index) => {
+        expect(value).toBeCloseTo(dataSet.expected[index], 3);
+      });
+    }
+  });
+});
