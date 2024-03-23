@@ -19,7 +19,7 @@ export default function DataPointMenu(
     <Billboard visible={selectedDataPoint != null} {...billboardProps}>
       <Plane args={[1.25, 0.8]}>
         <meshBasicMaterial color="gray" />
-        <Text fontSize={0.075} color="black" depthOffset={1}>
+        <Text fontSize={0.075} color="black" depthOffset={-1}>
           {`Here are data point # ${selectedDataPoint?.id ?? '-'} properties!\n\n`}
           {`Marker: ${selectedDataPoint?.marker ?? '-'}\n`}
           {`Color: ${selectedDataPoint?.color ?? '-'}\n`}
