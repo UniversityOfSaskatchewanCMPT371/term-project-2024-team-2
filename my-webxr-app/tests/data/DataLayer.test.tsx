@@ -116,7 +116,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       isQuality: false,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
-    console.log(resultColumn);
     expect(resultColumn).toEqual(expectedColumn);
   });
 
