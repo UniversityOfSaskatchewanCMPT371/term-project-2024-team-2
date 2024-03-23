@@ -111,12 +111,11 @@ export default function App() {
       <PointSelectionProvider>
         <Canvas>
           <XR>
-            <Sky sunPosition={[0, 1, 0]} />
+            <Sky sunPosition={[0.5, 0, 0.5]} />
             <Floor />
             <ambientLight />
             <pointLight position={[10, 10, 10]} />
             <Controllers />
-
             <GenerateXYZ
               minValue={minNum}
               maxValue={maxNum}
@@ -134,7 +133,7 @@ export default function App() {
             <DataPoint
               id={0}
               marker="circle"
-              color="gray"
+              color="yellow"
               columnX="John Doe"
               columnY="cmpt 145"
               columnZ={97}
@@ -143,7 +142,7 @@ export default function App() {
             <DataPoint
               id={1}
               marker="circle"
-              color="gray"
+              color="yellow"
               columnX="Bob Johnson"
               columnY="math 110"
               columnZ={81}
@@ -152,7 +151,7 @@ export default function App() {
             <DataPoint
               id={2}
               marker="circle"
-              color="gray"
+              color="yellow"
               columnX="Bob John"
               columnY="math 116"
               columnZ={87}
@@ -161,7 +160,7 @@ export default function App() {
             <DataPoint
               id={3}
               marker="circle"
-              color="gray"
+              color="yellow"
               columnX="Alice Smith"
               columnY="stat 245"
               columnZ={75}
@@ -170,7 +169,7 @@ export default function App() {
             <DataPoint
               id={4}
               marker="circle"
-              color="gray"
+              color="yellow"
               columnX="Bob Smith"
               columnY="math 115"
               columnZ={85}
