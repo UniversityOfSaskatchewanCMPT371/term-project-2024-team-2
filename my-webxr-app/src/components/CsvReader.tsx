@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   validateDbAndStore, handleParsedData, parseAndHandleUrlCsv,
 } from '../utils/CsvUtils';
+import assert from '../utils/Assert';
 
 interface CsvReaderProps {
   dbName: string;
@@ -17,8 +18,8 @@ interface CsvReaderProps {
  * @param {string} props.storeName - The name of the store within the database where the data should
  * be stored.
  *
- * Precondition: dbName and storeName are valid
- * PostCondition: there will be a new table inside IndexedDB after this function is finished.
+ * @Precondition: dbName and storeName are valid
+ * @PostCondition: there will be a new table inside IndexedDB after this function is finished.
  *
  * @returns {JSX.Element} A form with an input field for the local CSV and a button to load the CSV
  * data. After successful loading, a success message is displayed. If an error occurs, an error
@@ -29,6 +30,10 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
+    assert(selectedFile!==undefined || selectedFile!==null, 'Error in LocalCsvReader.tsx: selectedFile is undefined')
+    assert(dbName!==undefined || dbName!==null, 'Error in LocalCsvReader.tsx: dbName is undefined')
+    assert(storeName!==undefined || storeName!==null, 'Error in LocalCsvReader.tsx: storeName is undefined')
+    
 
     let batch: Array<Array<string | number | null>> = [];
     const reader = selectedFile?.stream().getReader();
@@ -40,24 +45,25 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
       await validateDbAndStore(dbName, storeName);
 
       try {
-        let chunk;
-        while (!((chunk = await reader?.read())?.done)) {
+        let chunk = await reader?.read();
+        while (!chunk?.done) {
           const textChunk = decoder.decode(chunk?.value, { stream: true });
           const lines = textChunk.split('\n');
-          for (const line of lines) {
+          lines.forEach((line) => {
             batch.push(line.split(','));
             counter += 1;
-          }
+          });
+          chunk = await reader?.read();
+        }
           if (batch.length >= BATCHSIZE) {
             handleParsedData(batch, dbName, storeName, counter);
             batch = [];
-          }
-        }
+          } 
         // Handles the final batch or whatever information is left in the file
         decoder.decode();
         if (batch.length > 0) {
-          console.log('Final BATCH\n:');
-          console.log(storeName);
+          // console.log('Final BATCH\n:');
+          // console.log(storeName);
           handleParsedData(batch, dbName, storeName, counter);
         }
       } catch (e) {
@@ -77,7 +83,7 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
       {message && <div>{message}</div>}
     </div>
   );
-}
+  }
 
 export function addBatch(columnNames: string[], dataRows: Array<Array<string | number | null>>) {
   const dataMap = new Map<string, Array<string | number | null>>();
