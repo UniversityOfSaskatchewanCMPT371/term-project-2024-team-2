@@ -28,6 +28,26 @@ describe('DbRepository Test', () => {
     await Dexie.delete(testDbName);
   });
 
+  test('isTableEmpty - Check all empty tables', async () => {
+    const isRawEmpty = await repository.isTableEmpty(ColumnType.RAW);
+    const isStatsEmpty = await repository.isTableEmpty(ColumnType.STATS);
+    const isStandardizedEmpty = await repository.isTableEmpty(ColumnType.STANDARDIZED);
+    const isPcaEmpty = await repository.isTableEmpty(ColumnType.PCA);
+
+    expect(isRawEmpty).toBe(true);
+    expect(isStatsEmpty).toBe(true);
+    expect(isStandardizedEmpty).toBe(true);
+    expect(isPcaEmpty).toBe(true);
+  });
+
+  test('isTableEmpty - Check a non empty table', async () => {
+    const column = new Column<DataColumn>('test', [1, 2, 3]);
+    await repository.addColumn(column, ColumnType.RAW);
+    const isEmpty = await repository.isTableEmpty(ColumnType.RAW);
+
+    expect(isEmpty).toBe(false);
+  });
+
   test('addColumn - add points when db has duplicate columns - expect Exception', async () => {
     const column = new Column<DataColumn>('test', ['CMPT371', 'Osgood', 'Oculus']);
     const dup = new Column<DataColumn>('test', [1, 2, 3]);

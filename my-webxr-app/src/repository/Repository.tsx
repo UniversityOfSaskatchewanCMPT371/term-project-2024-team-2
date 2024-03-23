@@ -14,4 +14,5 @@ export interface Repository {
   getDataColumn: (columnName: string, columnType: ColumnType) => Promise<Column<DataColumn>>;
   updateDataColumn: (column: Column<DataColumn>, columnType: ColumnType) => Promise<boolean>;
   getStatsColumn: (columnName: string) => Promise<Column<StatsColumn>>;
+  isTableEmpty(columnType: ColumnType): Promise<boolean>;
 }

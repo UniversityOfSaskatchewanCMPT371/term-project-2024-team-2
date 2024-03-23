@@ -42,6 +42,35 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
+   * Checks if the table is empty
+   *
+   * @param {ColumnType} columnType the type of column table to be checked
+   */
+
+  async isTableEmpty(columnType: ColumnType): Promise<boolean> {
+    let count = 0;
+
+    switch (columnType) {
+      case ColumnType.RAW:
+        count = await this.rawColumns.count();
+        break;
+      case ColumnType.STATS:
+        count = await this.statsColumns.count();
+        break;
+      case ColumnType.STANDARDIZED:
+        count = await this.standardizedColumns.count();
+        break;
+      case ColumnType.PCA:
+        count = await this.pcaColumns.count();
+        break;
+      default:
+        throw new Error(`Unknown column type: ${columnType}`);
+    }
+
+    return count === 0;
+  }
+
+  /**
    * addColumn adds a column to the database
    * @param column the column to be added to the database
    * @param columnType the type of column to be added
