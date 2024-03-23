@@ -11,22 +11,31 @@ import Column, {
 export default class DataLayer implements DataAbstractor {
   private repository: Repository;
 
+  private isFirstBatch: boolean;
+
   /**
    * Create a new Data Layer instance.
    * @param dbName (optional) the name of the Data Repository.
    */
   constructor(dbName?: string) {
     this.repository = new DbRepository(dbName ?? 'DAL_DB');
+    this.isFirstBatch = true;
   }
 
   /**
-   * Transport a stream of batched data to be referenced column-wise instead of row-wise.
+   * Transposes a 2D array of data. Helper function for storeCSV()
    *
-   * @param batchItems A 2D array of CSV data that is referenced by row.
-   * @returns batchItems transposed to be referenced by column instead of by row.
+   * This method takes a 2D array (batchItems) where the inner arrays represent rows of data,
+   * and transposes it so that the inner arrays represent columns of data instead. This is useful
+   * when you want to perform operations on columns of data rather than rows.
+   *
+   * @param {BatchedDataStream} batchItems - A 2D array of data where each inner array represents
+   * a row.
+   * @returns {BatchedDataStream} A 2D array where each inner array represents a column of the
+   * original data.
    * @protected
    */
-  protected static transposeData(batchItems: BatchedDataStream) {
+  protected static transposeData(batchItems: BatchedDataStream): BatchedDataStream {
     const rows = batchItems.length;
     const cols = batchItems[0]?.length ?? 0;
     const transposedItems: BatchedDataStream = [];
@@ -42,6 +51,56 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
+   * Asynchronously stores a batch of CSV data in the repository.
+   *
+   * This method transposes the csv data, so it can be referenced by column instead of by row.
+   * For each column in the transposed data, it retrieves the existing column from the repository
+   * and appends the new values to it. If the column doesn't exist in the repository, it creates a
+   * new one.
+   * All these operations are performed concurrently for improved performance.
+   *
+   * If any error occurs during the operation, the method catches the error and returns `false`.
+   *
+   * @param {BatchedDataStream} batchItems - A 2D array of CSV data that is referenced by row.
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
+   * and `false` otherwise.
+   */
+
+  async storeCSV(batchItems: BatchedDataStream): Promise<boolean> {
+    try {
+      const transposedData = DataLayer.transposeData(batchItems);
+
+      const promises = transposedData.map(async (column, index) => {
+        let columnName: string;
+        let newValues: DataColumn;
+
+        if (this.isFirstBatch) {
+          columnName = String(column[0]);
+          newValues = column.slice(1);
+          const aColumn = new Column<DataColumn>(columnName, newValues);
+          await this.repository.addColumn(aColumn, ColumnType.RAW);
+        } else {
+          const columnNames = await this.repository.getAllColumnNames();
+          columnName = columnNames[index];
+          newValues = column;
+          const existingColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
+          existingColumn.values.push(...newValues);
+          await this.repository.updateDataColumn(existingColumn, ColumnType.RAW);
+        }
+      });
+      await Promise.all(promises);
+
+      this.isFirstBatch = false;
+
+      return true;
+    } catch (error) {
+      return Promise.resolve(false);
+    }
+  }
+
+  /**
+   * Helper function for calculateStatistics()
+   *
    * Calculate the statistical values for a given column.
    *
    * @param {Column<DataColumn>} column The column of data to calculate statistics for.
@@ -53,18 +112,27 @@ export default class DataLayer implements DataAbstractor {
     column: Column<DataColumn>,
     columnName: string,
   ): Column<StatsColumn> {
+    const totalElement = column.values.length;
     // Handle empty column case
-    if (column.values.length === 0) {
+    if (totalElement === 0) {
       return new Column<StatsColumn>(columnName, {
         count: 0,
         sum: 0,
         sumOfSquares: 0,
         mean: 0,
         stdDev: 0,
+        isQuality: false,
       });
     }
     // Normal cases
-    const numberedItems = column.values.map((item) => ((typeof item === 'number') ? item : 0));
+    let isQuality = true;
+    const numberedItems = column.values.map((item) => {
+      if (typeof item !== 'number') {
+        isQuality = false;
+        return 0;
+      }
+      return item;
+    });
     const count = numberedItems.length;
     const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
     const sumOfSquares = numberedItems.reduce((runningTotal, x) => runningTotal + x ** 2, 0);
@@ -81,6 +149,7 @@ export default class DataLayer implements DataAbstractor {
       sumOfSquares,
       mean,
       stdDev,
+      isQuality,
     });
   }
 
@@ -114,41 +183,41 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
- * Retrieve the available fields (column headers) from the data repository.
- * This method calls the `getAllColumnNames` method of the `Repository` instance.
- *
- * @returns {Promise<string[]>} A promise that resolves to an array of column names.
- */
+   * Retrieve the available fields (column headers) from the data repository.
+   * This method calls the `getAllColumnNames` method of the `Repository` instance.
+   *
+   * @returns {Promise<string[]>} A promise that resolves to an array of column names.
+   */
   async getAvailableFields(): Promise<string[]> {
     return this.repository.getAllColumnNames();
   }
 
   /**
-   * WIP
+   * TODO - helper function for writeStandardizedData()
    */
-  // temp disable
-  // eslint-disable-next-line class-methods-use-this
-  async storeCSV(batchItems: BatchedDataStream) {
-    const transposedData = DataLayer.transposeData(batchItems);
-    // @ts-expect-error temp disable
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const itemsStats = DataLayer.calculateStatistics(transposedData);
-
-    // TODO: Find a way to deal with partial columns
-    transposedData.forEach((column) => {
-      this.repository.addColumn(
-        new Column<DataColumn>(
-          String(column[0]),
-          column.slice(1),
-        ),
-        ColumnType.RAW,
-      );
-    });
-    return Promise.resolve(true);
+  protected static standarizeData() {
   }
 
   /**
-   * need to clauclate satandreized data for each column
+   * TODO
+   */
+  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-empty-function
+  async writeStandardizedData() {
+  }
+
+  /**
+   * TODO
+   * Helper function for storePCA
+   * @protected
+   */
+  protected static calculatePCA() {
+  }
+
+  /**
+   * TODO - modify PCA column to store varience explained or eignevalues
+   * Write back the PCA column to the repository. Name column in terms of their significant.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    */
   // temp disable
   // eslint-disable-next-line class-methods-use-this
@@ -157,8 +226,8 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * WIP
-   * slect a clumn for a axis return data poiunt of the whole volumn
+   * TODO
+   * Select a raw data column from the repository for graphing
    */
   // temp disable
   // eslint-disable-next-line class-methods-use-this
@@ -167,8 +236,8 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * WIP
-   * slect a pca cplumn fo an axis
+   * TODO
+   * Select a PCA column from the repository
    */
   // temp disable
   // eslint-disable-next-line class-methods-use-this

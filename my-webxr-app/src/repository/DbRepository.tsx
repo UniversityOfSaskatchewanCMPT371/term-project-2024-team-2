@@ -62,6 +62,29 @@ export default class DbRepository extends Dexie implements Repository {
     }
   }
 
+  async updateDataColumn(column: Column<DataColumn>, columnType: ColumnType) {
+    let columnsTable;
+    switch (columnType) {
+      case ColumnType.RAW:
+        columnsTable = this.rawColumns;
+        break;
+      case ColumnType.STANDARDIZED:
+        columnsTable = this.standardizedColumns;
+        break;
+      case ColumnType.PCA:
+        columnsTable = this.pcaColumns;
+        break;
+      default: // This shouldn't ever occur because of the Enum usage
+        throw new Error(`Invalid columnType: ${columnType}`);
+    }
+    try {
+      await columnsTable.put(column);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   /**
    *Return a column object from the RawData/StandardizedData/PCAData table based on given column
    * name and column type.
@@ -190,13 +213,13 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * Retrieves all column names from the 'statsColumns' table (look up table) in the database.
+   * Retrieves all column names from the raw data table in the database.
    *
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
   async getAllColumnNames(): Promise<string[]> {
     const rawColumnNames: string[] = [];
-    const columns = await this.statsColumns.toArray();
+    const columns = await this.rawColumns.toArray();
     const columnNames = columns.map((column) => column.name);
     rawColumnNames.push(...columnNames);
     return Promise.resolve(rawColumnNames);

@@ -104,9 +104,9 @@ describe('DbRepository Test', () => {
     const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
     const testColumn2 = new Column<DataColumn>('column2', ['a', 'b', 'c']);
     const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
-    repository.addColumn(testColumn1, ColumnType.STATS);
-    repository.addColumn(testColumn2, ColumnType.STATS);
-    repository.addColumn(testColumn3, ColumnType.STATS);
+    repository.addColumn(testColumn1, ColumnType.RAW);
+    repository.addColumn(testColumn2, ColumnType.RAW);
+    repository.addColumn(testColumn3, ColumnType.RAW);
 
     const columnNames = await repository.getAllColumnNames();
 
@@ -126,6 +126,7 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
+      isQuality: true,
     });
     await repository.addColumn(testColumn, ColumnType.STATS);
 

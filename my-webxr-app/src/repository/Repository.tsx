@@ -11,5 +11,6 @@ export interface Repository {
   addColumn: (column: Column<DataColumn | StatsColumn>, columnType: ColumnType) => Promise<string>;
   getAllColumnNames: () => Promise<string[]>;
   getDataColumn: (columnName: string, columnType: ColumnType) => Promise<Column<DataColumn>>;
+  updateDataColumn: (column: Column<DataColumn>, columnType: ColumnType) => Promise<boolean>;
   getStatsColumn: (columnName: string) => Promise<Column<StatsColumn>>;
 }

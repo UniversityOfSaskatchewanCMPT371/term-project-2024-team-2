@@ -1,6 +1,9 @@
+import 'fake-indexeddb/auto';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
-import { BatchedDataStream } from '../../src/data/DataLayer';
-import Column, { DataColumn, StatsColumn } from '../../src/repository/Column';
+import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
+import Column, { ColumnType, DataColumn, StatsColumn } from '../../src/repository/Column';
+import { Repository } from '../../src/repository/Repository';
+import DbRepository from '../../src/repository/DbRepository';
 
 describe('Validate transposeData() operation', () => {
   test('transposeData with an empty data table (0x0)', async () => {
@@ -92,6 +95,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 0,
       mean: 0,
       stdDev: 0,
+      isQuality: false,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn).toEqual(expectedColumn);
@@ -109,8 +113,10 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 0,
       mean: 0,
       stdDev: 0,
+      isQuality: false,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
+    console.log(resultColumn);
     expect(resultColumn).toEqual(expectedColumn);
   });
 
@@ -126,6 +132,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 0.816,
+      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -147,6 +154,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 12,
       mean: 2,
       stdDev: 0,
+      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -168,6 +176,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 9,
       mean: 3,
       stdDev: 0,
+      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -189,6 +198,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 1573,
       mean: 27.5,
       stdDev: 5.5,
+      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -196,5 +206,91 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expect(resultColumn.values.sumOfSquares).toEqual(expectedColumn.values.sumOfSquares);
     expect(resultColumn.values.mean).toEqual(expectedColumn.values.mean);
     expect(resultColumn.values.stdDev).toEqual(expectedColumn.values.stdDev);
+  });
+});
+
+describe('storeCSV', () => {
+  let dataLayer: DataLayer;
+  let repository: Repository;
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase('Test_DB');
+    repository = new DbRepository('Test_DB');
+    dataLayer = new DataLayer('Test_DB');
+  });
+
+  test('should store 1 batch correctly', async () => {
+    const batchItems: BatchedDataStream = [
+      ['column1', 'column2'],
+      ['value1a', 'value2a'],
+      ['value1b', 'value2b'],
+      ['value1c', 'value2c'],
+    ];
+
+    const resolve = await dataLayer.storeCSV(batchItems);
+    expect(resolve).toEqual(true);
+
+    const column1 = await repository.getDataColumn('column1', ColumnType.RAW);
+    const column2 = await repository.getDataColumn('column2', ColumnType.RAW);
+
+    expect(column1.values).toEqual(['value1a', 'value1b', 'value1c']);
+    expect(column2.values).toEqual(['value2a', 'value2b', 'value2c']);
+  });
+
+  test('should store 2 batch correctly', async () => {
+    const firstBatchItems: BatchedDataStream = [
+      ['column1', 'column2'],
+      ['value1a', 'value2a'],
+      ['value1b', 'value2b'],
+      ['value1c', 'value2c'],
+    ];
+
+    const secondBatchItems: BatchedDataStream = [
+      ['value1d', 'value2d'],
+      ['value1e', 'value2e'],
+      ['value1f', 'value2f'],
+    ];
+
+    const resolve1 = await dataLayer.storeCSV(firstBatchItems);
+    const resolve2 = await dataLayer.storeCSV(secondBatchItems);
+
+    expect(resolve1).toEqual(true);
+    expect(resolve2).toEqual(true);
+
+    const column1 = await repository.getDataColumn('column1', ColumnType.RAW);
+    const column2 = await repository.getDataColumn('column2', ColumnType.RAW);
+
+    expect(column1.values).toEqual(['value1a', 'value1b', 'value1c', 'value1d', 'value1e', 'value1f']);
+    expect(column2.values).toEqual(['value2a', 'value2b', 'value2c', 'value2d', 'value2e', 'value2f']);
+  });
+
+  test('should store 3 batch correctly', async () => {
+    const firstBatchItems: BatchedDataStream = [
+      ['column1', 'column2'],
+      ['value1a', 'value2a'],
+      ['value1b', 'value2b'],
+    ];
+    const secondBatchItems: BatchedDataStream = [
+      ['value1c', 'value2c'],
+      ['value1d', 'value2d'],
+    ];
+    const thirdBatchItems: BatchedDataStream = [
+      ['value1e', 'value2e'],
+      ['value1f', 'value2f'],
+    ];
+
+    const resolve1 = await dataLayer.storeCSV(firstBatchItems);
+    const resolve2 = await dataLayer.storeCSV(secondBatchItems);
+    const resolve3 = await dataLayer.storeCSV(thirdBatchItems);
+
+    expect(resolve1).toEqual(true);
+    expect(resolve2).toEqual(true);
+    expect(resolve3).toEqual(true);
+
+    const column1 = await repository.getDataColumn('column1', ColumnType.RAW);
+    const column2 = await repository.getDataColumn('column2', ColumnType.RAW);
+
+    expect(column1.values).toEqual(['value1a', 'value1b', 'value1c', 'value1d', 'value1e', 'value1f']);
+    expect(column2.values).toEqual(['value2a', 'value2b', 'value2c', 'value2d', 'value2e', 'value2f']);
   });
 });
