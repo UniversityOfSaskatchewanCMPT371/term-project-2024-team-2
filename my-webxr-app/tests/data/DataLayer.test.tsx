@@ -128,9 +128,9 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expectedColumnValues = {
       count: 3,
       sum: 6,
-      sumOfSquares: 14,
+      sumOfSquares: 2,
       mean: 2,
-      stdDev: 0.816,
+      stdDev: 1,
       isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
@@ -138,7 +138,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expect(resultColumn.values.sum).toEqual(expectedColumn.values.sum);
     expect(resultColumn.values.sumOfSquares).toEqual(expectedColumn.values.sumOfSquares);
     expect(resultColumn.values.mean).toEqual(expectedColumn.values.mean);
-    expect(resultColumn.values.stdDev).toBeCloseTo(expectedColumn.values.stdDev, 3);
+    expect(resultColumn.values.stdDev).toEqual(expectedColumn.values.stdDev);
   });
 
   test('calculateStatistics on a constant data column, has no stdDev', () => {
@@ -150,7 +150,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expectedColumnValues = {
       count: 3,
       sum: 6,
-      sumOfSquares: 12,
+      sumOfSquares: 0,
       mean: 2,
       stdDev: 0,
       isQuality: true,
@@ -172,7 +172,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expectedColumnValues = {
       count: 1,
       sum: 3,
-      sumOfSquares: 9,
+      sumOfSquares: 0,
       mean: 3,
       stdDev: 0,
       isQuality: true,
@@ -190,13 +190,12 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     testColumnValues = [22, 33];
     testColumn = new Column<DataColumn>(columnName, testColumnValues);
     resultColumn = PrivilegedDataLayer.calculateColumnStatistics(testColumn, columnName);
-
     expectedColumnValues = {
       count: 2,
       sum: 55,
-      sumOfSquares: 1573,
+      sumOfSquares: 60.5,
       mean: 27.5,
-      stdDev: 5.5,
+      stdDev: 7.778,
       isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
@@ -204,11 +203,11 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expect(resultColumn.values.sum).toEqual(expectedColumn.values.sum);
     expect(resultColumn.values.sumOfSquares).toEqual(expectedColumn.values.sumOfSquares);
     expect(resultColumn.values.mean).toEqual(expectedColumn.values.mean);
-    expect(resultColumn.values.stdDev).toEqual(expectedColumn.values.stdDev);
+    expect(resultColumn.values.stdDev).toBeCloseTo(expectedColumn.values.stdDev, 3);
   });
 });
 
-describe('storeCSV', () => {
+describe('Validate storeCSV() operation', () => {
   let dataLayer: DataLayer;
   let repository: Repository;
 
@@ -291,5 +290,72 @@ describe('storeCSV', () => {
 
     expect(column1.values).toEqual(['value1a', 'value1b', 'value1c', 'value1d', 'value1e', 'value1f']);
     expect(column2.values).toEqual(['value2a', 'value2b', 'value2c', 'value2d', 'value2e', 'value2f']);
+  });
+});
+
+describe('Validate standardizeQualityColumn() operation', () => {
+  let dataLayer: DataLayer;
+  let repository: Repository;
+  let testRawColumn: Column<DataColumn>;
+  let testStatsColumn: Column<StatsColumn>;
+  let resultColumn: Column<DataColumn>;
+  let expectStandardizedColumn: Array<number>;
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase('Test_DB');
+    repository = new DbRepository('Test_DB');
+    dataLayer = new DataLayer('Test_DB');
+  });
+
+  test('standardizeQualityColumns - Standardize a quality column', async () => {
+    testRawColumn = new Column<DataColumn>('testColumn', [1, 5, 1, 5, 8]);
+    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
+    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+
+    expectStandardizedColumn = [-1, 0.333, -1, 0.333, 1.333];
+    resultColumn.values.forEach((value, index) => {
+      expect(value).toBeCloseTo(expectStandardizedColumn[index], 3);
+    });
+  });
+
+  test('standardizeQualityColumns - Standardize a quality column', async () => {
+    testRawColumn = new Column<DataColumn>('testColumn', [2, 5, 4, 3, 1]);
+    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
+    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+
+    expectStandardizedColumn = [-0.632, 1.265, 0.632, 0, -1.265];
+    resultColumn.values.forEach((value, index) => {
+      expect(value).toBeCloseTo(expectStandardizedColumn[index], 3);
+    });
+  });
+
+  test('standardizeQualityColumns - Standardize a quality column', async () => {
+    testRawColumn = new Column<DataColumn>('testColumn', [3, 6, 2, 2, 2]);
+    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
+    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+
+    expectStandardizedColumn = [0, 1.732, -0.577, -0.577, -0.577];
+    resultColumn.values.forEach((value, index) => {
+      expect(value).toBeCloseTo(expectStandardizedColumn[index], 3);
+    });
+  });
+
+  test('standardizeQualityColumns - Standardize a quality column', async () => {
+    testRawColumn = new Column<DataColumn>('testColumn', [4, 7, 3, 1, 2]);
+    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
+    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+
+    expectStandardizedColumn = [0.261, 1.564, -0.174, -1.042, -0.608];
+    resultColumn.values.forEach((value, index) => {
+      expect(value).toBeCloseTo(expectStandardizedColumn[index], 3);
+    });
   });
 });
