@@ -138,7 +138,7 @@ export default class DataLayer implements DataAbstractor {
     const count = numberedItems.length;
     const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
     const mean = sum / ((count !== 0) ? count : 1);
-    const sumOfSquares = numberedItems.reduce((runningTotal, x) => runningTotal + (x - mean) ** 2, 0);
+    const sumOfSquares = numberedItems.reduce((runningSum, x) => runningSum + (x - mean) ** 2, 0);
     // Note this is sample standard deviation
     const stdDev = (
       (count >= 2)
@@ -198,11 +198,13 @@ export default class DataLayer implements DataAbstractor {
   /**
    * This function standardizes a specified quality column in the repository.
    *
-   * This function takes the name of a quality column, retrieves the corresponding raw data column and stats column.
-   * For each entry in the raw data column, it standardizes the data using the mean and standard deviation from the stats column.
+   * This function takes the name of a quality column, retrieves the corresponding raw data column
+   * and stats column. For each entry in the raw data column, it standardizes the data using the
+   * mean and standard deviation from the stats column.
    *
    * @param {string} columnName - The name of the quality column to be standardized.
-   * @return {Promise<Column<DataColumn>>} A promise that resolves to a Column object containing the standardized data.
+   * @return {Promise<Column<DataColumn>>} A promise that resolves to a Column object containing the
+   * standardized data.
    * @throws {Error} If the specified column is not a quality column.
    */
   async standardizeQualityColumn(columnName: string): Promise<Column<DataColumn>> {
@@ -212,7 +214,7 @@ export default class DataLayer implements DataAbstractor {
     const { stdDev } = statsColumn.values;
     const rawDataColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
 
-    // @ts-ignore all value must be number is guaranteed by isQuality, ignore value type check
+    // @ts-expect-error all value must be number is guaranteed by isQuality, ignore value type check
     rawDataColumn.values = rawDataColumn.values.map((value) => (value - mean) / stdDev);
     return new Column<DataColumn>(columnName, rawDataColumn.values);
   }
