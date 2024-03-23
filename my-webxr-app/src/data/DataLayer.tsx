@@ -101,7 +101,8 @@ export default class DataLayer implements DataAbstractor {
   /**
    * Helper function for calculateStatistics()
    *
-   * Calculate the statistical values for a given column.
+   * Calculate the statistical values for a given column. This will also flag if a column is quality
+   * , meaning that all data points are of the same numeric type and there are no missing data.
    *
    * @param {Column<DataColumn>} column The column of data to calculate statistics for.
    * @param {string} columnName The name of the column.

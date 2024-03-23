@@ -31,7 +31,7 @@ export type StatsColumn = {
   sumOfSquares: number;
   mean: number;
   stdDev: number;
-  isQuality: boolean;
+  isQuality: boolean; // true iff all numeric and no missing data points
 };
 
 export enum ColumnType {

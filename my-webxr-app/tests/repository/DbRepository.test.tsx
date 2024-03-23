@@ -153,4 +153,38 @@ describe('DbRepository Test', () => {
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
   });
+
+  test('getQualityColumnNames - Get quality column names', async () => {
+    const testColumn1 = new Column<StatsColumn>('column1', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+      isQuality: true,
+    });
+    const testColumn2 = new Column<StatsColumn>('column2', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+      isQuality: false,
+    });
+    const testColumn3 = new Column<StatsColumn>('column3', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+      isQuality: true,
+    });
+    await repository.addColumn(testColumn1, ColumnType.STATS);
+    await repository.addColumn(testColumn2, ColumnType.STATS);
+    await repository.addColumn(testColumn3, ColumnType.STATS);
+
+    const qualityColumnNames = await repository.getQualityColumnNames();
+
+    expect(qualityColumnNames).toEqual(['column1', 'column3']);
+  });
 });
