@@ -83,23 +83,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
   let expectedColumnValues: StatsColumn;
   let expectedColumn: Column<StatsColumn>;
 
-  test('calculateStatistics on an empty data column', () => {
-    columnName = 'test 1';
-    testColumnValues = [];
-    testColumn = new Column<DataColumn>(columnName, testColumnValues);
-    resultColumn = PrivilegedDataLayer.calculateColumnStatistics(testColumn, columnName);
-
-    expectedColumnValues = {
-      count: 0,
-      sum: 0,
-      sumOfSquares: 0,
-      mean: 0,
-      stdDev: 0,
-    };
-    expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
-    expect(resultColumn).toEqual(expectedColumn);
-  });
-
   test('calculateStatistics on a normal data column', () => {
     columnName = 'test 1';
     testColumnValues = [1, 2, 3];

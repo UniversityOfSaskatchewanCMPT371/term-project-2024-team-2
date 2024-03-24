@@ -115,8 +115,9 @@ export default class DataLayer implements DataAbstractor {
     column: Column<DataColumn>,
     columnName: string,
   ): Column<StatsColumn> {
-    // Assert that all values in column.values are numbers
-    assert.ok(column.values.every((value) => typeof value === 'number'), 'All values in column must be numbers');
+    assert.ok(column.values.length > 0, `Column ${columnName} must have at least one value`);
+    // Assert column.values are array of numbers, check only the first element to save time
+    assert.ok(typeof column.values[0] === 'number', 'The first value in column must be a number');
 
     const count = column.values.length;
     const sum = (column.values as number[]).reduce((runningTotal, x) => runningTotal + x, 0);
