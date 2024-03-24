@@ -86,7 +86,7 @@ describe('DbRepository Test', () => {
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
   });
 
-  test('getAllColumnNames - Get all column names from statsColumns or the look up table', async () => {
+  test('getCSvColumnNames - Get all column names from raw data table', async () => {
     const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
     const testColumn2 = new Column<DataColumn>('column2', ['a', 'b', 'c']);
     const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
@@ -94,13 +94,88 @@ describe('DbRepository Test', () => {
     repository.addColumn(testColumn2, ColumnType.RAW);
     repository.addColumn(testColumn3, ColumnType.RAW);
 
-    const columnNames = await repository.getAllColumnNames();
+    const columnNames = await repository.getCsvColumnNames();
 
     expect(columnNames).toEqual(['column1', 'column2', 'column3']);
   });
 
-  test('getAllColumnNames - Get column names from empty table', async () => {
-    const columnNames = await repository.getAllColumnNames();
+  test('getCsvColumnNames - Get column names from empty table', async () => {
+    const columnNames = await repository.getCsvColumnNames();
+
+    expect(columnNames).toEqual([]);
+  });
+
+  test('getPcaColumnNames - Get all column names from pca data table', async () => {
+    const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
+    const testColumn2 = new Column<DataColumn>('column2', [10, 20, 30]);
+    const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
+    repository.addColumn(testColumn1, ColumnType.PCA);
+    repository.addColumn(testColumn2, ColumnType.PCA);
+    repository.addColumn(testColumn3, ColumnType.PCA);
+
+    const columnNames = await repository.getPcaColumnNames();
+
+    expect(columnNames).toEqual(['column1', 'column2', 'column3']);
+  });
+
+  test('getPcaColumnNames - Get column names from empty table', async () => {
+    const columnNames = await repository.getPcaColumnNames();
+
+    expect(columnNames).toEqual([]);
+  });
+
+  test('getStandarizedColumnNames - Get all column names from standardized data table', async () => {
+    const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
+    const testColumn2 = new Column<DataColumn>('column2', [10, 20, 30]);
+    const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
+    repository.addColumn(testColumn1, ColumnType.STANDARDIZED);
+    repository.addColumn(testColumn2, ColumnType.STANDARDIZED);
+    repository.addColumn(testColumn3, ColumnType.STANDARDIZED);
+
+    const columnNames = await repository.getStandarizedColumnNames();
+
+    expect(columnNames).toEqual(['column1', 'column2', 'column3']);
+  });
+
+  test('getStandarizedColumnNames - Get column names from empty table', async () => {
+    const columnNames = await repository.getStandarizedColumnNames();
+
+    expect(columnNames).toEqual([]);
+  });
+
+  test('getStatsColumnNames - Get all column names from stat data table', async () => {
+    const testColumn1 = new Column<StatsColumn>('column1', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+    });
+    const testColumn2 = new Column<StatsColumn>('column2', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+    });
+    const testColumn3 = new Column<StatsColumn>('column3', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+    });
+    repository.addColumn(testColumn1, ColumnType.STATS);
+    repository.addColumn(testColumn2, ColumnType.STATS);
+    repository.addColumn(testColumn3, ColumnType.STATS);
+
+    const columnNames = await repository.getStatsColumnNames();
+
+    expect(columnNames).toEqual(['column1', 'column2', 'column3']);
+  });
+
+  test('getStatsColumnNames - Get column names from empty table', async () => {
+    const columnNames = await repository.getStatsColumnNames();
 
     expect(columnNames).toEqual([]);
   });

@@ -82,7 +82,7 @@ export default class DataLayer implements DataAbstractor {
           const aColumn = new Column<DataColumn>(columnName, newValues);
           await this.repository.addColumn(aColumn, ColumnType.RAW);
         } else {
-          const columnNames = await this.repository.getAllColumnNames();
+          const columnNames = await this.repository.getCsvColumnNames();
           columnName = columnNames[index];
           newValues = column;
           const existingColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
@@ -157,7 +157,7 @@ export default class DataLayer implements DataAbstractor {
     try {
       const isEmpty = await this.repository.isTableEmpty(ColumnType.RAW);
       assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
-      const rawColumnNames = await this.repository.getAllColumnNames();
+      const rawColumnNames = await this.repository.getCsvColumnNames();
 
       // eslint-disable-next-line consistent-return -- return undefined if all values are not number
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
@@ -185,7 +185,7 @@ export default class DataLayer implements DataAbstractor {
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
-    return this.repository.getAllColumnNames();
+    return this.repository.getCsvColumnNames();
   }
 
   /**
@@ -223,7 +223,7 @@ export default class DataLayer implements DataAbstractor {
     try {
       const isEmpty = await this.repository.isTableEmpty(ColumnType.STATS);
       assert.ok(!isEmpty, 'Stats table is empty, can not pull quality columns.');
-      const columnNames = await this.repository.getNumericColumnNames();
+      const columnNames = await this.repository.getStatsColumnNames();
 
       const promises = columnNames.map(async (name) => {
         const standardizedColumn = await this.standardizeColumn(name);

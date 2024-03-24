@@ -251,7 +251,7 @@ export default class DbRepository extends Dexie implements Repository {
    *
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
-  async getAllColumnNames(): Promise<string[]> {
+  async getCsvColumnNames(): Promise<string[]> {
     return await this.rawColumns.toCollection().keys() as string[];
   }
 
@@ -262,8 +262,28 @@ export default class DbRepository extends Dexie implements Repository {
    * Use the same logic as `getAllColumnNames` to save memory.
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
-  async getNumericColumnNames(): Promise<string[]> {
+  async getStatsColumnNames(): Promise<string[]> {
     return await this.statsColumns.toCollection().keys() as string[];
+  }
+
+  /**
+   * Retrieves all PCA column names from the PCA data table in the database.
+   *
+   * Use the same logic as `getAllColumnNames` to save memory.
+   * @returns {Promise<string[]>} A promise resolves to an array of column names.
+   */
+  async getPcaColumnNames(): Promise<string[]> {
+    return await this.pcaColumns.toCollection().keys() as string[];
+  }
+
+  /**
+   * Retrieves all PCA column names from the PCA data table in the database.
+   *
+   * Use the same logic as `getAllColumnNames` to save memory.
+   * @returns {Promise<string[]>} A promise resolves to an array of column names.
+   */
+  async getStandarizedColumnNames(): Promise<string[]> {
+    return await this.standardizedColumns.toCollection().keys() as string[];
   }
 
   /**

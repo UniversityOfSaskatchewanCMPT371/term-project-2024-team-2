@@ -9,8 +9,9 @@ export interface Repository {
     columnYName: string,
     columnZName: string) => Promise<Array<DataPoint>>;
   addColumn: (column: Column<DataColumn | StatsColumn>, columnType: ColumnType) => Promise<string>;
-  getAllColumnNames: () => Promise<string[]>;
-  getNumericColumnNames: () => Promise<string[]>;
+  getCsvColumnNames: () => Promise<string[]>;
+  getStatsColumnNames: () => Promise<string[]>;
+  getPcaColumnNames: () => Promise<string[]>;
   getDataColumn: (columnName: string, columnType: ColumnType) => Promise<Column<DataColumn>>;
   updateDataColumn: (column: Column<DataColumn>, columnType: ColumnType) => Promise<boolean>;
   getStatsColumn: (columnName: string) => Promise<Column<StatsColumn>>;
