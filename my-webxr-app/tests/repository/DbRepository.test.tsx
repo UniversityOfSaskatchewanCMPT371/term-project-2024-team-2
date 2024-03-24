@@ -124,7 +124,7 @@ describe('DbRepository Test', () => {
     expect(columnNames).toEqual([]);
   });
 
-  test('getStandarizedColumnNames - Get all column names from standardized data table', async () => {
+  test('getStandardizedColumnNames - Get all column names from standardized data table', async () => {
     const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
     const testColumn2 = new Column<DataColumn>('column2', [10, 20, 30]);
     const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
@@ -132,13 +132,13 @@ describe('DbRepository Test', () => {
     repository.addColumn(testColumn2, ColumnType.STANDARDIZED);
     repository.addColumn(testColumn3, ColumnType.STANDARDIZED);
 
-    const columnNames = await repository.getStandarizedColumnNames();
+    const columnNames = await repository.getStandardizedColumnNames();
 
     expect(columnNames).toEqual(['column1', 'column2', 'column3']);
   });
 
-  test('getStandarizedColumnNames - Get column names from empty table', async () => {
-    const columnNames = await repository.getStandarizedColumnNames();
+  test('getStandardizedColumnNames - Get column names from empty table', async () => {
+    const columnNames = await repository.getStandardizedColumnNames();
 
     expect(columnNames).toEqual([]);
   });

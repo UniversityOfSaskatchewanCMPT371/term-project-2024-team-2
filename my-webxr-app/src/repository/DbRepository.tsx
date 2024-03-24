@@ -242,7 +242,6 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * TODO may be also include PCA column names
    * Retrieves all column names from the raw data table in the database.
    *
    * This will include all columns that have been added from the CSV.
@@ -258,7 +257,6 @@ export default class DbRepository extends Dexie implements Repository {
   /**
    * Retrieves all numeric column names from the stat data table in the database.
    *
-   * This assumes that the stats data table (look-up table) contains only numeric columns.
    * Use the same logic as `getAllColumnNames` to save memory.
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
@@ -277,12 +275,12 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * Retrieves all PCA column names from the PCA data table in the database.
+   * Retrieves all standardized column names from the standardized data table in the database.
    *
    * Use the same logic as `getAllColumnNames` to save memory.
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
-  async getStandarizedColumnNames(): Promise<string[]> {
+  async getStandardizedColumnNames(): Promise<string[]> {
     return await this.standardizedColumns.toCollection().keys() as string[];
   }
 
