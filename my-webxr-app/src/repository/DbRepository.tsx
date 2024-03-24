@@ -242,31 +242,28 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
+   * TODO may be also include PCA column names
    * Retrieves all column names from the raw data table in the database.
+   *
    * This will include all columns that have been added from the CSV.
+   * The method uses Dexie's `toCollection` and `keys` methods to retrieve all keys which is column
+   * names from the `rawColumns` table without loading the entire column into memory.
    *
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
   async getAllColumnNames(): Promise<string[]> {
-    const rawColumnNames: string[] = [];
-    const columns = await this.rawColumns.toArray();
-    const columnNames = columns.map((column) => column.name);
-    rawColumnNames.push(...columnNames);
-    return Promise.resolve(rawColumnNames);
+    return await this.rawColumns.toCollection().keys() as string[];
   }
 
   /**
    * Retrieves all numeric column names from the stat data table in the database.
-   * This assumes that the stats data table (look-up table) contains only numeric columns.
    *
+   * This assumes that the stats data table (look-up table) contains only numeric columns.
+   * Use the same logic as `getAllColumnNames` to save memory.
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
   async getNumericColumnNames(): Promise<string[]> {
-    const numericColumnNames: string[] = [];
-    const columns = await this.statsColumns.toArray();
-    const columnNames = columns.map((column) => column.name);
-    numericColumnNames.push(...columnNames);
-    return Promise.resolve(numericColumnNames);
+    return await this.statsColumns.toCollection().keys() as string[];
   }
 
   /**
