@@ -121,16 +121,31 @@ export default function App() {
                 columnX="John Doe"
                 columnY="cmpt 145"
                 columnZ={97}
-                meshProps={{
-                  position: createPosition({
-                    data: [Math.random() * (maxNum * 2) - maxNum, Math.random() * (maxNum * 2)
-                      - maxNum, Math.random() * (maxNum * 2) - maxNum],
-                    AxisStartPoints: [startPointX, startPointY, startPointZ],
-                    length: Length,
-                    scale: scaleFactor,
-                    max: maxNum,
-                  }),
-                }}
+                // meshProps={{
+                //   position: createPosition({
+                //     data: [Math.random() * (maxNum * 2) - maxNum, Math.random() * (maxNum * 2)
+                //       - maxNum, Math.random() * (maxNum * 2) - maxNum],
+                //     AxisStartPoints: [startPointX, startPointY, startPointZ],
+                //     length: Length,
+                //     scale: scaleFactor,
+                //     max: maxNum,
+                //   }),
+                // }}
+                positions={new Float32Array(createPosition({
+                  data: [Math.random() * (maxNum * 2) - maxNum, Math.random() * (maxNum * 2)
+                        - maxNum, Math.random() * (maxNum * 2) - maxNum],
+                  AxisStartPoints: [startPointX, startPointY, startPointZ],
+                  length: Length,
+                  scale: scaleFactor,
+                  max: maxNum,
+                }))}
+            // createPosition({
+            //       data: [0, 0, 0],
+            //       AxisStartPoints: [startPointX, startPointY, startPointZ],
+            //       length: Length,
+            //       scale: scaleFactor,
+            //       max: maxNum,
+            //     })
               />
             ))}
 
