@@ -1,6 +1,3 @@
-// import * as dotenv from "dotenv";
-// dotenv.config({ path:'.env' });
-
 export default function WriteHook(text: string): boolean {
   if (import.meta.env.VITE_IS_TESTING) {
     try {
