@@ -132,12 +132,16 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * Return a column object from the RawData/StandardizedData/PCAData table based on given column
-   * name and column type.
+   * Retrieves a column object from the specified table in the database based on the provided column
+   * name and type.
    *
-   * @param columnName the name of the column to be retrieved
-   * @param columnType the type of the column to be retrieved
-   * @return Promise<Column> the column object
+   * @param {string} columnName - The name of the column to be retrieved.
+   * @param {ColumnType} columnType - The type of the column to be retrieved. This determines the
+   * table to fetch the column from.
+   * @returns {Promise<Column<NumericColumn | RawColumn>>} - Returns a promise that resolves to the
+   * column object.
+   * @throws {Error} - Throws an error if an invalid column type is provided or if the column does
+   * not exist.
    */
   async getColumn(
     columnName: string,
