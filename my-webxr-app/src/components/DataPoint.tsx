@@ -5,12 +5,11 @@ import { TextureLoader } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
-import positions from './Positions.tsx';
 // eslint-disable-next-line import/no-absolute-path
 import circleImg from '/circle.png';
 
 export default function DataPoint({
-  id, marker, color, columnX, columnY, columnZ, outlineScale, size, positions,
+  id, marker, color, columnX, columnY, columnZ, positions,
 
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
@@ -46,7 +45,7 @@ export default function DataPoint({
           // Update point to be selected and set its fields
         } else {
           setSelectedDataPoint({
-            id, marker, color, columnX, columnY, columnZ,
+            id, marker, color, columnX, columnY, columnZ, positions,
           });
         }
       }}
