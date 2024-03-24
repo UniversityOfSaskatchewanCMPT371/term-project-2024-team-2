@@ -1,9 +1,13 @@
 import 'fake-indexeddb/auto';
 import { describe } from 'vitest';
+import { Matrix } from 'ml-matrix';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, StatsColumn,
+  ColumnType,
+  NumericColumn,
+  RawColumn,
+  StatsColumn,
 } from '../../src/repository/Column';
 import { Repository } from '../../src/repository/Repository';
 import DbRepository from '../../src/repository/DbRepository';
@@ -438,5 +442,41 @@ describe('Validate getAvailableFields operation', () => {
   test('getAvailableFields - Get column from both tables, both table empty', async () => {
     const result = await dataLayer.getAvailableFields();
     expect(result).toEqual([]);
+  });
+});
+
+describe('Validate getColumsForPca operation', () => {
+  let dataLayer: DataLayer;
+  let repository: Repository;
+
+  beforeEach(() => {
+    repository = new DbRepository('Test_DB');
+    dataLayer = new DataLayer('Test_DB');
+  });
+
+  test('getColumnsForPca - get standardized columns', async () => {
+    const columnNames = ['column1', 'column2'];
+    const column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
+    const column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
+    await repository.addColumn(column1, ColumnType.STANDARDIZED);
+    await repository.addColumn(column2, ColumnType.STANDARDIZED);
+
+    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
+
+    expect(result).toBeInstanceOf(Matrix);
+    expect(result.to2DArray()).toEqual([[1, 2, 3], [4, 5, 6]]);
+  });
+
+  test('getColumnsForPca - get raw columns', async () => {
+    const columnNames = ['column1', 'column2'];
+    const column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
+    const column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
+    await repository.addColumn(column1, ColumnType.RAW);
+    await repository.addColumn(column2, ColumnType.RAW);
+
+    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.RAW);
+
+    expect(result).toBeInstanceOf(Matrix);
+    expect(result.to2DArray()).toEqual([[1, 2, 3], [4, 5, 6]]);
   });
 });

@@ -248,23 +248,47 @@ export default class DataLayer implements DataAbstractor {
     }
   }
 
-  // TODO: queries coulmn names from stats table for PCA and let user choose subset to do pca on
+  // TODO: query column names from stats table for PCA and let user choose subset to do pca on
 
   /**
-   * TODO
-   * Helper function for storePCA
-   * @protected
+   * Retrieves column data for PCA. (Raw data or standardized data columns)
+   *
+   * This function accepts an array of column names, retrieves the corresponding data for each
+   * column based on the specified column type, and returns a new Matrix instance with the retrieved
+   * data.
+   *
+   * The Matrix size could be too large and exceed the memory limit. TODO handle this case.
+   *
+   * If an error occurs during the operation (e.g., a column does not exist, table empty), the
+   * function will catch the error and return an empty Matrix.
+   *
+   * @param {string[]} columnNames - The names of the columns to retrieve data for.
+   * @param {ColumnType} columnType - The type of the columns to retrieve data for.
+   * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
+   * retrieved data.
+   *
+   * @throws {Error} If the columnType is not RAW or STANDARDIZED.
    */
-  async getStandardizedColForPca(columnNames: string[]): Promise<Matrix> {
-    const columnDataArray: number[][] = [];
+  async getColumnsForPca(columnNames: string[], columnType: ColumnType): Promise<Matrix> {
+    if (columnType !== ColumnType.RAW && columnType !== ColumnType.STANDARDIZED) {
+      throw new Error('Invalid column type. Must be either RAW or STANDARDIZED.');
+    }
 
-    const promises = columnNames.map((columnName) => this.repository
-      .getColumn(columnName, ColumnType.STANDARDIZED)
-      .then((columnData) => columnDataArray.push(columnData.values as number[])));
+    try {
+      const columnDataArray: number[][] = [];
 
-    await Promise.all(promises);
+      // Assume all the columns are numeric
+      const promises = columnNames.map((columnName) => this.repository
+        .getColumn(columnName, columnType)
+        .then((columnData) => columnDataArray.push(columnData.values as number[])));
 
-    return new Matrix(columnDataArray);
+      await Promise.all(promises);
+
+      return new Matrix(columnDataArray);
+    } catch (error) {
+      // Logging the error here
+      return new Matrix([]);
+    }
   }
 
   /**
