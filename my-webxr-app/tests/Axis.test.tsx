@@ -22,9 +22,9 @@ describe('GenerateXYZ Tests', () => {
       </XR>,
     );
     // check the position of the axis vector is correct
-    expect(renderer.scene.children[1].instance.position).toEqual(
+    expect(renderer.scene.children[1].instance.position.equals(
       new Vector3(0, 0.82, -0.15),
-    );
+    )).toBe(true);
   });
 
   // test("Create single axis values 0-10 and see if increment is 1", async () => {
