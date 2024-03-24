@@ -270,7 +270,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     dataLayer = new DataLayer('Test_DB');
   });
 
-  test('standardizeQualityColumns - Standardize a numeric column', async () => {
+  test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [1, 5, 1, 5, 8]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
@@ -283,7 +283,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     });
   });
 
-  test('standardizeQualityColumns - Standardize a numeric column', async () => {
+  test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [2, 5, 4, 3, 1]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
@@ -296,7 +296,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     });
   });
 
-  test('standardizeQualityColumns - Standardize a numeric column', async () => {
+  test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [3, 6, 2, 2, 2]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
@@ -309,7 +309,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     });
   });
 
-  test('standardizeQualityColumns - Standardize a numeric column', async () => {
+  test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [4, 7, 3, 1, 2]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
