@@ -95,25 +95,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 0,
       mean: 0,
       stdDev: 0,
-      isQuality: false,
-    };
-    expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
-    expect(resultColumn).toEqual(expectedColumn);
-  });
-
-  test('calculateStatistics on a null data column', () => {
-    columnName = 'test 1';
-    testColumnValues = [null, null, null];
-    testColumn = new Column<DataColumn>(columnName, testColumnValues);
-    resultColumn = PrivilegedDataLayer.calculateColumnStatistics(testColumn, columnName);
-
-    expectedColumnValues = {
-      count: 3,
-      sum: 0,
-      sumOfSquares: 0,
-      mean: 0,
-      stdDev: 0,
-      isQuality: false,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn).toEqual(expectedColumn);
@@ -131,7 +112,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 2,
       mean: 2,
       stdDev: 1,
-      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -153,7 +133,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 0,
       mean: 2,
       stdDev: 0,
-      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -175,7 +154,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 0,
       mean: 3,
       stdDev: 0,
-      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -196,7 +174,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 60.5,
       mean: 27.5,
       stdDev: 7.778,
-      isQuality: true,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -312,7 +289,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
-    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+    resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [-1, 0.333, -1, 0.333, 1.333];
     resultColumn.values.forEach((value, index) => {
@@ -325,7 +302,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
-    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+    resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [-0.632, 1.265, 0.632, 0, -1.265];
     resultColumn.values.forEach((value, index) => {
@@ -338,7 +315,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
-    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+    resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [0, 1.732, -0.577, -0.577, -0.577];
     resultColumn.values.forEach((value, index) => {
@@ -351,7 +328,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
-    resultColumn = await dataLayer.standardizeQualityColumn('testColumn');
+    resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [0.261, 1.564, -0.174, -1.042, -0.608];
     resultColumn.values.forEach((value, index) => {

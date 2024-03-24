@@ -17,7 +17,7 @@ export default class Column<Type> {
 /**
  * The DataColumn type is used to represent a column of data from IndexedDB.
  */
-export type DataColumn = Array<string | number | null>;
+export type DataColumn = Array<string> | Array<number>;
 /**
  * The DataRow type is an abstraction of DataColumn for before CSV data is transposed into columns.
  */
@@ -31,7 +31,6 @@ export type StatsColumn = {
   sumOfSquares: number;
   mean: number;
   stdDev: number;
-  isQuality: boolean; // true iff all numeric and no missing data points
 };
 
 export enum ColumnType {

@@ -4,7 +4,6 @@ import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 import * as assert from 'assert';
 import DbRepository from '../../src/repository/DbRepository';
-import DataPoint from '../../src/repository/DataPoint';
 import Column, { ColumnType, DataColumn, StatsColumn } from '../../src/repository/Column';
 
 describe('DbRepository Test', () => {
@@ -87,39 +86,6 @@ describe('DbRepository Test', () => {
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
   });
 
-  test('getPoints - Get all points of 3 given columns', async () => {
-    const column1 = new Column<DataColumn>('column1', [1.1, null, 3.3]);
-    const column2 = new Column<DataColumn>('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
-    const column3 = new Column<DataColumn>('column3', [-1.1, -2.2, -3.3]);
-    repository.addColumn(column1, ColumnType.RAW);
-    repository.addColumn(column2, ColumnType.RAW);
-    repository.addColumn(column3, ColumnType.RAW);
-
-    const result = await repository.getPoints(false, 'column1', 'column2', 'column3');
-
-    expect(result).toHaveLength(3);
-    const expected = [new DataPoint(false, 1.1, 'CheeseCake', -1.1),
-      new DataPoint(true, null, 'Takoyaki', -2.2),
-      new DataPoint(false, 3.3, 'Poutine', -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
-  });
-
-  test('getPoints - Get points of 3 given columns - filter out points missing data', async () => {
-    const column1 = new Column<DataColumn>('column1', [1.1, null, 3.3]);
-    const column2 = new Column<DataColumn>('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
-    const column3 = new Column<DataColumn>('column3', [-1.1, -2.2, -3.3]);
-    repository.addColumn(column1, ColumnType.RAW);
-    repository.addColumn(column2, ColumnType.RAW);
-    repository.addColumn(column3, ColumnType.RAW);
-
-    const result = await repository.getPoints(true, 'column1', 'column2', 'column3');
-
-    expect(result).toHaveLength(2);
-    const expected = [new DataPoint(false, 1.1, 'CheeseCake', -1.1),
-      new DataPoint(false, 3.3, 'Poutine', -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
-  });
-
   test('getAllColumnNames - Get all column names from statsColumns or the look up table', async () => {
     const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
     const testColumn2 = new Column<DataColumn>('column2', ['a', 'b', 'c']);
@@ -146,7 +112,6 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
-      isQuality: true,
     });
     await repository.addColumn(testColumn, ColumnType.STATS);
 
@@ -172,39 +137,5 @@ describe('DbRepository Test', () => {
     await expect(repository.getDataColumn('nonExistentColumn', ColumnType.RAW))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
-  });
-
-  test('getQualityColumnNames - Get quality column names', async () => {
-    const testColumn1 = new Column<StatsColumn>('column1', {
-      count: 3,
-      sum: 6,
-      sumOfSquares: 14,
-      mean: 2,
-      stdDev: 1,
-      isQuality: true,
-    });
-    const testColumn2 = new Column<StatsColumn>('column2', {
-      count: 3,
-      sum: 6,
-      sumOfSquares: 14,
-      mean: 2,
-      stdDev: 1,
-      isQuality: false,
-    });
-    const testColumn3 = new Column<StatsColumn>('column3', {
-      count: 3,
-      sum: 6,
-      sumOfSquares: 14,
-      mean: 2,
-      stdDev: 1,
-      isQuality: true,
-    });
-    await repository.addColumn(testColumn1, ColumnType.STATS);
-    await repository.addColumn(testColumn2, ColumnType.STATS);
-    await repository.addColumn(testColumn3, ColumnType.STATS);
-
-    const qualityColumnNames = await repository.getQualityColumnNames();
-
-    expect(qualityColumnNames).toEqual(['column1', 'column3']);
   });
 });

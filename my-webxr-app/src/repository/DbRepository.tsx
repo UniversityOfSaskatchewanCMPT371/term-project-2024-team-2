@@ -256,21 +256,17 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * Retrieves all column quality column names from the stats data table in the database.
-   * Quality columns are columns that has all data to be the same numeric type and has no missing
-   * data points.
+   * Retrieves all numeric column names from the stat data table in the database.
+   * This assumes that the stats data table (look-up table) contains only numeric columns.
    *
-   * @returns {Promise<string[]>} A promise that resolves to an array of column names where the
-   * isQuality field is true.
+   * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
-  async getQualityColumnNames(): Promise<string[]> {
-    const qualityColumnNames: string[] = [];
+  async getNumericColumnNames(): Promise<string[]> {
+    const numericColumnNames: string[] = [];
     const columns = await this.statsColumns.toArray();
-    const columnNames = columns
-      .filter((column) => column.values.isQuality)
-      .map((column) => column.name);
-    qualityColumnNames.push(...columnNames);
-    return Promise.resolve(qualityColumnNames);
+    const columnNames = columns.map((column) => column.name);
+    numericColumnNames.push(...columnNames);
+    return Promise.resolve(numericColumnNames);
   }
 
   /**

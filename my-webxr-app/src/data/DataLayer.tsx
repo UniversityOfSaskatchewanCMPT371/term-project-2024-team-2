@@ -64,6 +64,8 @@ export default class DataLayer implements DataAbstractor {
    * @param {BatchedDataStream} batchItems - A 2D array of CSV data that is referenced by row.
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
+   *
+   * TODO reset the flag for different csv
    */
 
   async storeCSV(batchItems: BatchedDataStream): Promise<boolean> {
@@ -84,7 +86,7 @@ export default class DataLayer implements DataAbstractor {
           columnName = columnNames[index];
           newValues = column;
           const existingColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
-          existingColumn.values.push(...newValues);
+          (existingColumn.values as (string | number)[]).push(...newValues);
           await this.repository.updateDataColumn(existingColumn, ColumnType.RAW);
         }
       });
@@ -101,8 +103,8 @@ export default class DataLayer implements DataAbstractor {
   /**
    * Helper function for calculateStatistics()
    *
-   * Calculate the statistical values for a given column. This will also flag if a column is quality
-   * , meaning that all data points are of the same numeric type and there are no missing data.
+   * Calculate the statistical values for a given column. This assumes that all values in the
+   * column are numbers.
    *
    * @param {Column<DataColumn>} column The column of data to calculate statistics for.
    * @param {string} columnName The name of the column.
@@ -113,31 +115,14 @@ export default class DataLayer implements DataAbstractor {
     column: Column<DataColumn>,
     columnName: string,
   ): Column<StatsColumn> {
-    const totalElement = column.values.length;
-    // Handle empty column case
-    if (totalElement === 0) {
-      return new Column<StatsColumn>(columnName, {
-        count: 0,
-        sum: 0,
-        sumOfSquares: 0,
-        mean: 0,
-        stdDev: 0,
-        isQuality: false,
-      });
-    }
-    // Normal cases
-    let isQuality = true;
-    const numberedItems = column.values.map((item) => {
-      if (typeof item !== 'number') {
-        isQuality = false;
-        return 0;
-      }
-      return item;
-    });
-    const count = numberedItems.length;
-    const sum = numberedItems.reduce((runningTotal, x) => runningTotal + x, 0);
+    // Assert that all values in column.values are numbers
+    assert.ok(column.values.every((value) => typeof value === 'number'), 'All values in column must be numbers');
+
+    const count = column.values.length;
+    const sum = (column.values as number[]).reduce((runningTotal, x) => runningTotal + x, 0);
     const mean = sum / ((count !== 0) ? count : 1);
-    const sumOfSquares = numberedItems.reduce((runningSum, x) => runningSum + (x - mean) ** 2, 0);
+    // eslint-disable-next-line max-len
+    const sumOfSquares = (column.values as number[]).reduce((runningSum, x) => runningSum + (x - mean) ** 2, 0);
     // Note this is sample standard deviation
     const stdDev = (
       (count >= 2)
@@ -151,7 +136,6 @@ export default class DataLayer implements DataAbstractor {
       sumOfSquares,
       mean,
       stdDev,
-      isQuality,
     });
   }
 
@@ -159,11 +143,9 @@ export default class DataLayer implements DataAbstractor {
    * Asynchronously calculates and stores statistics for each column in the repository.
    *
    * This function retrieves all column names from the repository. For each raw column, it retrieves
-   * the data, calculates statistics, and adds a new statistic column to the Look-up table (stats
-   * table) in the repository.
+   * the data, check if the data are all numeric, calculates statistics, and adds a new statistic
+   * column to the Look-up table (stats table) in the repository.
    *
-   * A quality column is defined as a column where all data points are of the same numeric type and
-   * there are no missing data.
    *
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
@@ -176,11 +158,16 @@ export default class DataLayer implements DataAbstractor {
       assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
       const rawColumnNames = await this.repository.getAllColumnNames();
 
+      // eslint-disable-next-line consistent-return -- return undefined if all values are not number
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
         const rawDataColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
-        const statsColumn = DataLayer.calculateColumnStatistics(rawDataColumn, columnName);
-        await this.repository.addColumn(statsColumn, ColumnType.STATS);
-        return statsColumn;
+
+        // Check if all values in the column are numbers
+        if (rawDataColumn.values.every((value) => typeof value === 'number')) {
+          const statsColumn = DataLayer.calculateColumnStatistics(rawDataColumn, columnName);
+          await this.repository.addColumn(statsColumn, ColumnType.STATS);
+          return statsColumn;
+        }
       });
 
       await Promise.all(statsColumnsPromises);
@@ -202,20 +189,18 @@ export default class DataLayer implements DataAbstractor {
 
   /**
    * Helper for storeStandardizedData()
-   * This function standardizes a specified quality column in the repository.
+   * This function standardizes a specified numeric column in the repository.
    *
-   * This function takes the name of a quality column, retrieves the corresponding raw data column
+   * This function takes the name of a numeric column, retrieves the corresponding raw data column
    * and stats column. For each entry in the raw data column, it standardizes the data using the
    * mean and standard deviation from the stats column.
    *
-   * @param {string} columnName - The name of the quality column to be standardized.
+   * @param {string} columnName - The name of the numeric column to be standardized.
    * @return {Promise<Column<DataColumn>>} A promise that resolves to a Column object containing the
    * standardized data.
-   * @throws {Error} If the specified column is not a quality column.
    */
-  async standardizeQualityColumn(columnName: string): Promise<Column<DataColumn>> {
+  async standardizeColumn(columnName: string): Promise<Column<DataColumn>> {
     const statsColumn = await this.repository.getStatsColumn(columnName);
-    assert.ok(statsColumn.values.isQuality, `Column ${columnName} is not a quality column!`);
     const { mean } = statsColumn.values;
     const { stdDev } = statsColumn.values;
     const rawDataColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
@@ -237,10 +222,10 @@ export default class DataLayer implements DataAbstractor {
     try {
       const isEmpty = await this.repository.isTableEmpty(ColumnType.STATS);
       assert.ok(!isEmpty, 'Stats table is empty, can not pull quality columns.');
-      const columnNames = await this.repository.getQualityColumnNames();
+      const columnNames = await this.repository.getNumericColumnNames();
 
       const promises = columnNames.map(async (name) => {
-        const standardizedColumn = await this.standardizeQualityColumn(name);
+        const standardizedColumn = await this.standardizeColumn(name);
         await this.repository.addColumn(standardizedColumn, ColumnType.STANDARDIZED);
       });
 
@@ -251,13 +236,15 @@ export default class DataLayer implements DataAbstractor {
     }
   }
 
+  // TODO: queries coulmn names from stats table for PCA and let user choose subset to do pca on
+
   /**
    * TODO
    * Helper function for storePCA
    * @protected
    */
-  protected static calculatePCA() {
-  }
+  // protected static calculatePCA(//subset of stat column names) {
+  // }
 
   /**
    * TODO - modify PCA column to store varience explained or eignevalues
@@ -273,7 +260,7 @@ export default class DataLayer implements DataAbstractor {
 
   /**
    * TODO
-   * Select a raw data column from the repository for graphing
+   * Select a raw data column or PCA column from the repository for graphing
    */
   // temp disable
   // eslint-disable-next-line class-methods-use-this
