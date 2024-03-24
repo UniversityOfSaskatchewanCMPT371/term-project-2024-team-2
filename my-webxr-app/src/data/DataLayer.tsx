@@ -87,7 +87,7 @@ export default class DataLayer implements DataAbstractor {
           columnName = columnNames[index];
           newValues = column;
           const existingColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
-          (existingColumn.values).push(...newValues);
+          (existingColumn.values as (string | number)[]).push(...newValues);
           await this.repository.updateColumn(existingColumn, ColumnType.RAW);
         }
       });
@@ -166,7 +166,8 @@ export default class DataLayer implements DataAbstractor {
 
         // Check if is a numeric column
         if (typeof rawDataColumn.values[0] === 'number') {
-          const statsColumn = DataLayer.calculateColumnStatistics(rawDataColumn, columnName);
+          const numericRawColumn = rawDataColumn as Column<NumericColumn>;
+          const statsColumn = DataLayer.calculateColumnStatistics(numericRawColumn, columnName);
           await this.repository.addColumn(statsColumn, ColumnType.STATS);
           return statsColumn;
         }
@@ -199,9 +200,13 @@ export default class DataLayer implements DataAbstractor {
    * and stats column. For each entry in the raw data column, it standardizes the data using the
    * mean and standard deviation from the stats column.
    *
+   * This assumes if a column name is in look up table (stats table) then the column data are
+   * numeric in the raw data table
+   *
    * @param {string} columnName - The name of the numeric column to be standardized.
    * @return {Promise<Column<NumericColumn>>} A promise that resolves to a Column object containing
    * the standardized data.
+   * @throws {Error} If the column is not numeric, an error will be thrown.
    */
   async standardizeColumn(columnName: string): Promise<Column<NumericColumn>> {
     const statsColumn = await this.repository.getStatsColumn(columnName);
@@ -209,9 +214,12 @@ export default class DataLayer implements DataAbstractor {
     const { stdDev } = statsColumn.values;
     const rawDataColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
 
-    // Column name in Look up table (stats table) means the column is numeric in raw data table
-    rawDataColumn.values = rawDataColumn.values.map((value: number) => (value - mean) / stdDev);
-    return new Column<NumericColumn>(columnName, rawDataColumn.values);
+    assert.ok(typeof rawDataColumn.values[0] === 'number', 'Column must be numeric to be standardized');
+    const numericalRawDataColumn = rawDataColumn as Column<NumericColumn>;
+    numericalRawDataColumn.values = numericalRawDataColumn.values.map(
+      (value) => (value - mean) / stdDev,
+    );
+    return new Column<NumericColumn>(columnName, numericalRawDataColumn.values);
   }
 
   /**
