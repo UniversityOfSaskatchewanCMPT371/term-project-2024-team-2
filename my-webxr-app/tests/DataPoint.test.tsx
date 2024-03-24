@@ -29,9 +29,9 @@ describe('DataPoint Creation and Interaction', () => {
     );
 
     // Check if the both mesh positions are accurate.
-    expect(renderer.scene.children[1].children[0].instance.position).toEqual(
+    expect(renderer.scene.children[1].children[0].instance.position.equals(
       new Vector3(1, 2, 3),
-    );
+    )).toBe(true);
   });
 
   test('creating a basic DataPoint and assign outline scale', async () => {
@@ -44,9 +44,9 @@ describe('DataPoint Creation and Interaction', () => {
     );
 
     // Check if the outline mesh scale is accurate.
-    expect(renderer.scene.children[1].children[1].instance.scale).toEqual(
+    expect(renderer.scene.children[1].children[1].instance.scale.equals(
       new Vector3(2, 2, 2),
-    );
+    )).toBe(true);
   });
 });
 
