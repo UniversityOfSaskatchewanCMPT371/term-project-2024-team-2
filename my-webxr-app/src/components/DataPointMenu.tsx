@@ -18,6 +18,7 @@ export default function DataPointMenu(
   return (
     <Billboard visible={selectedDataPoint != null} {...billboardProps}>
       <Plane args={[1.25, 0.8]}>
+        {/* A negative depth offset brings the object closer to the viewer */}
         <Text fontSize={0.075} color="black" depthOffset={-4}>
           {`Here are data point # ${selectedDataPoint?.id ?? '-'} properties!\n\n`}
           {`Marker: ${selectedDataPoint?.marker ?? '-'}\n`}
