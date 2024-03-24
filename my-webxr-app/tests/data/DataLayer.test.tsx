@@ -1,4 +1,5 @@
 import 'fake-indexeddb/auto';
+import { describe } from 'vitest';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
 import Column, { ColumnType, DataColumn, StatsColumn } from '../../src/repository/Column';
@@ -379,5 +380,61 @@ describe('Validate writeStandardizedData() operation', () => {
         expect(value).toBeCloseTo(dataSet.expected[index], 3);
       });
     }
+  });
+});
+
+describe('Validate getAvailableFields operation', () => {
+  let dataLayer: DataLayer;
+  let repository: Repository;
+  let testPCAColumn: Column<DataColumn>;
+  let testStatsColumn: Column<StatsColumn>;
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase('Test_DB');
+    repository = new DbRepository('Test_DB');
+    dataLayer = new DataLayer('Test_DB');
+  });
+
+  test('getAvailableFields - Get column from both tables', async () => {
+    testStatsColumn = new Column<StatsColumn>('statCol', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+    });
+    testPCAColumn = new Column<DataColumn>('pcaCol', [1, 5, 1, 5, 8]);
+    await repository.addColumn(testPCAColumn, ColumnType.PCA);
+    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+
+    const result = await dataLayer.getAvailableFields();
+    expect(result).toEqual(['statCol', 'pcaCol']);
+  });
+
+  test('getAvailableFields - Get column from both tables, pca table empty', async () => {
+    testStatsColumn = new Column<StatsColumn>('statCol', {
+      count: 3,
+      sum: 6,
+      sumOfSquares: 14,
+      mean: 2,
+      stdDev: 1,
+    });
+    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+
+    const result = await dataLayer.getAvailableFields();
+    expect(result).toEqual(['statCol']);
+  });
+
+  test('getAvailableFields - Get column from both tables, stat table empty', async () => {
+    testPCAColumn = new Column<DataColumn>('pcaCol', [1, 5, 1, 5, 8]);
+    await repository.addColumn(testPCAColumn, ColumnType.PCA);
+
+    const result = await dataLayer.getAvailableFields();
+    expect(result).toEqual(['pcaCol']);
+  });
+
+  test('getAvailableFields - Get column from both tables, both table empty', async () => {
+    const result = await dataLayer.getAvailableFields();
+    expect(result).toEqual([]);
   });
 });

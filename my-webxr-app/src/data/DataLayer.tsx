@@ -65,7 +65,7 @@ export default class DataLayer implements DataAbstractor {
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
    *
-   * TODO reset the flag for different csv
+   * TODO reset the flag every when user load a different csv file
    */
 
   async storeCSV(batchItems: BatchedDataStream): Promise<boolean> {
@@ -179,13 +179,15 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Retrieve the available fields (column headers) from the data repository.
-   * This method calls the `getAllColumnNames` method of the `Repository` instance.
+   * Retrieve the available fields (column headers) from stats data table and pca data table.
+   * Intended to be used for user to select which fields to plot
    *
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
-    return this.repository.getCsvColumnNames();
+    const statsNames = await this.repository.getStatsColumnNames();
+    const pcaNames = await this.repository.getPcaColumnNames();
+    return [...statsNames, ...pcaNames];
   }
 
   /**
@@ -219,7 +221,7 @@ export default class DataLayer implements DataAbstractor {
    * and `false` otherwise.
    * @throws {Error} If the stats table is empty or if an error occurs during the operation.
    */
-  async storeStandardizedData() {
+  async storeStandardizedData(): Promise<boolean> {
     try {
       const isEmpty = await this.repository.isTableEmpty(ColumnType.STATS);
       assert.ok(!isEmpty, 'Stats table is empty, can not pull quality columns.');
@@ -255,7 +257,7 @@ export default class DataLayer implements DataAbstractor {
    */
   // temp disable
   // eslint-disable-next-line class-methods-use-this
-  async storePCA() {
+  async storePCA(): Promise<boolean> {
     return Promise.resolve(true);
   }
 
