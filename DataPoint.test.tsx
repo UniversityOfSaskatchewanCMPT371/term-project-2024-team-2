@@ -1,8 +1,8 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
-import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import DataPoint from '../src/components/DataPoint';
+import { PointSelectionProvider } from './my-webxr-app/src/contexts/PointSelectionContext';
+import DataPoint from './my-webxr-app/src/components/DataPoint';
 
 describe('DataPoint Creation and Interaction', () => {
   test('creating a basic DataPoint with defaults', async () => {

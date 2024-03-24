@@ -1,10 +1,10 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
-import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import DataPoint from '../src/components/DataPoint';
-import GenerateXYZ from '../src/components/GenerateXYZ';
-import createPosition from '../src/components/Positions';
+import { PointSelectionProvider } from './my-webxr-app/src/contexts/PointSelectionContext';
+import DataPoint from './my-webxr-app/src/components/DataPoint';
+import GenerateXYZ from './my-webxr-app/src/components/GenerateXYZ';
+import createPosition from './my-webxr-app/src/components/Positions';
 
 const minNum: number = -10;
 const maxNum: number = 10;

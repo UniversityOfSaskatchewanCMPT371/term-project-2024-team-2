@@ -14,4 +14,5 @@ export interface DataPointProps {
   outlineScale?: number;
   size?: SphereGeometryProps['args'];
   meshProps?: JSX.IntrinsicElements['mesh'];
+  positions: Float32Array;
 }

@@ -1,12 +1,15 @@
 import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
-import { BackSide } from 'three';
+import { BackSide, TextureLoader } from 'three';
 // import * as log4js from "log4js";
+import { useLoader } from '@react-three/fiber';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
+// eslint-disable-next-line import/no-absolute-path
+import circleImg from '/circle.png';
 
 export default function DataPoint({
-  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps,
+  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps, positions,
 
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
@@ -28,7 +31,8 @@ export default function DataPoint({
     //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
-
+  // console.log(pointProps);
+  const CircleImg = useLoader(TextureLoader, circleImg);
   return (
     <Interactive
       onHover={() => adjustHoverCount(hoverCount + 1)}
@@ -38,26 +42,35 @@ export default function DataPoint({
         if (selectedDataPoint?.id === id) {
           setSelectedDataPoint(null);
 
-        // Update point to be selected and set its fields
+          // Update point to be selected and set its fields
         } else {
           setSelectedDataPoint({
-            id, marker, color, columnX, columnY, columnZ, meshProps,
+            id, marker, color, columnX, columnY, columnZ, positions,
           });
         }
       }}
     >
-      {/* This first mesh stores custom data about the DataPoint */}
-      <mesh
-        userData={{
-          id, columnX, columnY, columnZ, marker, color,
-        }}
-        {...meshProps}
-      >
-        {/* Low numbers to try to minimize the number of faces we need to render */}
-        {/* There will be a LOT of these present in the simulation */}
-        <sphereGeometry args={size} />
-        <meshStandardMaterial />
-      </mesh>
+
+      <points>
+        <bufferGeometry attach="geometry">
+          <bufferAttribute
+            attach="attributes-position"
+            array={positions}
+            count={positions.length / 3} //
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          attach="material"
+          map={CircleImg}
+          color={0x000000}
+          size={0.01}
+          sizeAttenuation
+          transparent={false}
+          alphaTest={0.5}
+          opacity={1.0}
+        />
+      </points>
 
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
