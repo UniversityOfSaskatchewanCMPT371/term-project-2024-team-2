@@ -3,17 +3,17 @@ import { setupServer } from 'msw/node';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('node:fs');
 
-async function readFile() {
-  const blob = await fs.openAsBlob('./src/assets/sans-serif.normal.100.woff');
-  return blob.arrayBuffer();
-}
+const readFile = util.promisify(fs.readFile);
 
-const data = await readFile();
+// 1. Load the font file
+const data = await readFile('./src/assets/sans-serif.normal.100.woff');
+const fontFile = Uint8Array.from(data).buffer;
+
 // 2. Describe network behavior with request handlers.
 const worker = setupServer(
   http.get(
     'https://cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver@v1.0.1/packages/data/*',
-    async () => HttpResponse.arrayBuffer(data, {
+    async () => HttpResponse.arrayBuffer(fontFile, {
       headers: {
         'Content-Type': 'font/woff',
       },
