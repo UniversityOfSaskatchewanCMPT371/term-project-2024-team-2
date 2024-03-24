@@ -12,7 +12,6 @@ import createPosition from './components/Positions';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
 import TestingOptions from './testing/TestingOptions';
-import Button from './components/Button';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -42,12 +41,12 @@ export default function App() {
   // also would like to make a new type for GenerateXYZ info, allowing for easier use
   const [showData, setShowData] = useState(false);
   const [arrayData, setArrayData] = useState(Array<number>());
-  const [dataNumber,setNumber] = useState(0);
+  const [dataNumber, setNumber] = useState(0);
 
-  const LoadTestChange= async ( )=>{
-    const num = (document.getElementById("minNum") as HTMLInputElement).value;
-    setNumber(parseInt(num));
-  }
+  const LoadTestChange = async () => {
+    const num = (document.getElementById('minNum') as HTMLInputElement).value;
+    setNumber(parseInt(num, 10));
+  };
 
   // Initialize the database and store for csv data
   useEffect(() => {
@@ -81,14 +80,17 @@ export default function App() {
         >
           Print Data to Console
         </button>
-        <br></br>
-          <input type="number" id="minNum" name="minNum" placeholder="Min Number" onChange={LoadTestChange} />
-          <button onClick={()=>{
-            setShowData(!showData)
-            setArrayData(Array(dataNumber).fill(0).map((_, i) => i+1))
-          }}>
-            {showData ? "Hide Data" : "Show Data"}
-          </button>
+        <br />
+        <input type="number" id="minNum" name="minNum" placeholder="Min Number" onChange={LoadTestChange} />
+        <button
+          type="button"
+          onClick={() => {
+            setShowData(!showData);
+            setArrayData(Array(dataNumber).fill(0).map((_, i) => i + 1));
+          }}
+        >
+          {showData ? 'Hide Data' : 'Show Data'}
+        </button>
       </div>
       <VRButton />
       <PointSelectionProvider>
@@ -110,24 +112,28 @@ export default function App() {
               radius={radius}
               labelOffset={labelOffset}
             />
-            {showData&&arrayData.map((i) => (
+            {showData && arrayData.map((i) => (
               <DataPoint
+                key={i}
                 id={i}
                 marker="circle"
                 color="gray"
                 columnX="John Doe"
                 columnY="cmpt 145"
                 columnZ={97}
-                meshProps={{ position: createPosition({
-                  data: [Math.random() * (maxNum*2) - maxNum, Math.random() * (maxNum*2) - maxNum, Math.random() * (maxNum*2) - maxNum],                  AxisStartPoints: [startPointX, startPointY, startPointZ],
-                  length: Length,
-                  scale: scaleFactor,
-                  max: maxNum,
-                }) }}
+                meshProps={{
+                  position: createPosition({
+                    data: [Math.random() * (maxNum * 2) - maxNum, Math.random() * (maxNum * 2)
+                      - maxNum, Math.random() * (maxNum * 2) - maxNum],
+                    AxisStartPoints: [startPointX, startPointY, startPointZ],
+                    length: Length,
+                    scale: scaleFactor,
+                    max: maxNum,
+                  }),
+                }}
               />
             ))}
 
-            
             <DataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
         </Canvas>
