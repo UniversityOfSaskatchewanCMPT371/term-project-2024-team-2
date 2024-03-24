@@ -1,6 +1,6 @@
 import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
-import { TextureLoader } from 'three';
+import { BackSide, TextureLoader } from 'three';
 // import * as log4js from "log4js";
 import { useLoader } from '@react-three/fiber';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
@@ -9,7 +9,7 @@ import { DataPointProps } from '../types/DataPointTypes';
 import circleImg from '/circle.png';
 
 export default function DataPoint({
-  id, marker, color, columnX, columnY, columnZ, positions,
+  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps, positions,
 
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
@@ -74,17 +74,17 @@ export default function DataPoint({
 
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
-      {/* <mesh */}
-      {/*  {...meshProps} */}
-      {/*  scale={outlineScale} */}
-      {/*  visible={hoverCount !== 0 || selectedDataPoint?.id === id} */}
-      {/* > */}
-      {/*  <sphereGeometry args={size} /> */}
-      {/*  <meshStandardMaterial */}
-      {/*    color={selectedDataPoint?.id === id ? 'blue' : 'aqua'} */}
-      {/*    side={BackSide} */}
-      {/*  /> */}
-      {/* </mesh> */}
+      <mesh
+        {...meshProps}
+        scale={outlineScale}
+        visible={hoverCount !== 0 || selectedDataPoint?.id === id}
+      >
+        <sphereGeometry args={size} />
+        <meshStandardMaterial
+          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
+          side={BackSide}
+        />
+      </mesh>
     </Interactive>
   );
 }
