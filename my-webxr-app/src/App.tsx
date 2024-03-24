@@ -118,6 +118,7 @@ export default function App() {
             <ambientLight />
             <pointLight position={[10, 10, 10]} />
             <Controllers />
+
             <GenerateXYZ
               minValue={minNum}
               maxValue={maxNum}
