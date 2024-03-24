@@ -1,9 +1,10 @@
 import * as assert from 'assert';
+import { Matrix } from 'ml-matrix';
 import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
-  ColumnType, DataColumn, DataRow, StatsColumn,
+  ColumnType, RawColumn, NumericColumn, DataRow, StatsColumn,
 } from '../repository/Column';
 
 /**
@@ -74,20 +75,20 @@ export default class DataLayer implements DataAbstractor {
 
       const promises = transposedData.map(async (column, index) => {
         let columnName: string;
-        let newValues: DataColumn;
+        let newValues: RawColumn;
 
         if (this.isFirstBatch) {
           columnName = String(column[0]);
           newValues = column.slice(1);
-          const aColumn = new Column<DataColumn>(columnName, newValues);
+          const aColumn = new Column<RawColumn>(columnName, newValues);
           await this.repository.addColumn(aColumn, ColumnType.RAW);
         } else {
           const columnNames = await this.repository.getCsvColumnNames();
           columnName = columnNames[index];
           newValues = column;
-          const existingColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
-          (existingColumn.values as (string | number)[]).push(...newValues);
-          await this.repository.updateDataColumn(existingColumn, ColumnType.RAW);
+          const existingColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+          (existingColumn.values).push(...newValues);
+          await this.repository.updateColumn(existingColumn, ColumnType.RAW);
         }
       });
       await Promise.all(promises);
@@ -106,24 +107,22 @@ export default class DataLayer implements DataAbstractor {
    * Calculate the statistical values for a given column. This assumes that all values in the
    * column are numbers.
    *
-   * @param {Column<DataColumn>} column The column of data to calculate statistics for.
+   * @param {Column<NumericColumn>} column The column of data to calculate statistics for.
    * @param {string} columnName The name of the column.
    * @returns {Column<StatsColumn>} containing the statistical values.
    * @protected
    */
   protected static calculateColumnStatistics(
-    column: Column<DataColumn>,
+    column: Column<NumericColumn>,
     columnName: string,
   ): Column<StatsColumn> {
     assert.ok(column.values.length > 0, `Column ${columnName} must have at least one value`);
-    // Assert column.values are array of numbers, check only the first element to save time
-    assert.ok(typeof column.values[0] === 'number', 'The first value in column must be a number');
 
     const count = column.values.length;
-    const sum = (column.values as number[]).reduce((runningTotal, x) => runningTotal + x, 0);
+    const sum = (column.values).reduce((runningTotal, x) => runningTotal + x, 0);
     const mean = sum / ((count !== 0) ? count : 1);
     // eslint-disable-next-line max-len
-    const sumOfSquares = (column.values as number[]).reduce((runningSum, x) => runningSum + (x - mean) ** 2, 0);
+    const sumOfSquares = (column.values).reduce((runningSum, x) => runningSum + (x - mean) ** 2, 0);
     // Note this is sample standard deviation
     const stdDev = (
       (count >= 2)
@@ -146,6 +145,7 @@ export default class DataLayer implements DataAbstractor {
    * This function retrieves all column names from the repository. For each raw column, it retrieves
    * the data, check if the data are all numeric, calculates statistics, and adds a new statistic
    * column to the Look-up table (stats table) in the repository.
+   * This assumes the column is not empty
    *
    *
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
@@ -159,12 +159,13 @@ export default class DataLayer implements DataAbstractor {
       assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
       const rawColumnNames = await this.repository.getCsvColumnNames();
 
-      // eslint-disable-next-line consistent-return -- return undefined if all values are not number
+      // eslint-disable-next-line consistent-return -- return undefined if column is not numeric
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
-        const rawDataColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
+        const rawDataColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+        assert.ok(rawDataColumn.values.length > 0, 'Column values must not be empty');
 
-        // Check if all values in the column are numbers
-        if (rawDataColumn.values.every((value) => typeof value === 'number')) {
+        // Check if is a numeric column
+        if (typeof rawDataColumn.values[0] === 'number') {
           const statsColumn = DataLayer.calculateColumnStatistics(rawDataColumn, columnName);
           await this.repository.addColumn(statsColumn, ColumnType.STATS);
           return statsColumn;
@@ -199,18 +200,18 @@ export default class DataLayer implements DataAbstractor {
    * mean and standard deviation from the stats column.
    *
    * @param {string} columnName - The name of the numeric column to be standardized.
-   * @return {Promise<Column<DataColumn>>} A promise that resolves to a Column object containing the
-   * standardized data.
+   * @return {Promise<Column<NumericColumn>>} A promise that resolves to a Column object containing
+   * the standardized data.
    */
-  async standardizeColumn(columnName: string): Promise<Column<DataColumn>> {
+  async standardizeColumn(columnName: string): Promise<Column<NumericColumn>> {
     const statsColumn = await this.repository.getStatsColumn(columnName);
     const { mean } = statsColumn.values;
     const { stdDev } = statsColumn.values;
-    const rawDataColumn = await this.repository.getDataColumn(columnName, ColumnType.RAW);
+    const rawDataColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
 
-    // @ts-expect-error all value must be number is guaranteed by isQuality, ignore value type check
-    rawDataColumn.values = rawDataColumn.values.map((value) => (value - mean) / stdDev);
-    return new Column<DataColumn>(columnName, rawDataColumn.values);
+    // Column name in Look up table (stats table) means the column is numeric in raw data table
+    rawDataColumn.values = rawDataColumn.values.map((value: number) => (value - mean) / stdDev);
+    return new Column<NumericColumn>(columnName, rawDataColumn.values);
   }
 
   /**
@@ -246,8 +247,17 @@ export default class DataLayer implements DataAbstractor {
    * Helper function for storePCA
    * @protected
    */
-  // protected static calculatePCA(//subset of stat column names) {
-  // }
+  async getStandardizedColForPca(columnNames: string[]): Promise<Matrix> {
+    const columnDataArray: number[][] = [];
+
+    const promises = columnNames.map((columnName) => this.repository
+      .getColumn(columnName, ColumnType.STANDARDIZED)
+      .then((columnData) => columnDataArray.push(columnData.values as number[])));
+
+    await Promise.all(promises);
+
+    return new Matrix(columnDataArray);
+  }
 
   /**
    * TODO - modify PCA column to store varience explained or eignevalues

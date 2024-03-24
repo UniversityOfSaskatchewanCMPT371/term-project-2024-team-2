@@ -4,7 +4,9 @@ import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 import * as assert from 'assert';
 import DbRepository from '../../src/repository/DbRepository';
-import Column, { ColumnType, DataColumn, StatsColumn } from '../../src/repository/Column';
+import Column, {
+  ColumnType, RawColumn, NumericColumn, StatsColumn,
+} from '../../src/repository/Column';
 
 describe('DbRepository Test', () => {
   let repository: DbRepository;
@@ -40,7 +42,7 @@ describe('DbRepository Test', () => {
   });
 
   test('isTableEmpty - Check a non empty table', async () => {
-    const column = new Column<DataColumn>('test', [1, 2, 3]);
+    const column = new Column<RawColumn>('test', [1, 2, 3]);
     await repository.addColumn(column, ColumnType.RAW);
     const isEmpty = await repository.isTableEmpty(ColumnType.RAW);
 
@@ -48,8 +50,8 @@ describe('DbRepository Test', () => {
   });
 
   test('addColumn - add points when db has duplicate columns - expect Exception', async () => {
-    const column = new Column<DataColumn>('test', ['CMPT371', 'Osgood', 'Oculus']);
-    const dup = new Column<DataColumn>('test', [1, 2, 3]);
+    const column = new Column<RawColumn>('test', ['CMPT371', 'Osgood', 'Oculus']);
+    const dup = new Column<RawColumn>('test', [1, 2, 3]);
     await repository.addColumn(column, ColumnType.RAW);
 
     await expect(repository.addColumn(dup, ColumnType.RAW))
@@ -58,7 +60,7 @@ describe('DbRepository Test', () => {
   });
 
   test('getPoints - Given duplicate column name - expect Exception', async () => {
-    const column = new Column<DataColumn>('test', [1, 2]);
+    const column = new Column<RawColumn>('test', [1, 2]);
     await repository.addColumn(column, ColumnType.RAW);
 
     await expect(repository.getPoints(
@@ -73,7 +75,7 @@ describe('DbRepository Test', () => {
   });
 
   test('getPoints - Given non-existent column name - expect Exception', async () => {
-    const column = new Column<DataColumn>('test', [1, 2]);
+    const column = new Column<RawColumn>('test', [1, 2]);
     await repository.addColumn(column, ColumnType.RAW);
 
     await expect(repository.getPoints(
@@ -87,9 +89,9 @@ describe('DbRepository Test', () => {
   });
 
   test('getCSvColumnNames - Get all column names from raw data table', async () => {
-    const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
-    const testColumn2 = new Column<DataColumn>('column2', ['a', 'b', 'c']);
-    const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
+    const testColumn1 = new Column<RawColumn>('column1', [1, 2, 3]);
+    const testColumn2 = new Column<RawColumn>('column2', ['a', 'b', 'c']);
+    const testColumn3 = new Column<RawColumn>('column3', [1.1, 2.2, 3.3]);
     repository.addColumn(testColumn1, ColumnType.RAW);
     repository.addColumn(testColumn2, ColumnType.RAW);
     repository.addColumn(testColumn3, ColumnType.RAW);
@@ -106,9 +108,9 @@ describe('DbRepository Test', () => {
   });
 
   test('getPcaColumnNames - Get all column names from pca data table', async () => {
-    const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
-    const testColumn2 = new Column<DataColumn>('column2', [10, 20, 30]);
-    const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
+    const testColumn1 = new Column<NumericColumn>('column1', [1, 2, 3]);
+    const testColumn2 = new Column<NumericColumn>('column2', [10, 20, 30]);
+    const testColumn3 = new Column<NumericColumn>('column3', [1.1, 2.2, 3.3]);
     repository.addColumn(testColumn1, ColumnType.PCA);
     repository.addColumn(testColumn2, ColumnType.PCA);
     repository.addColumn(testColumn3, ColumnType.PCA);
@@ -125,9 +127,9 @@ describe('DbRepository Test', () => {
   });
 
   test('getStandardizedColumnNames - Get all column names from standardized data table', async () => {
-    const testColumn1 = new Column<DataColumn>('column1', [1, 2, 3]);
-    const testColumn2 = new Column<DataColumn>('column2', [10, 20, 30]);
-    const testColumn3 = new Column<DataColumn>('column3', [1.1, 2.2, 3.3]);
+    const testColumn1 = new Column<NumericColumn>('column1', [1, 2, 3]);
+    const testColumn2 = new Column<NumericColumn>('column2', [10, 20, 30]);
+    const testColumn3 = new Column<NumericColumn>('column3', [1.1, 2.2, 3.3]);
     repository.addColumn(testColumn1, ColumnType.STANDARDIZED);
     repository.addColumn(testColumn2, ColumnType.STANDARDIZED);
     repository.addColumn(testColumn3, ColumnType.STANDARDIZED);
@@ -200,16 +202,16 @@ describe('DbRepository Test', () => {
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
   });
 
-  test('getDataColumn - Retrieve a data column from Raw data table', async () => {
-    const testColumn = new Column<DataColumn>('testColumn', [1, 2, 3]);
+  test('getColumn - Retrieve a data column from Raw data table', async () => {
+    const testColumn = new Column<RawColumn>('testColumn', [1, 2, 3]);
     await repository.addColumn(testColumn, ColumnType.RAW);
 
-    const retrievedColumn = await repository.getDataColumn('testColumn', ColumnType.RAW);
+    const retrievedColumn = await repository.getColumn('testColumn', ColumnType.RAW);
     expect(retrievedColumn).toEqual(testColumn);
   });
 
-  test('getDataColumn - Retrieve non-existent data column', async () => {
-    await expect(repository.getDataColumn('nonExistentColumn', ColumnType.RAW))
+  test('getColumn - Retrieve non-existent data column', async () => {
+    await expect(repository.getColumn('nonExistentColumn', ColumnType.RAW))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
   });

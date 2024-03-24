@@ -2,7 +2,9 @@ import 'fake-indexeddb/auto';
 import { describe } from 'vitest';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
-import Column, { ColumnType, DataColumn, StatsColumn } from '../../src/repository/Column';
+import Column, {
+  ColumnType, RawColumn, NumericColumn, StatsColumn,
+} from '../../src/repository/Column';
 import { Repository } from '../../src/repository/Repository';
 import DbRepository from '../../src/repository/DbRepository';
 
@@ -78,8 +80,8 @@ describe('Validate transposeData() operation', () => {
 
 describe('Validate calculateColumnsStatistics() operation', () => {
   let columnName: string;
-  let testColumnValues: DataColumn;
-  let testColumn: Column<DataColumn>;
+  let testColumnValues: RawColumn;
+  let testColumn: Column<RawColumn>;
   let resultColumn: Column<StatsColumn>;
   let expectedColumnValues: StatsColumn;
   let expectedColumn: Column<StatsColumn>;
@@ -87,7 +89,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
   test('calculateStatistics on a normal data column', () => {
     columnName = 'test 1';
     testColumnValues = [1, 2, 3];
-    testColumn = new Column<DataColumn>(columnName, testColumnValues);
+    testColumn = new Column<RawColumn>(columnName, testColumnValues);
     resultColumn = PrivilegedDataLayer.calculateColumnStatistics(testColumn, columnName);
 
     expectedColumnValues = {
@@ -108,7 +110,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
   test('calculateStatistics on a constant data column, has no stdDev', () => {
     columnName = 'test 1';
     testColumnValues = [2, 2, 2];
-    testColumn = new Column<DataColumn>(columnName, testColumnValues);
+    testColumn = new Column<RawColumn>(columnName, testColumnValues);
     resultColumn = PrivilegedDataLayer.calculateColumnStatistics(testColumn, columnName);
 
     expectedColumnValues = {
@@ -129,7 +131,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
   test('calculateStatistics on a single point data column', () => {
     columnName = 'test 1';
     testColumnValues = [3];
-    testColumn = new Column<DataColumn>(columnName, testColumnValues);
+    testColumn = new Column<RawColumn>(columnName, testColumnValues);
     resultColumn = PrivilegedDataLayer.calculateColumnStatistics(testColumn, columnName);
 
     expectedColumnValues = {
@@ -150,7 +152,7 @@ describe('Validate calculateColumnsStatistics() operation', () => {
   test('calculateStatistics on a two points data column', () => {
     columnName = 'test 1';
     testColumnValues = [22, 33];
-    testColumn = new Column<DataColumn>(columnName, testColumnValues);
+    testColumn = new Column<RawColumn>(columnName, testColumnValues);
     resultColumn = PrivilegedDataLayer.calculateColumnStatistics(testColumn, columnName);
     expectedColumnValues = {
       count: 2,
@@ -189,8 +191,8 @@ describe('Validate storeCSV() operation', () => {
     const resolve = await dataLayer.storeCSV(batchItems);
     expect(resolve).toEqual(true);
 
-    const column1 = await repository.getDataColumn('column1', ColumnType.RAW);
-    const column2 = await repository.getDataColumn('column2', ColumnType.RAW);
+    const column1 = await repository.getColumn('column1', ColumnType.RAW);
+    const column2 = await repository.getColumn('column2', ColumnType.RAW);
 
     expect(column1.values).toEqual(['value1a', 'value1b', 'value1c']);
     expect(column2.values).toEqual(['value2a', 'value2b', 'value2c']);
@@ -216,8 +218,8 @@ describe('Validate storeCSV() operation', () => {
     expect(resolve1).toEqual(true);
     expect(resolve2).toEqual(true);
 
-    const column1 = await repository.getDataColumn('column1', ColumnType.RAW);
-    const column2 = await repository.getDataColumn('column2', ColumnType.RAW);
+    const column1 = await repository.getColumn('column1', ColumnType.RAW);
+    const column2 = await repository.getColumn('column2', ColumnType.RAW);
 
     expect(column1.values).toEqual(['value1a', 'value1b', 'value1c', 'value1d', 'value1e', 'value1f']);
     expect(column2.values).toEqual(['value2a', 'value2b', 'value2c', 'value2d', 'value2e', 'value2f']);
@@ -246,8 +248,8 @@ describe('Validate storeCSV() operation', () => {
     expect(resolve2).toEqual(true);
     expect(resolve3).toEqual(true);
 
-    const column1 = await repository.getDataColumn('column1', ColumnType.RAW);
-    const column2 = await repository.getDataColumn('column2', ColumnType.RAW);
+    const column1 = await repository.getColumn('column1', ColumnType.RAW);
+    const column2 = await repository.getColumn('column2', ColumnType.RAW);
 
     expect(column1.values).toEqual(['value1a', 'value1b', 'value1c', 'value1d', 'value1e', 'value1f']);
     expect(column2.values).toEqual(['value2a', 'value2b', 'value2c', 'value2d', 'value2e', 'value2f']);
@@ -257,9 +259,9 @@ describe('Validate storeCSV() operation', () => {
 describe('Validate standardizeQualityColumn() operation', () => {
   let dataLayer: DataLayer;
   let repository: Repository;
-  let testRawColumn: Column<DataColumn>;
+  let testRawColumn: Column<RawColumn>;
   let testStatsColumn: Column<StatsColumn>;
-  let resultColumn: Column<DataColumn>;
+  let resultColumn: Column<NumericColumn>;
   let expectStandardizedColumn: Array<number>;
 
   beforeEach(() => {
@@ -269,7 +271,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
   });
 
   test('standardizeQualityColumns - Standardize a quality column', async () => {
-    testRawColumn = new Column<DataColumn>('testColumn', [1, 5, 1, 5, 8]);
+    testRawColumn = new Column<RawColumn>('testColumn', [1, 5, 1, 5, 8]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
@@ -282,7 +284,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
   });
 
   test('standardizeQualityColumns - Standardize a quality column', async () => {
-    testRawColumn = new Column<DataColumn>('testColumn', [2, 5, 4, 3, 1]);
+    testRawColumn = new Column<RawColumn>('testColumn', [2, 5, 4, 3, 1]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
@@ -295,7 +297,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
   });
 
   test('standardizeQualityColumns - Standardize a quality column', async () => {
-    testRawColumn = new Column<DataColumn>('testColumn', [3, 6, 2, 2, 2]);
+    testRawColumn = new Column<RawColumn>('testColumn', [3, 6, 2, 2, 2]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
@@ -308,7 +310,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
   });
 
   test('standardizeQualityColumns - Standardize a quality column', async () => {
-    testRawColumn = new Column<DataColumn>('testColumn', [4, 7, 3, 1, 2]);
+    testRawColumn = new Column<RawColumn>('testColumn', [4, 7, 3, 1, 2]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
@@ -324,7 +326,7 @@ describe('Validate standardizeQualityColumn() operation', () => {
 describe('Validate writeStandardizedData() operation', () => {
   let dataLayer: DataLayer;
   let repository: Repository;
-  let testRawColumn: Column<DataColumn>;
+  let testRawColumn: Column<RawColumn>;
   let testStatsColumn: Column<StatsColumn>;
 
   beforeEach(() => {
@@ -334,7 +336,7 @@ describe('Validate writeStandardizedData() operation', () => {
   });
 
   test('writeStandardizedData - Standardize on quality column and save', async () => {
-    testRawColumn = new Column<DataColumn>('testColumn', [1, 5, 1, 5, 8]);
+    testRawColumn = new Column<RawColumn>('testColumn', [1, 5, 1, 5, 8]);
     await repository.addColumn(testRawColumn, ColumnType.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
@@ -342,9 +344,9 @@ describe('Validate writeStandardizedData() operation', () => {
     const result = await dataLayer.storeStandardizedData();
     expect(result).toEqual(true);
 
-    const standardizedColumn = await repository.getDataColumn('testColumn', ColumnType.STANDARDIZED);
+    const standardizedColumn = await repository.getColumn('testColumn', ColumnType.STANDARDIZED);
     const expectedValues = [-1, 0.333, -1, 0.333, 1.333];
-    standardizedColumn.values.forEach((value, index) => {
+    standardizedColumn.values.forEach((value:number, index:number) => {
       expect(value).toBeCloseTo(expectedValues[index], 3);
     });
   });
@@ -359,7 +361,7 @@ describe('Validate writeStandardizedData() operation', () => {
 
     for (let i = 0; i < dataSets.length; i += 1) {
       const dataSet = dataSets[i];
-      testRawColumn = new Column<DataColumn>(`testColumn${i}`, dataSet.data);
+      testRawColumn = new Column<RawColumn>(`testColumn${i}`, dataSet.data);
       // eslint-disable-next-line no-await-in-loop
       await repository.addColumn(testRawColumn, ColumnType.RAW);
       testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, `testColumn${i}`);
@@ -373,10 +375,10 @@ describe('Validate writeStandardizedData() operation', () => {
     for (let i = 0; i < dataSets.length; i += 1) {
       const dataSet = dataSets[i];
       // eslint-disable-next-line no-await-in-loop
-      const standardizedColumn = await repository.getDataColumn(`testColumn${i}`, ColumnType.STANDARDIZED);
+      const standardizedColumn = await repository.getColumn(`testColumn${i}`, ColumnType.STANDARDIZED);
       // console.log(standardizedColumn);
       // eslint-disable-next-line @typescript-eslint/no-loop-func
-      standardizedColumn.values.forEach((value, index) => {
+      standardizedColumn.values.forEach((value:number, index:number) => {
         expect(value).toBeCloseTo(dataSet.expected[index], 3);
       });
     }
@@ -386,7 +388,7 @@ describe('Validate writeStandardizedData() operation', () => {
 describe('Validate getAvailableFields operation', () => {
   let dataLayer: DataLayer;
   let repository: Repository;
-  let testPCAColumn: Column<DataColumn>;
+  let testPCAColumn: Column<NumericColumn>;
   let testStatsColumn: Column<StatsColumn>;
 
   beforeEach(() => {
@@ -403,7 +405,7 @@ describe('Validate getAvailableFields operation', () => {
       mean: 2,
       stdDev: 1,
     });
-    testPCAColumn = new Column<DataColumn>('pcaCol', [1, 5, 1, 5, 8]);
+    testPCAColumn = new Column<NumericColumn>('pcaCol', [1, 5, 1, 5, 8]);
     await repository.addColumn(testPCAColumn, ColumnType.PCA);
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
 
@@ -426,7 +428,7 @@ describe('Validate getAvailableFields operation', () => {
   });
 
   test('getAvailableFields - Get column from both tables, stat table empty', async () => {
-    testPCAColumn = new Column<DataColumn>('pcaCol', [1, 5, 1, 5, 8]);
+    testPCAColumn = new Column<NumericColumn>('pcaCol', [1, 5, 1, 5, 8]);
     await repository.addColumn(testPCAColumn, ColumnType.PCA);
 
     const result = await dataLayer.getAvailableFields();

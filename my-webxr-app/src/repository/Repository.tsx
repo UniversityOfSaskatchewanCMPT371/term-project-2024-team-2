@@ -12,8 +12,8 @@ export interface Repository {
   getCsvColumnNames: () => Promise<string[]>;
   getStatsColumnNames: () => Promise<string[]>;
   getPcaColumnNames: () => Promise<string[]>;
-  getDataColumn: (columnName: string, columnType: ColumnType) => Promise<Column<DataColumn>>;
-  updateDataColumn: (column: Column<DataColumn>, columnType: ColumnType) => Promise<boolean>;
+  getColumn: (columnName: string, columnType: ColumnType) => Promise<Column<>>;
+  updateColumn: (column: Column<>, columnType: ColumnType) => Promise<boolean>;
   getStatsColumn: (columnName: string) => Promise<Column<StatsColumn>>;
   isTableEmpty(columnType: ColumnType): Promise<boolean>;
 }

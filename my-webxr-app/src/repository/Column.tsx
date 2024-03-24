@@ -14,14 +14,15 @@ export default class Column<Type> {
   }
 }
 
-/**
- * The DataColumn type is used to represent a column of data from IndexedDB.
- */
-export type DataColumn = Array<string> | Array<number>;
+// RawColumn is column in the raw data table as read in from csv
+export type RawColumn = Array<string> | Array<number>;
+// NumericColumn is a column in the pca or standardized data table
+export type NumericColumn = Array<number>;
+
 /**
  * The DataRow type is an abstraction of DataColumn for before CSV data is transposed into columns.
  */
-export type DataRow = DataColumn;
+export type DataRow = RawColumn;
 /**
  * The StatsColumn type is used to represent all the statistical values for a given column.
  */

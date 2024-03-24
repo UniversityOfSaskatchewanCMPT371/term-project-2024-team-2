@@ -2,18 +2,20 @@ import Dexie from 'dexie';
 import * as assert from 'assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
-import Column, { ColumnType, DataColumn, StatsColumn } from './Column';
+import Column, {
+  ColumnType, RawColumn, NumericColumn, StatsColumn,
+} from './Column';
 
 export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
   // just to inform Typescript of the object type stored in the table.
   private statsColumns!: Dexie.Table<Column<StatsColumn>, string>;
 
-  private rawColumns!: Dexie.Table<Column<DataColumn>, string>;
+  private rawColumns!: Dexie.Table<Column<RawColumn>, string>;
 
-  private standardizedColumns!: Dexie.Table<Column<DataColumn>, string>;
+  private standardizedColumns!: Dexie.Table<Column<NumericColumn>, string>;
 
-  private pcaColumns!: Dexie.Table<Column<DataColumn>, string>;
+  private pcaColumns!: Dexie.Table<Column<NumericColumn>, string>;
 
   constructor(dbName: string) {
     // create a db instance
@@ -76,22 +78,37 @@ export default class DbRepository extends Dexie implements Repository {
    * @param columnType the type of column to be added
    * @return Promise<string> the primary key of the column aka the name of the column
    */
-  async addColumn(column: Column<DataColumn | StatsColumn>, columnType: ColumnType) {
+  async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, columnType: ColumnType) {
     switch (columnType) {
       case ColumnType.STATS:
         return this.statsColumns.add(column as Column<StatsColumn>);
       case ColumnType.RAW:
-        return this.rawColumns.add(column as Column<DataColumn>);
+        return this.rawColumns.add(column as Column<RawColumn>);
       case ColumnType.STANDARDIZED:
-        return this.standardizedColumns.add(column as Column<DataColumn>);
+        return this.standardizedColumns.add(column as Column<NumericColumn>);
       case ColumnType.PCA:
-        return this.pcaColumns.add(column as Column<DataColumn>);
+        return this.pcaColumns.add(column as Column<NumericColumn>);
       default: // This shouldn't ever occur because of the Enum usage
         throw new Error(`Invalid columnType: ${columnType}`);
     }
   }
 
-  async updateDataColumn(column: Column<DataColumn>, columnType: ColumnType) {
+  /**
+   * Updates a column in the database based on the column type.
+   * This excludes stats column because stats column is a look up table, and value should not be
+   * updated manually
+   *
+   * @param {Column<NumericColumn | RawColumn | StatsColumn>} column - The column to be updated.
+   * @param {ColumnType} columnType - The type of the column to be updated.
+   * @returns {Promise<boolean>} - Returns a promise that resolves to a boolean indicating whether
+   * the update was successful.
+   * @throws {Error} - Throws an error if an invalid column type is provided.
+   */
+
+  async updateColumn(
+    column: Column<NumericColumn | RawColumn>,
+    columnType: ColumnType,
+  ): Promise<boolean> {
     let columnsTable;
     switch (columnType) {
       case ColumnType.RAW:
@@ -115,14 +132,17 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   *Return a column object from the RawData/StandardizedData/PCAData table based on given column
+   * Return a column object from the RawData/StandardizedData/PCAData table based on given column
    * name and column type.
    *
    * @param columnName the name of the column to be retrieved
    * @param columnType the type of the column to be retrieved
    * @return Promise<Column> the column object
    */
-  async getDataColumn(columnName: string, columnType: ColumnType) {
+  async getColumn(
+    columnName: string,
+    columnType: ColumnType,
+  ): Promise<Column<RawColumn | NumericColumn>> {
     let columnsTable;
     switch (columnType) {
       case ColumnType.RAW:
@@ -163,6 +183,8 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * getPoints gets the points from the database
+   * TODO: allow this to also get points from the pca table, only gets points from the raw table now
+   *
    * @param qualifyingPointOnly if true, only return points that have no missing data
    * @param columnXName the name of the column to be used as the x-axis
    * @param columnYName the name of the column to be used as the y-axis
@@ -185,12 +207,12 @@ export default class DbRepository extends Dexie implements Repository {
     );
 
     // get the three columns
-    const columnX = (await this.getDataColumn(columnXName, ColumnType.RAW)) as
-      Column<DataColumn>;
-    const columnY = (await this.getDataColumn(columnYName, ColumnType.RAW)) as
-      Column<DataColumn>;
-    const columnZ = (await this.getDataColumn(columnZName, ColumnType.RAW)) as
-      Column<DataColumn>;
+    const columnX = (await this.getColumn(columnXName, ColumnType.RAW)) as
+      Column<RawColumn>;
+    const columnY = (await this.getColumn(columnYName, ColumnType.RAW)) as
+      Column<RawColumn>;
+    const columnZ = (await this.getColumn(columnZName, ColumnType.RAW)) as
+      Column<RawColumn>;
 
     const sameLength = new Set([columnX.values.length,
       columnY.values.length,
@@ -219,18 +241,18 @@ export default class DbRepository extends Dexie implements Repository {
    */
   static convertColumnsIntoDataPoints(
     qualifyingPointOnly: boolean,
-    columnX: Column<DataColumn>,
-    columnY: Column<DataColumn>,
-    columnZ: Column<DataColumn>,
+    columnX: Column<RawColumn | NumericColumn>,
+    columnY: Column<RawColumn | NumericColumn>,
+    columnZ: Column<RawColumn | NumericColumn>,
   ): Array<DataPoint> {
     const dataPoints: Array<DataPoint> = [];
 
     for (let i = 0; i < columnX.values.length; i += 1) {
       // Force type cast to string | number | null.
       // We can guarantee this, given the DataColumn generic consists of these types.
-      const xValue = (columnX.values[i] as unknown as string | number | null);
-      const yValue = (columnY.values[i] as unknown as string | number | null);
-      const zValue = (columnZ.values[i] as unknown as string | number | null);
+      const xValue = (columnX.values[i]);
+      const yValue = (columnY.values[i]);
+      const zValue = (columnZ.values[i]);
       const hasMissingData = xValue === null || yValue === null || zValue === null;
 
       // if only qualifying points are requested, add the point only if it has no missing data
