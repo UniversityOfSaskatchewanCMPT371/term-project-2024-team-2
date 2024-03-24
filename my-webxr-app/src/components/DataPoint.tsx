@@ -56,7 +56,7 @@ export default function DataPoint({
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
         <sphereGeometry args={size} />
-        <meshStandardMaterial color="yellow" />
+        <meshStandardMaterial color="gray" />
       </mesh>
 
       {/* This second mesh is the outline which works by rendering */}
@@ -68,7 +68,7 @@ export default function DataPoint({
       >
         <sphereGeometry args={size} />
         <meshStandardMaterial
-          color={selectedDataPoint?.id === id ? 'darkorange' : 'purple'}
+          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
           side={BackSide}
         />
       </mesh>
