@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 import * as assert from 'assert';
 import { Repository } from './Repository';
-import DataPoint from './DataPoint';
+import RepoDataPoint from './RepoDataPoint';
 import Column, {
   ColumnType, RawColumn, NumericColumn, StatsColumn,
 } from './Column';
@@ -201,7 +201,7 @@ export default class DbRepository extends Dexie implements Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string,
-  ): Promise<Array<DataPoint>> {
+  ): Promise<Array<RepoDataPoint>> {
     // verify the three columns are distinct
     assert.equal(
       (new Set([columnXName, columnYName, columnZName])).size,
@@ -248,8 +248,8 @@ export default class DbRepository extends Dexie implements Repository {
     columnX: Column<RawColumn | NumericColumn>,
     columnY: Column<RawColumn | NumericColumn>,
     columnZ: Column<RawColumn | NumericColumn>,
-  ): Array<DataPoint> {
-    const dataPoints: Array<DataPoint> = [];
+  ): Array<RepoDataPoint> {
+    const dataPoints: Array<RepoDataPoint> = [];
 
     for (let i = 0; i < columnX.values.length; i += 1) {
       // Force type cast to string | number | null.
@@ -261,7 +261,7 @@ export default class DbRepository extends Dexie implements Repository {
 
       // if only qualifying points are requested, add the point only if it has no missing data
       if (!qualifyingPointOnly || (qualifyingPointOnly && !hasMissingData)) {
-        dataPoints.push(new DataPoint(hasMissingData, xValue, yValue, zValue));
+        dataPoints.push(new RepoDataPoint(hasMissingData, xValue, yValue, zValue));
       }
     }
     return dataPoints;

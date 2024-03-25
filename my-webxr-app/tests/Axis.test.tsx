@@ -34,7 +34,10 @@ describe('Axis Tests', () => {
     const renderer = await ReactThreeTestRenderer.create(<Element />);
     // wait for scene children to be rendered
     await waitFor(() => expect(renderer.scene.children).toBeDefined());
-
+    await waitFor(() => expect(renderer.scene.children !== null).toBeTruthy());
+    await waitFor(() => expect(renderer.scene.children[1]).toBeDefined());
+    await waitFor(() => expect(renderer.scene.children[1] !== null).toBeTruthy());
+    
     // wait for the axes to be rendered
     await waitFor(() => expect(renderer.scene.children[1].children).toBeDefined());
     const axes = renderer.scene.children[1].children;
