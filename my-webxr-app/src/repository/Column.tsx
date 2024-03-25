@@ -32,7 +32,6 @@ export type StatsColumn = {
   sumOfSquares: number;
   mean: number;
   stdDev: number;
-  max: number;
 };
 
 export enum ColumnType {

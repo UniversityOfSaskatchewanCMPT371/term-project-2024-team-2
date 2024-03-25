@@ -12,7 +12,7 @@ export default interface DataAbstractor {
   selectAxes: (columnXName: string, columnYName: string, columnZName: string) => Promise<boolean>;
   selectPCA: (columnXName: string, columnYName: string, columnZName: string) => Promise<boolean>;
   calculateStatistics:() => Promise<boolean>;
-  createGraphingPoints:(
+  createDataPointsFrom3Columns:(
     columnX: string,
     ColumnY: string,
     ColumnZ: string,

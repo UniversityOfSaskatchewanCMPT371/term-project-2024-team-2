@@ -136,7 +136,6 @@ export default class DataLayer implements DataAbstractor {
         ? (Math.sqrt(sumOfSquares / (count - 1)))
         : 0
     );
-    const max = Math.max(...column.values);
 
     return new Column<StatsColumn>(columnName, {
       count,
@@ -144,7 +143,6 @@ export default class DataLayer implements DataAbstractor {
       sumOfSquares,
       mean,
       stdDev,
-      max,
     });
   }
 
@@ -372,13 +370,39 @@ export default class DataLayer implements DataAbstractor {
     }
   }
 
-  public async createGraphingPoints(
+  /**
+   * This function retrieves data points from the repository based on the provided column names
+   * and column type.
+   *
+   * @param {string} columnX - The name of the column to be used for the x-axis values.
+   * @param {string} columnY - The name of the column to be used for the y-axis values.
+   * @param {string} columnZ - The name of the column to be used for the z-axis values.
+   * @param {ColumnType} columnType - The type of the columns (RAW, STANDARDIZED, STATS, or PCA).
+   *
+   * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
+   * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
+   */
+
+  public async createDataPointsFrom3Columns(
     columnX: string,
-    ColumnY: string,
-    ColumnZ: string,
+    columnY: string,
+    columnZ: string,
     columnType: ColumnType,
   ): Promise<DataPoint[]> {
-    return this.repository.getPoints(columnX, ColumnY, ColumnZ, columnType);
+    return this.repository.getPoints(columnX, columnY, columnZ, columnType);
+  }
+
+  /**
+   * This function retrieves the statistical values for a given column from the repository.
+   *
+   * @param {string} columnName - The name of the column to retrieve statistics for.
+   *
+   * @returns {Promise<StatsColumn>} A promise that resolves to a StatsColumn object.
+   * The StatsColumn object contains statistical values such as count, sum, sum of squares,
+   * mean, standard deviation, and max.
+   */
+  public async getStats(columnName: string): Promise<StatsColumn> {
+    return this.repository.getStatsColumn(columnName).then((column) => column.values);
   }
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed

@@ -102,7 +102,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 2,
       mean: 2,
       stdDev: 1,
-      max: 3,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -110,7 +109,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expect(resultColumn.values.sumOfSquares).toEqual(expectedColumn.values.sumOfSquares);
     expect(resultColumn.values.mean).toEqual(expectedColumn.values.mean);
     expect(resultColumn.values.stdDev).toEqual(expectedColumn.values.stdDev);
-    expect(resultColumn.values.max).toEqual(expectedColumn.values.max);
   });
 
   test('calculateStatistics on a constant data column, has no stdDev', () => {
@@ -125,7 +123,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 0,
       mean: 2,
       stdDev: 0,
-      max: 2,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -133,7 +130,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expect(resultColumn.values.sumOfSquares).toEqual(expectedColumn.values.sumOfSquares);
     expect(resultColumn.values.mean).toEqual(expectedColumn.values.mean);
     expect(resultColumn.values.stdDev).toEqual(expectedColumn.values.stdDev);
-    expect(resultColumn.values.max).toEqual(expectedColumn.values.max);
   });
 
   test('calculateStatistics on a single point data column', () => {
@@ -148,7 +144,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 0,
       mean: 3,
       stdDev: 0,
-      max: 3,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -156,7 +151,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expect(resultColumn.values.sumOfSquares).toEqual(expectedColumn.values.sumOfSquares);
     expect(resultColumn.values.mean).toEqual(expectedColumn.values.mean);
     expect(resultColumn.values.stdDev).toEqual(expectedColumn.values.stdDev);
-    expect(resultColumn.values.max).toEqual(expectedColumn.values.max);
   });
 
   test('calculateStatistics on a two points data column', () => {
@@ -170,7 +164,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
       sumOfSquares: 60.5,
       mean: 27.5,
       stdDev: 7.778,
-      max: 33,
     };
     expectedColumn = new Column<StatsColumn>(columnName, expectedColumnValues);
     expect(resultColumn.values.count).toEqual(expectedColumn.values.count);
@@ -178,7 +171,6 @@ describe('Validate calculateColumnsStatistics() operation', () => {
     expect(resultColumn.values.sumOfSquares).toEqual(expectedColumn.values.sumOfSquares);
     expect(resultColumn.values.mean).toEqual(expectedColumn.values.mean);
     expect(resultColumn.values.stdDev).toBeCloseTo(expectedColumn.values.stdDev, 3);
-    expect(resultColumn.values.max).toEqual(expectedColumn.values.max);
   });
 });
 
@@ -416,7 +408,6 @@ describe('Validate getAvailableFields operation', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
-      max: 2,
     });
     testPCAColumn = new Column<NumericColumn>('pcaCol', [1, 5, 1, 5, 8]);
     await repository.addColumn(testPCAColumn, ColumnType.PCA);
@@ -433,7 +424,6 @@ describe('Validate getAvailableFields operation', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
-      max: 2,
     });
     await repository.addColumn(testStatsColumn, ColumnType.STATS);
 
