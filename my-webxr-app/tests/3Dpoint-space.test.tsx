@@ -1,10 +1,11 @@
-import ReactThreeTestRenderer from '@react-three/test-renderer';
+import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
 import DataPoint from '../src/components/DataPoint';
 import GenerateXYZ from '../src/components/GenerateXYZ';
 import createPosition from '../src/components/Positions';
+import MockServer from './MockServer';
 
 const minNum: number = -10;
 const maxNum: number = 10;
@@ -55,6 +56,12 @@ const datapoint5 = createPosition({
 });
 
 describe("Datapoint's Location is based off of values given ", () => {
+  beforeEach(() => MockServer.listen());
+
+  afterEach(() => MockServer.resetHandlers());
+
+  afterAll(() => MockServer.close());
+
   test('Test #1: Creating Datapoint with the location/coordinates 1,2,3, making sure that the positions'
         + 'actually work', async () => {
     const render = await ReactThreeTestRenderer.create(
@@ -75,6 +82,7 @@ describe("Datapoint's Location is based off of values given ", () => {
         </XR>
       </PointSelectionProvider>,
     );
+    await waitFor(() => expect(render.scene.children).toBeDefined());
     expect(render.scene.children[1].children[0].instance.position.equals(
       new Vector3(1, 2, 3),
     )).toBe(true);
@@ -108,6 +116,7 @@ describe("Datapoint's Location is based off of values given ", () => {
       new Vector3(-0.1, 1.75, -0.5),
     )).toBe(true);
   });
+
   test("Test #4: testing with all 0's to make sure it behaves as intended", async () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
@@ -121,6 +130,7 @@ describe("Datapoint's Location is based off of values given ", () => {
       new Vector3(-0.2, 1.6, -0.5),
     )).toBe(true);
   });
+
   test('Test #5: Testing with the maximum values make sure it is handled ', async () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
@@ -134,6 +144,7 @@ describe("Datapoint's Location is based off of values given ", () => {
       new Vector3(0.3, 2.1, 0),
     )).toBe(true);
   });
+
   test('Test #6: Testing with all negative values to make sure that '
         + 'it behaves as it should', async () => {
     const render = await ReactThreeTestRenderer.create(

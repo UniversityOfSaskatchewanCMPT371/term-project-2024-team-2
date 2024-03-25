@@ -98,9 +98,9 @@ export default function SingleAxis({
   const material: THREE.MeshBasicMaterial | undefined = new THREE.MeshBasicMaterial({ color });
 
   return (
-    <>
+    <group name="A Single Axis">
       {/* Create the axis and color it */}
-      <mesh geometry={axisGeometry} material={material} position={position} rotation={rotation} />
+      <mesh name="Axis Line" geometry={axisGeometry} material={material} position={position} rotation={rotation} />
       {/* call GenerateTicks for each axis */}
       {axisTicks.map((label) => GenerateTicks(
         startX,
@@ -113,6 +113,6 @@ export default function SingleAxis({
         labelIncrement,
         axis,
       ))}
-    </>
+    </group>
   );
 }
