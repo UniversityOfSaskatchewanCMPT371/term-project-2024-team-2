@@ -139,7 +139,6 @@ export default function App() {
               color="gray"
               columnX="John Doe"
               columnY="cmpt 145"
-              test="dfasdfasdfmasdkfmas;dmv'al;sdmv'asmdv,.asmdv'asdmv'v"
               columnZ={97}
               meshProps={{ position: datapoint1 }}
               actualData={exampleData[0]}
