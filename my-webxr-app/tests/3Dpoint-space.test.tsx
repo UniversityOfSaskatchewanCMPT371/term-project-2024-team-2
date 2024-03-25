@@ -2,20 +2,16 @@ import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import DataPoint from '../src/components/DataPoint';
-import GenerateXYZ from '../src/components/GenerateXYZ';
+import GraphingDataPoint from '../src/components/GraphingDataPoint';
 import createPosition from '../src/components/Positions';
 import MockServer from './MockServer';
 
-const minNum: number = -10;
 const maxNum: number = 10;
 const scaleFactor: number = 1;
-const labelOffset: number = 0.1;
 const startPointX: number = -0.2;
 const startPointY: number = 1.6;
 const startPointZ: number = -0.5;
 const endPoint: number = 1;
-const radius: number = 0.002;
 
 const exampleData = [[1, 1, 1], [2, 3, 0], [0, 0, 0], [10, 10, 10], [-1, -1, -1]];
 
@@ -67,18 +63,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
-          <GenerateXYZ
-            minValue={minNum}
-            maxValue={maxNum}
-            scaleFactor={scaleFactor}
-            startX={startPointX}
-            startY={startPointY}
-            startZ={startPointZ}
-            endPoint={endPoint}
-            radius={radius}
-            labelOffset={labelOffset}
-          />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={[1, 2, 3]} meshProps={{ position: [1, 2, 3] }} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -92,7 +77,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint1 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[0]} meshProps={{ position: datapoint1 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -107,7 +92,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint2 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[1]} meshProps={{ position: datapoint2 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -121,7 +106,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint3 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[2]} meshProps={{ position: datapoint3 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -135,7 +120,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint4 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[3]} meshProps={{ position: datapoint4 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -150,7 +135,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: datapoint5 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[4]} meshProps={{ position: datapoint5 }} />
         </XR>
       </PointSelectionProvider>,
 

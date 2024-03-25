@@ -4,8 +4,8 @@ import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { useEffect } from 'react';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
-import DataPoint from './components/DataPoint';
-import DataPointMenu from './components/DataPointMenu';
+import GraphingDataPoint from './components/GraphingDataPoint';
+import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import Floor from './components/Floor';
 import GenerateXYZ from './components/GenerateXYZ';
 import createPosition from './components/Positions';
@@ -133,7 +133,7 @@ export default function App() {
 
             {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <DataPoint
+            <GraphingDataPoint
               id={0}
               marker="circle"
               color="gray"
@@ -141,8 +141,9 @@ export default function App() {
               columnY="cmpt 145"
               columnZ={97}
               meshProps={{ position: datapoint1 }}
+              actualData={exampleData[0]}
             />
-            <DataPoint
+            <GraphingDataPoint
               id={1}
               marker="circle"
               color="gray"
@@ -150,8 +151,9 @@ export default function App() {
               columnY="math 110"
               columnZ={81}
               meshProps={{ position: datapoint2 }}
+              actualData={exampleData[1]}
             />
-            <DataPoint
+            <GraphingDataPoint
               id={2}
               marker="circle"
               color="gray"
@@ -159,8 +161,9 @@ export default function App() {
               columnY="math 116"
               columnZ={87}
               meshProps={{ position: datapoint3 }}
+              actualData={exampleData[2]}
             />
-            <DataPoint
+            <GraphingDataPoint
               id={3}
               marker="circle"
               color="gray"
@@ -168,8 +171,9 @@ export default function App() {
               columnY="stat 245"
               columnZ={75}
               meshProps={{ position: datapoint4 }}
+              actualData={exampleData[3]}
             />
-            <DataPoint
+            <GraphingDataPoint
               id={4}
               marker="circle"
               color="gray"
@@ -177,9 +181,10 @@ export default function App() {
               columnY="math 115"
               columnZ={85}
               meshProps={{ position: datapoint5 }}
+              actualData={exampleData[4]}
             />
 
-            <DataPointMenu position={[0, 2.2, -0.75]} />
+            <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
           </XR>
         </Canvas>
       </PointSelectionProvider>

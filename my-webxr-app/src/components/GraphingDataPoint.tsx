@@ -5,13 +5,13 @@ import { BackSide } from 'three';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 
-export default function DataPoint({
-  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps,
+export default function GraphingDataPoint({
+  id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
 
 }: DataPointProps) {
-  /* State for the count of controllers hovering over the DataPoint */
+  /* State for the count of controllers hovering over the GraphingDataPoint */
   const [hoverCount, setHoverCount] = useState(0);
-  /* Access the selected DataPoint State from the shared PointSelectionContext */
+  /* Access the selected GraphingDataPoint State from the shared PointSelectionContext */
   const { selectedDataPoint, setSelectedDataPoint } = usePointSelectionContext();
 
   const adjustHoverCount = (amount: number) => {
@@ -25,7 +25,7 @@ export default function DataPoint({
     // We will have to find a way around this.
     // log4js
     //   .getLogger()
-    //   .debug("DataPoint #" + id + ": setting hover count to " + amount);
+    //   .debug("GraphingDataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
 
@@ -41,15 +41,15 @@ export default function DataPoint({
         // Update point to be selected and set its fields
         } else {
           setSelectedDataPoint({
-            id, marker, color, columnX, columnY, columnZ, meshProps,
+            id, marker, color, columnX, columnY, columnZ, actualData, meshProps,
           });
         }
       }}
     >
-      {/* This first mesh stores custom data about the DataPoint */}
+      {/* This first mesh stores custom data about the GraphingDataPoint */}
       <mesh
         userData={{
-          id, columnX, columnY, columnZ, marker, color,
+          id, columnX, columnY, columnZ, marker, actualData, color,
         }}
         {...meshProps}
       >
@@ -77,9 +77,9 @@ export default function DataPoint({
 }
 
 /**
- * Specify default values for DataPoint's optional props.
+ * Specify default values for GraphingDataPoint's optional props.
  */
-DataPoint.defaultProps = {
+GraphingDataPoint.defaultProps = {
   outlineScale: 1.25,
   size: [0.01, 10, 10],
   meshProps: {},
