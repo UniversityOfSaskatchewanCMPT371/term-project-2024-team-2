@@ -155,7 +155,6 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
-      max: 3,
     });
     const testColumn2 = new Column<StatsColumn>('column2', {
       count: 3,
@@ -163,7 +162,6 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
-      max: 3,
     });
     const testColumn3 = new Column<StatsColumn>('column3', {
       count: 3,
@@ -171,7 +169,6 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
-      max: 3,
     });
     repository.addColumn(testColumn1, ColumnType.STATS);
     repository.addColumn(testColumn2, ColumnType.STATS);
@@ -195,7 +192,6 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
-      max: 3,
     });
     await repository.addColumn(testColumn, ColumnType.STATS);
 
