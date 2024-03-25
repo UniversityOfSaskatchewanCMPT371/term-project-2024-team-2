@@ -1,4 +1,4 @@
-import DataPoint from './DataPoint';
+import RepoDataPoint from './RepoDataPoint';
 import Column, {
   ColumnType, NumericColumn, RawColumn, StatsColumn,
 } from './Column';
@@ -9,7 +9,7 @@ export interface Repository {
   getPoints: (qualifyingPointOnly : boolean,
     columnXName: string,
     columnYName: string,
-    columnZName: string) => Promise<Array<DataPoint>>;
+    columnZName: string) => Promise<Array<RepoDataPoint>>;
   addColumn: (column: Column<RawColumn | StatsColumn | NumericColumn>,
     columnType: ColumnType) => Promise<string>;
   getCsvColumnNames: () => Promise<string[]>;
