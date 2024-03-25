@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto';
-import { describe } from 'vitest';
+import { describe, expect } from 'vitest';
 import { Matrix } from 'ml-matrix';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
@@ -269,9 +269,9 @@ describe('Validate standardizeQualityColumn() operation', () => {
   let expectStandardizedColumn: Array<number>;
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB');
-    repository = new DbRepository('Test_DB');
-    dataLayer = new DataLayer('Test_DB');
+    indexedDB.deleteDatabase('Test_DB1');
+    repository = new DbRepository('Test_DB1');
+    dataLayer = new DataLayer('Test_DB1');
   });
 
   test('standardizeColumn - Standardize a numeric column', async () => {
@@ -334,9 +334,9 @@ describe('Validate writeStandardizedData() operation', () => {
   let testStatsColumn: Column<StatsColumn>;
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB');
-    repository = new DbRepository('Test_DB');
-    dataLayer = new DataLayer('Test_DB');
+    indexedDB.deleteDatabase('Test_DB2');
+    repository = new DbRepository('Test_DB2');
+    dataLayer = new DataLayer('Test_DB2');
   });
 
   test('writeStandardizedData - Standardize on quality column and save', async () => {
@@ -396,9 +396,9 @@ describe('Validate getAvailableFields operation', () => {
   let testStatsColumn: Column<StatsColumn>;
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB');
-    repository = new DbRepository('Test_DB');
-    dataLayer = new DataLayer('Test_DB');
+    indexedDB.deleteDatabase('Test_DB3');
+    repository = new DbRepository('Test_DB3');
+    dataLayer = new DataLayer('Test_DB3');
   });
 
   test('getAvailableFields - Get column from both tables', async () => {
@@ -445,38 +445,179 @@ describe('Validate getAvailableFields operation', () => {
   });
 });
 
-describe('Validate getColumsForPca operation', () => {
+describe('Validate getColumnsForPca operation', () => {
   let dataLayer: DataLayer;
   let repository: Repository;
+  let column1: Column<NumericColumn>;
+  let column2: Column<NumericColumn>;
+  let columnNames: string[];
 
   beforeEach(() => {
-    repository = new DbRepository('Test_DB');
-    dataLayer = new DataLayer('Test_DB');
+    indexedDB.deleteDatabase('Test_DB4');
+    repository = new DbRepository('Test_DB4');
+    dataLayer = new DataLayer('Test_DB4');
   });
 
   test('getColumnsForPca - get standardized columns', async () => {
-    const columnNames = ['column1', 'column2'];
-    const column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
-    const column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
+    columnNames = ['column1', 'column2'];
+    column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
+    column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
     await repository.addColumn(column1, ColumnType.STANDARDIZED);
     await repository.addColumn(column2, ColumnType.STANDARDIZED);
 
     const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
 
     expect(result).toBeInstanceOf(Matrix);
-    expect(result.to2DArray()).toEqual([[1, 2, 3], [4, 5, 6]]);
+    expect(result.to2DArray()).toEqual([[1, 4], [2, 5], [3, 6]]);
   });
 
   test('getColumnsForPca - get raw columns', async () => {
-    const columnNames = ['column1', 'column2'];
-    const column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
-    const column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
+    columnNames = ['column1', 'column2'];
+    column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
+    column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
     await repository.addColumn(column1, ColumnType.RAW);
     await repository.addColumn(column2, ColumnType.RAW);
 
     const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.RAW);
 
     expect(result).toBeInstanceOf(Matrix);
-    expect(result.to2DArray()).toEqual([[1, 2, 3], [4, 5, 6]]);
+    expect(result.to2DArray()).toEqual([[1, 4], [2, 5], [3, 6]]);
+  });
+
+  test('getStandardizedColumnsForPca - get non exist standardized columns, return empty matrix', async () => {
+    columnNames = ['col1', 'col2'];
+    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
+
+    expect(result).toBeInstanceOf(Matrix);
+    expect(result.rows).toEqual(0);
+    expect(result.columns).toEqual(0);
+  });
+
+  test('getStandardizedColumnsForPca - get non exist raw columns, return empty matrix', async () => {
+    columnNames = ['col1', 'col2'];
+    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.RAW);
+
+    expect(result).toBeInstanceOf(Matrix);
+    expect(result.rows).toEqual(0);
+    expect(result.columns).toEqual(0);
+  });
+});
+
+describe('Validate calculatePCA operation', () => {
+  let dataLayer: DataLayer;
+  let repository: Repository;
+  let rawCol1: Column<RawColumn>;
+  let rawCol2: Column<RawColumn>;
+  let rawCol3: Column<RawColumn>;
+  let rawCol4: Column<RawColumn>;
+  let columnNames: string[];
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase('Test_DB5');
+    repository = new DbRepository('Test_DB5');
+    dataLayer = new DataLayer('Test_DB5');
+  });
+
+  test('getColumnsForPca - test against hard values', async () => {
+    columnNames = ['col1', 'col2', 'col3', 'col4'];
+
+    rawCol1 = new Column<RawColumn>('col1', [1, 5, 1, 5, 8]);
+    rawCol2 = new Column<RawColumn>('col2', [2, 5, 4, 3, 1]);
+    rawCol3 = new Column<RawColumn>('col3', [3, 6, 2, 2, 2]);
+    rawCol4 = new Column<RawColumn>('col4', [4, 7, 3, 1, 2]);
+    await repository.addColumn(rawCol1, ColumnType.RAW);
+    await repository.addColumn(rawCol2, ColumnType.RAW);
+    await repository.addColumn(rawCol3, ColumnType.RAW);
+    await repository.addColumn(rawCol4, ColumnType.RAW);
+
+    const response1 = await dataLayer.calculateStatistics();
+    expect(response1).toEqual(true);
+    const response2 = await dataLayer.storeStandardizedData();
+    expect(response2).toEqual(true);
+
+    const result = await dataLayer.calculatePCA(columnNames);
+    const expected: Matrix = new Matrix([
+      [-0.014003307840190604, 0.7559747649563959, 0.941199614594691, -0.10185222583403578],
+      [2.5565339942868186, -0.7804317748323727, -0.10686986110059982, -0.00575705265323978],
+      [0.051480191864712074, 1.2531347040524978, -0.39667339694231407, 0.18214124212185656],
+      [-1.0141500183909433, 0.0002388083099344046, -0.6798861824511148, -0.20122464897453102],
+      [-1.5798608599203967, -1.2289165024864557, 0.24222982589933767, 0.1266926853399502],
+    ]);
+    expect(result).toBeInstanceOf(Matrix);
+    for (let i = 0; i < result.rows; i += 1) {
+      for (let j = 0; j < result.columns; j += 1) {
+        expect(result.get(i, j)).toBeCloseTo(expected.get(i, j), 12);
+      }
+    }
+  });
+});
+
+describe('Validate storePCA operation', () => {
+  let dataLayer: DataLayer;
+  let repository: Repository;
+  let rawCol1: Column<RawColumn>;
+  let rawCol2: Column<RawColumn>;
+  let rawCol3: Column<RawColumn>;
+  let rawCol4: Column<RawColumn>;
+  let testColumnNames: string[];
+  let pcaColumnNames: string[];
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase('Test_DB6');
+    repository = new DbRepository('Test_DB6');
+    dataLayer = new DataLayer('Test_DB6');
+  });
+
+  test('getStorePCA - test that PCA get store correctly', async () => {
+    testColumnNames = ['col1', 'col2', 'col3', 'col4'];
+    pcaColumnNames = ['PC1', 'PC2', 'PC3', 'PC4'];
+
+    rawCol1 = new Column<RawColumn>('col1', [1, 5, 1, 5, 8]);
+    rawCol2 = new Column<RawColumn>('col2', [2, 5, 4, 3, 1]);
+    rawCol3 = new Column<RawColumn>('col3', [3, 6, 2, 2, 2]);
+    rawCol4 = new Column<RawColumn>('col4', [4, 7, 3, 1, 2]);
+    await repository.addColumn(rawCol1, ColumnType.RAW);
+    await repository.addColumn(rawCol2, ColumnType.RAW);
+    await repository.addColumn(rawCol3, ColumnType.RAW);
+    await repository.addColumn(rawCol4, ColumnType.RAW);
+
+    const response1 = await dataLayer.calculateStatistics();
+    expect(response1).toEqual(true);
+    const response2 = await dataLayer.storeStandardizedData();
+    expect(response2).toEqual(true);
+    const response3 = await dataLayer.storePCA(testColumnNames);
+    expect(response3).toEqual(true);
+
+    const resultPcaColumnNames = await repository.getPcaColumnNames();
+    expect(resultPcaColumnNames).toEqual(pcaColumnNames);
+
+    const resultPC1 = await repository.getColumn('PC1', ColumnType.PCA);
+    expect(resultPC1.values).toEqual([
+      -0.014003307840190604,
+      2.5565339942868186,
+      0.051480191864712074,
+      -1.0141500183909433,
+      -1.5798608599203967]);
+    const resultPC2 = await repository.getColumn('PC2', ColumnType.PCA);
+    expect(resultPC2.values).toEqual([
+      0.7559747649563959,
+      -0.7804317748323727,
+      1.2531347040524978,
+      0.0002388083099344046,
+      -1.2289165024864557]);
+    const resultPC3 = await repository.getColumn('PC3', ColumnType.PCA);
+    expect(resultPC3.values).toEqual([
+      0.941199614594691,
+      -0.10686986110059982,
+      -0.39667339694231407,
+      -0.6798861824511148,
+      0.24222982589933767]);
+    const resultPC4 = await repository.getColumn('PC4', ColumnType.PCA);
+    expect(resultPC4.values).toEqual([
+      -0.10185222583403578,
+      -0.00575705265323978,
+      0.18214124212185656,
+      -0.20122464897453102,
+      0.1266926853399502]);
   });
 });

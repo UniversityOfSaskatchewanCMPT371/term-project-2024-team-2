@@ -5,7 +5,7 @@
 export default interface DataAbstractor {
   getAvailableFields: () => Promise<string[]>;
   storeCSV: (batchItems: Array<Array<string> | Array<number>>) => Promise<boolean>;
-  storePCA: () => Promise<boolean>;
+  storePCA: (columnNames: string[]) => Promise<boolean>;
   selectAxes: (columnXName: string, columnYName: string, columnZName: string) => Promise<boolean>;
   selectPCA: (columnXName: string, columnYName: string, columnZName: string) => Promise<boolean>;
   calculateStatistics:() => Promise<boolean>;

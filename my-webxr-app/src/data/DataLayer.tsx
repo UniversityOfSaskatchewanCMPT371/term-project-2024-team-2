@@ -6,6 +6,7 @@ import DbRepository from '../repository/DbRepository';
 import Column, {
   ColumnType, RawColumn, NumericColumn, DataRow, StatsColumn,
 } from '../repository/Column';
+import { computeCovariancePCA } from '../utils/PcaCovariance';
 
 /**
  * The Data Layer provides a set of methods for working with CSV and PCA data.
@@ -223,7 +224,7 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * This function retrieves all quality columns from the Look-Up Table (Stats table), standardizes
+   * This function retrieves all numeric columns from the Look-Up Table (Stats table), standardizes
    * them, and writes the standardized data as column back to the standardizedDataTable.
    *
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
@@ -233,7 +234,7 @@ export default class DataLayer implements DataAbstractor {
   async storeStandardizedData(): Promise<boolean> {
     try {
       const isEmpty = await this.repository.isTableEmpty(ColumnType.STATS);
-      assert.ok(!isEmpty, 'Stats table is empty, can not pull quality columns.');
+      assert.ok(!isEmpty, 'Stats table is empty, can not pull numeric columns.');
       const columnNames = await this.repository.getStatsColumnNames();
 
       const promises = columnNames.map(async (name) => {
@@ -251,7 +252,7 @@ export default class DataLayer implements DataAbstractor {
   // TODO: query column names from stats table for PCA and let user choose subset to do pca on
 
   /**
-   * Retrieves column data for PCA. (Raw data or standardized data columns)
+   * Retrieves column data for PCA calculation. (Raw data or standardized data columns)
    *
    * This function accepts an array of column names, retrieves the corresponding data for each
    * column based on the specified column type, and returns a new Matrix instance with the retrieved
@@ -263,13 +264,16 @@ export default class DataLayer implements DataAbstractor {
    * function will catch the error and return an empty Matrix.
    *
    * @param {string[]} columnNames - The names of the columns to retrieve data for.
-   * @param {ColumnType} columnType - The type of the columns to retrieve data for.
+   * @param columnType
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
    * retrieved data.
    *
    * @throws {Error} If the columnType is not RAW or STANDARDIZED.
    */
-  async getColumnsForPca(columnNames: string[], columnType: ColumnType): Promise<Matrix> {
+  async getColumnsForPca(
+    columnNames: string[],
+    columnType: ColumnType,
+  ): Promise<Matrix> {
     if (columnType !== ColumnType.RAW && columnType !== ColumnType.STANDARDIZED) {
       throw new Error('Invalid column type. Must be either RAW or STANDARDIZED.');
     }
@@ -281,10 +285,11 @@ export default class DataLayer implements DataAbstractor {
       const promises = columnNames.map((columnName) => this.repository
         .getColumn(columnName, columnType)
         .then((columnData) => columnDataArray.push(columnData.values as number[])));
-
       await Promise.all(promises);
 
-      return new Matrix(columnDataArray);
+      // Push method pushes a column values as row, so we need to transpose the data to get
+      // them back to column
+      return new Matrix(columnDataArray).transpose();
     } catch (error) {
       // Logging the error here
       return new Matrix([]);
@@ -292,16 +297,72 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * TODO - modify PCA column to store varience explained or eignevalues
-   * Write back the PCA column to the repository. Name column in terms of their significant.
+   * Performs Principal Component Analysis (PCA) on the specified columns using covariance method.
    *
-   * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
+   * This function retrieves standardized data for the specified columns, calculates the covariance
+   * matrix of the standardized data, and computes the eigenvectors of the covariance matrix. It
+   * then returns the standardized data projected onto the space spanned by the eigenvectors.
+   *
+   * If an error occurs during the operation (e.g., the raw or standardized data is empty), the
+   * function will catch the error and return an empty Matrix.
+   *
+   * @param {string[]} columnNames - The names of the columns to perform PCA on.
+   * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
+   * PCA-transformed data.
+   * @throws {Error} If the raw or standardized data is empty.
    */
-  // temp disable
-  // eslint-disable-next-line class-methods-use-this
-  async storePCA(): Promise<boolean> {
-    return Promise.resolve(true);
+  async calculatePCA(columnNames: string[]): Promise<Matrix> {
+    try {
+      const standardizedData = await this.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
+      if (standardizedData.rows === 0 || standardizedData.columns === 0) {
+        throw new Error('Standardized data is empty');
+      }
+      return computeCovariancePCA(standardizedData);
+    } catch (error) {
+      // Logging the error here
+      return new Matrix(0, 0);
+    }
   }
+
+  /**
+   * This function performs Principal Component Analysis (PCA) on the specified columns and stores
+   * the result back to the repository (PCA table).
+   *
+   * The PCA-transformed Matrix is split into columns, each representing a Principal Component, and
+   * named as "PC1", "PC2", ..., "PCn", where "PC1" is the most significant Principal Component and
+   * "PCn" is the least significant.
+   *
+   * Each column is then written back to the repository.
+   *
+   * @param {string[]} columnNames - The names of the columns to perform PCA on.
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
+   * and `false` otherwise.
+   * @throws {Error} If an error occurs during the operation.
+   */
+  async storePCA(columnNames: string[]): Promise<boolean> {
+    try {
+      if (columnNames) {
+        const pcaMatrix = await this.calculatePCA(columnNames);
+
+        // Split the matrix into columns
+        const columns: NumericColumn[] = pcaMatrix.transpose().to2DArray();
+
+        // Write each column to the repository
+        const promises = columns.map((column, i) => {
+          const columnName = `PC${i + 1}`;
+          const columnData = new Column<NumericColumn>(columnName, column);
+          return this.repository.addColumn(columnData, ColumnType.PCA);
+        });
+        await Promise.all(promises);
+      }
+      return true;
+    } catch (error) {
+      // Logging the error here
+      return false;
+    }
+  }
+
+  // TODO add function to calculate and store variance explained by each PC?
 
   /**
    * TODO
