@@ -24,7 +24,7 @@ export type NumericColumn = Array<number>;
  */
 export type DataRow = RawColumn;
 /**
- * The StatsColumn type is used to represent all the statistical values for a given column.
+ * The StatsColumn type is used to represent all the statistical values for a given CSV column.
  */
 export type StatsColumn = {
   count: number;
