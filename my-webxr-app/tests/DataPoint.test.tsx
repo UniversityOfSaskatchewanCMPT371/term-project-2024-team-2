@@ -2,7 +2,7 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import GraphingDataPoint from '../src/components/GraphingDataPoint.tsx';
+import GraphingDataPoint from '../src/components/GraphingDataPoint';
 
 describe('GraphingDataPoint Creation and Interaction', () => {
   test('creating a basic GraphingDataPoint with defaults', async () => {
@@ -14,7 +14,8 @@ describe('GraphingDataPoint Creation and Interaction', () => {
       </PointSelectionProvider>,
     );
 
-    // Expect the GraphingDataPoint component to be created, along with its two meshes with default values.
+    // Expect the GraphingDataPoint component to be created, along with its two meshes with
+    // default values.
     expect(renderer.scene.children.length).toEqual(2); // + native camera component = 2
     expect(renderer.scene.children[1].children.length).toEqual(2);
   });

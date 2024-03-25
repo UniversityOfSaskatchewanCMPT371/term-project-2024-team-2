@@ -172,7 +172,6 @@ export default class DbRepository extends Dexie implements Repository {
     return column[0];
   }
 
-
   /**
     * Return a column object from the StatsData table (Look up table) based on given column name.
    *
