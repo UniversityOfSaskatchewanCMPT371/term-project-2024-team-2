@@ -98,6 +98,7 @@ export default class DataLayer implements DataAbstractor {
 
       return true;
     } catch (error) {
+      // Logging the error here
       return Promise.resolve(false);
     }
   }
@@ -177,6 +178,7 @@ export default class DataLayer implements DataAbstractor {
       await Promise.all(statsColumnsPromises);
       return true;
     } catch (error) {
+      // Logging the error here
       return Promise.resolve(false);
     }
   }
@@ -245,14 +247,14 @@ export default class DataLayer implements DataAbstractor {
       await Promise.all(promises);
       return true;
     } catch (error) {
+      // Logging the error here
       return Promise.resolve(false);
     }
   }
 
-  // TODO: query column names from stats table for PCA and let user choose subset to do pca on
-
   /**
    * Retrieves column data for PCA calculation. (Raw data or standardized data columns)
+   * Helper for calculatePca()
    *
    * This function accepts an array of column names, retrieves the corresponding data for each
    * column based on the specified column type, and returns a new Matrix instance with the retrieved
@@ -298,6 +300,7 @@ export default class DataLayer implements DataAbstractor {
 
   /**
    * Performs Principal Component Analysis (PCA) on the specified columns using covariance method.
+   * Helper for storePCA()
    *
    * This function retrieves standardized data for the specified columns, calculates the covariance
    * matrix of the standardized data, and computes the eigenvectors of the covariance matrix. It
@@ -358,11 +361,11 @@ export default class DataLayer implements DataAbstractor {
       return true;
     } catch (error) {
       // Logging the error here
-      return false;
+      return Promise.resolve(false);
     }
   }
 
-  // TODO add function to calculate and store variance explained by each PC?
+  // TODO add function to calculate and store variance explained by each PC? maybe not needed
 
   /**
    * TODO
@@ -376,7 +379,7 @@ export default class DataLayer implements DataAbstractor {
 
   /**
    * TODO
-   * Select a PCA column from the repository
+   * Select a PCA column from the repository for graphing
    */
   // temp disable
   // eslint-disable-next-line class-methods-use-this
