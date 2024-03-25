@@ -2,28 +2,28 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import DataPoint from '../src/components/DataPoint';
+import GraphingDataPoint from '../src/components/GraphingDataPoint.tsx';
 
-describe('DataPoint Creation and Interaction', () => {
-  test('creating a basic DataPoint with defaults', async () => {
+describe('GraphingDataPoint Creation and Interaction', () => {
+  test('creating a basic GraphingDataPoint with defaults', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
         </XR>
       </PointSelectionProvider>,
     );
 
-    // Expect the DataPoint component to be created, along with its two meshes with default values.
+    // Expect the GraphingDataPoint component to be created, along with its two meshes with default values.
     expect(renderer.scene.children.length).toEqual(2); // + native camera component = 2
     expect(renderer.scene.children[1].children.length).toEqual(2);
   });
 
-  test('creating a basic DataPoint and assign position', async () => {
+  test('creating a basic GraphingDataPoint and assign position', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -34,11 +34,11 @@ describe('DataPoint Creation and Interaction', () => {
     )).toBe(true);
   });
 
-  test('creating a basic DataPoint and assign outline scale', async () => {
+  test('creating a basic GraphingDataPoint and assign outline scale', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} outlineScale={2} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} outlineScale={2} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -50,12 +50,12 @@ describe('DataPoint Creation and Interaction', () => {
   });
 });
 
-describe('DataPoint UI Interaction', () => {
-  test('create a basic DataPoint and check all its fields', async () => {
+describe('GraphingDataPoint UI Interaction', () => {
+  test('create a basic GraphingDataPoint and check all its fields', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
         </XR>
       </PointSelectionProvider>,
     );

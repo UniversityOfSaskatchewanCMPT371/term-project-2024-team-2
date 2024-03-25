@@ -60,7 +60,7 @@ export default class DbRepository extends Dexie implements Repository {
         @param columnYName: the name of the column to be used as the y-axis
         @param columnZName: the name of the column to be used as the z-axis
         @pre-condition: 3 column names must be distinct and existing in the db
-        @return Promise<Array<DataPoint>>
+        @return Promise<Array<GraphingDataPoint>>
          */
   async getPoints(
     qualifyingPointOnly: boolean,
@@ -104,7 +104,7 @@ export default class DbRepository extends Dexie implements Repository {
         @param columnX: the column to be used as the x-axis
         @param columnY: the column to be used as the y-axis
         @param columnZ: the column to be used as the z-axis
-        @return Array<DataPoint>
+        @return Array<GraphingDataPoint>
          */
   static convertColumnsIntoDataPoints(
     qualifyingPointOnly: boolean,

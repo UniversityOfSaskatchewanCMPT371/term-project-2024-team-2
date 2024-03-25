@@ -6,12 +6,12 @@ import { JSX } from 'react/jsx-runtime';
 import { Group } from 'three';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 
-export default function DataPointMenu(
+export default function GraphingDataPointMenu(
   billboardProps: JSX.IntrinsicAttributes &
   Omit<BillboardProps, 'ref'> &
   RefAttributes<Group>,
 ) {
-  /* Access the selected DataPoint State from the shared PointSelectionContext */
+  /* Access the selected GraphingDataPoint State from the shared PointSelectionContext */
   const { selectedDataPoint } = usePointSelectionContext();
 
   return (

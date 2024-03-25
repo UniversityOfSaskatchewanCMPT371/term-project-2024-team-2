@@ -2,7 +2,7 @@ import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import DataPoint from '../src/components/DataPoint';
+import GraphingDataPoint from '../src/components/GraphingDataPoint.tsx';
 import createPosition from '../src/components/Positions';
 import MockServer from './MockServer';
 
@@ -63,7 +63,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={[1, 2, 3]} meshProps={{ position: [1, 2, 3] }} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={[1, 2, 3]} meshProps={{ position: [1, 2, 3] }} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -77,7 +77,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[0]} meshProps={{ position: datapoint1 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[0]} meshProps={{ position: datapoint1 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -92,7 +92,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[1]} meshProps={{ position: datapoint2 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[1]} meshProps={{ position: datapoint2 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -106,7 +106,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[2]} meshProps={{ position: datapoint3 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[2]} meshProps={{ position: datapoint3 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -120,7 +120,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[3]} meshProps={{ position: datapoint4 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[3]} meshProps={{ position: datapoint4 }} />
         </XR>
       </PointSelectionProvider>,
 
@@ -135,7 +135,7 @@ describe("Datapoint's Location is based off of values given ", () => {
     const render = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <DataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[4]} meshProps={{ position: datapoint5 }} />
+          <GraphingDataPoint id={4} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} actualData={exampleData[4]} meshProps={{ position: datapoint5 }} />
         </XR>
       </PointSelectionProvider>,
 
