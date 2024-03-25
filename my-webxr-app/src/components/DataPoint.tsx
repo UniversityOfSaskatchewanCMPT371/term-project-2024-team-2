@@ -6,7 +6,7 @@ import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 
 export default function DataPoint({
-  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps,
+  id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
 
 }: DataPointProps) {
   /* State for the count of controllers hovering over the DataPoint */
@@ -41,7 +41,7 @@ export default function DataPoint({
         // Update point to be selected and set its fields
         } else {
           setSelectedDataPoint({
-            id, marker, color, columnX, columnY, columnZ, meshProps,
+            id, marker, color, columnX, columnY, columnZ, actualData, meshProps,
           });
         }
       }}
@@ -49,7 +49,7 @@ export default function DataPoint({
       {/* This first mesh stores custom data about the DataPoint */}
       <mesh
         userData={{
-          id, columnX, columnY, columnZ, marker, color,
+          id, columnX, columnY, columnZ, marker, actualData, color,
         }}
         {...meshProps}
       >

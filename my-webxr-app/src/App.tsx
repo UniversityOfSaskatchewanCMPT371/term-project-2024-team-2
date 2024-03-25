@@ -139,8 +139,10 @@ export default function App() {
               color="gray"
               columnX="John Doe"
               columnY="cmpt 145"
+              test="dfasdfasdfmasdkfmas;dmv'al;sdmv'asmdv,.asmdv'asdmv'v"
               columnZ={97}
               meshProps={{ position: datapoint1 }}
+              actualData={exampleData[0]}
             />
             <DataPoint
               id={1}
@@ -150,6 +152,7 @@ export default function App() {
               columnY="math 110"
               columnZ={81}
               meshProps={{ position: datapoint2 }}
+              actualData={exampleData[1]}
             />
             <DataPoint
               id={2}
@@ -159,6 +162,7 @@ export default function App() {
               columnY="math 116"
               columnZ={87}
               meshProps={{ position: datapoint3 }}
+              actualData={exampleData[2]}
             />
             <DataPoint
               id={3}
@@ -168,6 +172,7 @@ export default function App() {
               columnY="stat 245"
               columnZ={75}
               meshProps={{ position: datapoint4 }}
+              actualData={exampleData[3]}
             />
             <DataPoint
               id={4}
@@ -177,6 +182,7 @@ export default function App() {
               columnY="math 115"
               columnZ={85}
               meshProps={{ position: datapoint5 }}
+              actualData={exampleData[4]}
             />
 
             <DataPointMenu position={[0, 2.2, -0.75]} />
