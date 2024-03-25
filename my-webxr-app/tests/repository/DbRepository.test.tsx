@@ -5,7 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 import * as assert from 'assert';
 import DbRepository from '../../src/repository/DbRepository';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, StatsColumn,
+  ColumnType,
+  NumericColumn,
+  RawColumn,
+  StatsColumn,
 } from '../../src/repository/Column';
 
 describe('DbRepository Test', () => {
@@ -64,10 +67,10 @@ describe('DbRepository Test', () => {
     await repository.addColumn(column, ColumnType.RAW);
 
     await expect(repository.getPoints(
-      false,
       'test',
       'test',
       'test',
+      ColumnType.RAW,
     ))
       .rejects
     // confirm that it did throw an assertion error with the correct message
@@ -79,10 +82,10 @@ describe('DbRepository Test', () => {
     await repository.addColumn(column, ColumnType.RAW);
 
     await expect(repository.getPoints(
-      false,
       'test',
       'nonExistentColumn1',
       'nonExistentColumn2',
+      ColumnType.RAW,
     ))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
@@ -152,6 +155,7 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
+      max: 3,
     });
     const testColumn2 = new Column<StatsColumn>('column2', {
       count: 3,
@@ -159,6 +163,7 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
+      max: 3,
     });
     const testColumn3 = new Column<StatsColumn>('column3', {
       count: 3,
@@ -166,6 +171,7 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
+      max: 3,
     });
     repository.addColumn(testColumn1, ColumnType.STATS);
     repository.addColumn(testColumn2, ColumnType.STATS);
@@ -189,6 +195,7 @@ describe('DbRepository Test', () => {
       sumOfSquares: 14,
       mean: 2,
       stdDev: 1,
+      max: 3,
     });
     await repository.addColumn(testColumn, ColumnType.STATS);
 

@@ -186,21 +186,31 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * getPoints gets the points from the database
-   * TODO: allow this to also get points from the pca table, only gets points from the raw table now
+   * Retrieves the x, y, and z values from the specified columns in the database and returns them as
+   * an array of DataPoint objects.
    *
-   * @param qualifyingPointOnly if true, only return points that have no missing data
-   * @param columnXName the name of the column to be used as the x-axis
-   * @param columnYName the name of the column to be used as the y-axis
-   * @param columnZName the name of the column to be used as the z-axis
+   * This assumes a column from the raw data table is numeric, and both RAW and PCA tables are not
+   * empty.
+   *
+   * If the specified column type is not RAW or PCA, an error is thrown.
+   * If the lengths of the x, y, and z columns are not the same, an error is thrown.
+   * If any error occurs during the execution of the function, an empty array is returned.
+   *
+   * @param {string} columnXName - Column names to use for the x values of the DataPoint.
+   * @param {string} columnYName - Column names to use for the y values of the DataPoint.
+   * @param {string} columnZName - Column names to use for the z values of the DataPoint.
+   * @param {ColumnType} columnType - The type of the columns to retrieve data from. Must be either
+   * RAW or PCA.
+   * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
+   * @throws {Error} If the columnType is not RAW or PCA, or if the lengths of the x, y, and z
+   * columns are not the same.
    * @pre-condition 3 column names must be distinct and existing in the db
-   * @return Promise<Array<DataPoint>>
    */
   async getPoints(
-    qualifyingPointOnly: boolean,
     columnXName: string,
     columnYName: string,
     columnZName: string,
+    columnType: ColumnType,
   ): Promise<Array<DataPoint>> {
     // verify the three columns are distinct
     assert.equal(
@@ -210,13 +220,19 @@ export default class DbRepository extends Dexie implements Repository {
         columnYName},${columnZName}!`,
     );
 
+    assert.ok(
+      columnType === ColumnType.RAW || columnType === ColumnType.PCA,
+      'Invalid column type. Must be either RAW or PCA.',
+    );
+
     // get the three columns
-    const columnX = (await this.getColumn(columnXName, ColumnType.RAW)) as
-      Column<RawColumn>;
-    const columnY = (await this.getColumn(columnYName, ColumnType.RAW)) as
-      Column<RawColumn>;
-    const columnZ = (await this.getColumn(columnZName, ColumnType.RAW)) as
-      Column<RawColumn>;
+    const columnX = (await this.getColumn(columnXName, columnType));
+    const columnY = (await this.getColumn(columnYName, columnType));
+    const columnZ = (await this.getColumn(columnZName, columnType));
+
+    assert.ok(columnX.values[0] === 'number', 'ColumnX must be numeric!');
+    assert.ok(columnY.values[0] === 'number', 'ColumnY must be numeric!');
+    assert.ok(columnZ.values[0] === 'number', 'ColumnZ must be numeric!');
 
     const sameLength = new Set([columnX.values.length,
       columnY.values.length,
@@ -227,7 +243,6 @@ export default class DbRepository extends Dexie implements Repository {
             + `column ${columnZName} has ${columnZ.values.length} values!`);
 
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
-      qualifyingPointOnly,
       columnX,
       columnY,
       columnZ,
@@ -237,32 +252,25 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * convertColumnsIntoDataPoints converts the columns into an array of DataPoints
-   * @param qualifyingPointOnly if true, only return points that have no missing data
+   *
    * @param columnX the column to be used as the x-axis
    * @param columnY the column to be used as the y-axis
    * @param columnZ the column to be used as the z-axis
    * @return Array<DataPoint>
    */
   static convertColumnsIntoDataPoints(
-    qualifyingPointOnly: boolean,
-    columnX: Column<RawColumn | NumericColumn>,
-    columnY: Column<RawColumn | NumericColumn>,
-    columnZ: Column<RawColumn | NumericColumn>,
+    columnX: Column<NumericColumn | RawColumn>,
+    columnY: Column<NumericColumn | RawColumn>,
+    columnZ: Column<NumericColumn | RawColumn>,
   ): Array<DataPoint> {
     const dataPoints: Array<DataPoint> = [];
 
     for (let i = 0; i < columnX.values.length; i += 1) {
-      // Force type cast to string | number | null.
-      // We can guarantee this, given the DataColumn generic consists of these types.
       const xValue = (columnX.values[i]);
       const yValue = (columnY.values[i]);
       const zValue = (columnZ.values[i]);
-      const hasMissingData = xValue === null || yValue === null || zValue === null;
 
-      // if only qualifying points are requested, add the point only if it has no missing data
-      if (!qualifyingPointOnly || (qualifyingPointOnly && !hasMissingData)) {
-        dataPoints.push(new DataPoint(hasMissingData, xValue, yValue, zValue));
-      }
+      dataPoints.push(new DataPoint(xValue, yValue, zValue));
     }
     return dataPoints;
   }

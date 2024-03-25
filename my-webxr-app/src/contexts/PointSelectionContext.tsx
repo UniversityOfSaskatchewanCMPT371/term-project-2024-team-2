@@ -9,7 +9,7 @@ import { DataPointProps } from '../types/DataPointTypes';
 /**
  * Create an interface for the return state values of the Context.
  *
- * selectedDataPoint: either the id number of the selected DataPoint,
+ * selectedDataPoint: either the id number of the selected GraphingDataPoint,
  *                    or null if one isn't selected.
  * setSelectedDataPoint: React State setter function
  */
@@ -35,7 +35,7 @@ export const PointSelectionContext = createContext<PointSelectionContextType | n
 export function PointSelectionProvider({
   children,
 }: React.PropsWithChildren) {
-  /* Create the internal selected DataPoint State */
+  /* Create the internal selected GraphingDataPoint State */
   const [selectedDataPoint, setSelectedDataPointInternal] = useState<PointSelectionContextType['selectedDataPoint']>(null);
 
   const setSelectedDataPoint = (

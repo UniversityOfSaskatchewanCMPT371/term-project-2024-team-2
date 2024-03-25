@@ -1,3 +1,6 @@
+import { ColumnType } from '../repository/Column';
+import DataPoint from '../repository/DataPoint';
+
 /**
  * The DataAbstractor interface defines a set of common operations available to the Data
  * Abstraction Layer.
@@ -9,4 +12,10 @@ export default interface DataAbstractor {
   selectAxes: (columnXName: string, columnYName: string, columnZName: string) => Promise<boolean>;
   selectPCA: (columnXName: string, columnYName: string, columnZName: string) => Promise<boolean>;
   calculateStatistics:() => Promise<boolean>;
+  createGraphingPoints:(
+    columnX: string,
+    ColumnY: string,
+    ColumnZ: string,
+    columnType: ColumnType,
+  ) => Promise<DataPoint[]>;
 }

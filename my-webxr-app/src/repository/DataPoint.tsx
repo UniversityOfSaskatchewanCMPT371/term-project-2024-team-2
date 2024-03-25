@@ -1,19 +1,15 @@
 export default class DataPoint {
-  hasMissingData: boolean;
+  xValue: number | string;
 
-  xValue: number | string | null;
+  yValue: number | string;
 
-  yValue: number | string | null;
-
-  zValue: number | string | null;
+  zValue: number | string;
 
   constructor(
-    hasMissingData: boolean,
-    xValue: number | string | null,
-    yValue: number | string | null,
-    zValue: number | string | null,
+    xValue: number | string,
+    yValue: number | string,
+    zValue: number | string,
   ) {
-    this.hasMissingData = hasMissingData;
     this.xValue = xValue;
     this.yValue = yValue;
     this.zValue = zValue;

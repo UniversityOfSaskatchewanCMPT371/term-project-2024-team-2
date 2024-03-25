@@ -4,9 +4,14 @@ import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, DataRow, StatsColumn,
+  ColumnType,
+  DataRow,
+  NumericColumn,
+  RawColumn,
+  StatsColumn,
 } from '../repository/Column';
 import { computeCovariancePCA } from '../utils/PcaCovariance';
+import DataPoint from '../repository/DataPoint';
 
 /**
  * The Data Layer provides a set of methods for working with CSV and PCA data.
@@ -131,6 +136,7 @@ export default class DataLayer implements DataAbstractor {
         ? (Math.sqrt(sumOfSquares / (count - 1)))
         : 0
     );
+    const max = Math.max(...column.values);
 
     return new Column<StatsColumn>(columnName, {
       count,
@@ -138,6 +144,7 @@ export default class DataLayer implements DataAbstractor {
       sumOfSquares,
       mean,
       stdDev,
+      max,
     });
   }
 
@@ -363,6 +370,15 @@ export default class DataLayer implements DataAbstractor {
       // Logging the error here
       return Promise.resolve(false);
     }
+  }
+
+  public async createGraphingPoints(
+    columnX: string,
+    ColumnY: string,
+    ColumnZ: string,
+    columnType: ColumnType,
+  ): Promise<DataPoint[]> {
+    return this.repository.getPoints(columnX, ColumnY, ColumnZ, columnType);
   }
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed
