@@ -28,9 +28,4 @@ const worker = setupServer(
   ),
 );
 
-// to check if it's actually intercepting the requests
-//   worker.events.on('request:start', ({ request }) => {
-//     console.log('MSW intercepted:', request.method, request.url);
-//   });
-
 export default worker;
