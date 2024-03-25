@@ -11,7 +11,6 @@ export interface DataPointProps {
   columnZ: number;
   color: string
   marker: string
-  test?: string;
   actualData?: number[];
   outlineScale?: number;
   size?: SphereGeometryProps['args'];
