@@ -23,16 +23,17 @@ interface PointSelectionContextType {
  * Create the PointSelectionContext.
  * There is a default value of null when it used outside a PointSelectionProvider.
  * Otherwise, it is the selectedDataPoint state.
+ * @type {React.Context<PointSelectionContextType | null>}
  */
 export const PointSelectionContext = createContext<PointSelectionContextType | null>(null);
 
 /**
  * Create the Context Provider element for the React tree.
- *
- * @param children: pass-through for the child elements.
- *
- * @return: A context manager for clicking on data points.
- *
+ * @param {React.ReactElement<any, string | React.JSXElementConstructor<any>> |
+ *          string | number | Iterable<React.ReactNode> | React.ReactPortal |
+ *          boolean | undefined | null} children pass-through for the child elements.
+ * @return {React.JSX.Element} A context manager for clicking on data points.
+ * @constructor
  * @pre-condition: None
  * @post-condition: The children's interaction signals will be handled by the returned object.
  */
@@ -66,6 +67,7 @@ export function PointSelectionProvider({
 /**
  * Provide a type-guaranteed context (not null) for use within components.
  * Call this function instead of useContext(PointSelectionContext).
+ * @return {PointSelectionContextType}
  */
 export const usePointSelectionContext = (): PointSelectionContextType => {
   // This context will only be null if called from outside a PointSelectionProvider.
