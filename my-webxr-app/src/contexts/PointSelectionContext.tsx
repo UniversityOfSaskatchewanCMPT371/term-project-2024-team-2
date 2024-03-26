@@ -30,6 +30,11 @@ export const PointSelectionContext = createContext<PointSelectionContextType | n
  * Create the Context Provider element for the React tree.
  *
  * @param children: pass-through for the child elements.
+ *
+ * @return: A context manager for clicking on data points.
+ *
+ * @pre-condition: None
+ * @post-condition: The children's interaction signals will be handled by the returned object.
  */
 export function PointSelectionProvider({
   children,
