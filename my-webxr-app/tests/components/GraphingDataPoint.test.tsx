@@ -1,8 +1,8 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
-import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import GraphingDataPoint from '../src/components/GraphingDataPoint';
+import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
+import GraphingDataPoint from '../../src/components/GraphingDataPoint';
 
 describe('GraphingDataPoint Creation and Interaction', () => {
   test('creating a basic GraphingDataPoint with defaults', async () => {

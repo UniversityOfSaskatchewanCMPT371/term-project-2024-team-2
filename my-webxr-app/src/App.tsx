@@ -12,7 +12,7 @@ import './styles.css';
 import TestingOptions from './testing/TestingOptions';
 import {
   createGraphingDataPoints,
-} from './utils/CreateGraphingDataPoints';
+} from './components/CreateGraphingDataPoints';
 import DataPoint from './repository/DataPoint';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now

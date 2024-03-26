@@ -1,8 +1,8 @@
 import DataLayer from '../data/DataLayer';
 import { ColumnType } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
-import createPosition from '../components/Positions';
-import GraphingDataPoint from '../components/GraphingDataPoint';
+import createPosition from './Positions';
+import GraphingDataPoint from './GraphingDataPoint';
 
 /**
  * Asynchronously fetches data points from the provided data layer using the specified 3 column
