@@ -1,14 +1,14 @@
 export default class DataPoint {
-  xValue: number | string;
+  xValue: number;
 
-  yValue: number | string;
+  yValue: number;
 
-  zValue: number | string;
+  zValue: number;
 
   constructor(
-    xValue: number | string,
-    yValue: number | string,
-    zValue: number | string,
+    xValue: number,
+    yValue: number,
+    zValue: number,
   ) {
     this.xValue = xValue;
     this.yValue = yValue;

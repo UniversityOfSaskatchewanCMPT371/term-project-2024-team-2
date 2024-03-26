@@ -5,8 +5,7 @@ import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 
 export default function GraphingDataPoint({
-  id, marker, color, columnX, columnY, columnZ, outlineScale, size, meshProps,
-
+  id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
 }: DataPointProps) {
   /* State for the count of controllers hovering over the GraphingDataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -19,12 +18,6 @@ export default function GraphingDataPoint({
         'Assertion failed: hoverCount should never be < 0 or > 2',
       );
     }
-
-    // Critical Failure: log4js accesses process.env() which vite removes.
-    // We will have to find a way around this.
-    // log4js
-    //   .getLogger()
-    //   .debug("GraphingDataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
 
@@ -37,10 +30,10 @@ export default function GraphingDataPoint({
         if (selectedDataPoint?.id === id) {
           setSelectedDataPoint(null);
 
-        // Update point to be selected and set its fields
+          // Update point to be selected and set its fields
         } else {
           setSelectedDataPoint({
-            id, marker, color, columnX, columnY, columnZ, meshProps,
+            id, marker, color, columnX, columnY, columnZ, actualData, meshProps,
           });
         }
       }}
@@ -48,7 +41,7 @@ export default function GraphingDataPoint({
       {/* This first mesh stores custom data about the GraphingDataPoint */}
       <mesh
         userData={{
-          id, columnX, columnY, columnZ, marker, color,
+          id, columnX, columnY, columnZ, marker, actualData, color,
         }}
         {...meshProps}
       >

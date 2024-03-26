@@ -84,7 +84,7 @@ export default class DataLayer implements DataAbstractor {
         let newValues: RawColumn;
 
         if (this.isFirstBatch) {
-          columnName = String(column[0]);
+          columnName = String(column[0]); // Type cast numeric field header to string
           newValues = column.slice(1);
           const aColumn = new Column<RawColumn>(columnName, newValues);
           await this.repository.addColumn(aColumn, ColumnType.RAW);
@@ -393,16 +393,17 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * This function retrieves the statistical values for a given column from the repository.
+   * This function retrieves the values for a given column from the raw or pca table.
    *
-   * @param {string} columnName - The name of the column to retrieve statistics for.
+   * This assumes the column relives are numeric from raw table is numeric
    *
-   * @returns {Promise<StatsColumn>} A promise that resolves to a StatsColumn object.
-   * The StatsColumn object contains statistical values such as count, sum, sum of squares,
-   * mean, standard deviation, and max.
+   * @param {string} columnName - The name of the column to retrieve values for.
+   * @param {ColumnType} columnType - The type of the column (RAW or PCA).
+   * @returns {Promise<NumericColumn>} A promise that resolves to a NumericColumn object.
    */
-  public async getStats(columnName: string): Promise<StatsColumn> {
-    return this.repository.getStatsColumn(columnName).then((column) => column.values);
+  public async getColumnValues(columnName: string, columnType: ColumnType): Promise<NumericColumn> {
+    return this.repository.getColumn(columnName, columnType)
+      .then((column) => column.values as number[]);
   }
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed

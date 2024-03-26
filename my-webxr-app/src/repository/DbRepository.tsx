@@ -243,9 +243,9 @@ export default class DbRepository extends Dexie implements Repository {
             + `column ${columnZName} has ${columnZ.values.length} values!`);
 
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
-      columnX,
-      columnY,
-      columnZ,
+      columnX as Column<NumericColumn>,
+      columnY as Column<NumericColumn>,
+      columnZ as Column<NumericColumn>,
     );
     return Promise.resolve(dataPoints);
   }
@@ -259,9 +259,9 @@ export default class DbRepository extends Dexie implements Repository {
    * @return Array<DataPoint>
    */
   static convertColumnsIntoDataPoints(
-    columnX: Column<NumericColumn | RawColumn>,
-    columnY: Column<NumericColumn | RawColumn>,
-    columnZ: Column<NumericColumn | RawColumn>,
+    columnX: Column<NumericColumn>,
+    columnY: Column<NumericColumn>,
+    columnZ: Column<NumericColumn>,
   ): Array<DataPoint> {
     const dataPoints: Array<DataPoint> = [];
 

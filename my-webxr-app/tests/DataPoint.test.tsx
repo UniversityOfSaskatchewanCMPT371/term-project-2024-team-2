@@ -9,7 +9,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" />
         </XR>
       </PointSelectionProvider>,
     );
@@ -24,7 +24,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} meshProps={{ position: [1, 2, 3] }} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" meshProps={{ position: [1, 2, 3] }} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -39,7 +39,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} outlineScale={2} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" outlineScale={2} />
         </XR>
       </PointSelectionProvider>,
     );
@@ -56,7 +56,7 @@ describe('GraphingDataPoint UI Interaction', () => {
     const renderer = await ReactThreeTestRenderer.create(
       <PointSelectionProvider>
         <XR>
-          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
+          <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" />
         </XR>
       </PointSelectionProvider>,
     );
@@ -76,6 +76,6 @@ describe('GraphingDataPoint UI Interaction', () => {
     // Check if the point column2 value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.columnY).toBe('cmpt 145');
     // Check if the point column3 value is accurate.
-    expect(renderer.scene.children[1].children[0].instance.userData.columnZ).toBe(97);
+    expect(renderer.scene.children[1].children[0].instance.userData.columnZ).toBe('97');
   });
 });

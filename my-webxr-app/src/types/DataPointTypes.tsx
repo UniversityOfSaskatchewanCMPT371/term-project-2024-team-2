@@ -8,9 +8,10 @@ export interface DataPointProps {
   id: number;
   columnX: string;
   columnY: string;
-  columnZ: number;
+  columnZ: string;
   color: string
   marker: string
+  actualData?: number[];
   outlineScale?: number;
   size?: SphereGeometryProps['args'];
   meshProps?: JSX.IntrinsicElements['mesh'];
