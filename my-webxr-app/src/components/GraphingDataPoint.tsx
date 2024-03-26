@@ -54,6 +54,7 @@ export default function GraphingDataPoint({
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
       <mesh
+        name="point sphere"
         {...meshProps}
         scale={outlineScale}
         visible={hoverCount !== 0 || selectedDataPoint?.id === id}
