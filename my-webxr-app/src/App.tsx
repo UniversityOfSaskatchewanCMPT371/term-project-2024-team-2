@@ -141,6 +141,7 @@ export default function App() {
               columnY="cmpt 145"
               columnZ="97"
               meshProps={{ position: datapoint1 }}
+              actualData={exampleData[0]}
             />
             <GraphingDataPoint
               id={1}
@@ -150,6 +151,7 @@ export default function App() {
               columnY="math 110"
               columnZ="81"
               meshProps={{ position: datapoint2 }}
+              actualData={exampleData[1]}
             />
             <GraphingDataPoint
               id={2}
@@ -159,6 +161,7 @@ export default function App() {
               columnY="math 116"
               columnZ="87"
               meshProps={{ position: datapoint3 }}
+              actualData={exampleData[2]}
             />
             <GraphingDataPoint
               id={3}
@@ -168,6 +171,7 @@ export default function App() {
               columnY="stat 245"
               columnZ="75"
               meshProps={{ position: datapoint4 }}
+              actualData={exampleData[3]}
             />
             <GraphingDataPoint
               id={4}
@@ -177,6 +181,7 @@ export default function App() {
               columnY="math 115"
               columnZ="85"
               meshProps={{ position: datapoint5 }}
+              actualData={exampleData[4]}
             />
 
             <GraphingDataPointMenu position={[0, 2.2, -0.75]} />

@@ -30,7 +30,7 @@ export default function GraphingDataPoint({
         if (selectedDataPoint?.id === id) {
           setSelectedDataPoint(null);
 
-          // Update point to be selected and set its fields
+        // Update point to be selected and set its fields
         } else {
           setSelectedDataPoint({
             id, marker, color, columnX, columnY, columnZ, actualData, meshProps,
