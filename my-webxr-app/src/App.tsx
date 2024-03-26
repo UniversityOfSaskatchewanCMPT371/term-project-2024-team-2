@@ -139,7 +139,7 @@ export default function App() {
               color="gray"
               columnX="John Doe"
               columnY="cmpt 145"
-              columnZ={97}
+              columnZ="97"
               meshProps={{ position: datapoint1 }}
             />
             <GraphingDataPoint
@@ -148,7 +148,7 @@ export default function App() {
               color="gray"
               columnX="Bob Johnson"
               columnY="math 110"
-              columnZ={81}
+              columnZ="81"
               meshProps={{ position: datapoint2 }}
             />
             <GraphingDataPoint
@@ -157,7 +157,7 @@ export default function App() {
               color="gray"
               columnX="Bob John"
               columnY="math 116"
-              columnZ={87}
+              columnZ="87"
               meshProps={{ position: datapoint3 }}
             />
             <GraphingDataPoint
@@ -166,7 +166,7 @@ export default function App() {
               color="gray"
               columnX="Alice Smith"
               columnY="stat 245"
-              columnZ={75}
+              columnZ="75"
               meshProps={{ position: datapoint4 }}
             />
             <GraphingDataPoint
@@ -175,7 +175,7 @@ export default function App() {
               color="gray"
               columnX="Bob Smith"
               columnY="math 115"
-              columnZ={85}
+              columnZ="85"
               meshProps={{ position: datapoint5 }}
             />
 
