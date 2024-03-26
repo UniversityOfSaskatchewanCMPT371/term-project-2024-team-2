@@ -6,6 +6,9 @@ import Column, {
   TableName, RawColumn, NumericColumn, StatsColumn,
 } from './Column';
 
+/**
+ * Concrete implementation of a data source in IndexedDB
+ */
 export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
   // just to inform Typescript of the object type stored in the table.
@@ -17,6 +20,13 @@ export default class DbRepository extends Dexie implements Repository {
 
   private pcaColumns!: Dexie.Table<Column<NumericColumn>, string>;
 
+  /**
+   * Concrete implementation of a data source in IndexedDB
+   *
+   * @param dbName The name of the database to create
+   * @pre-condition The dbName is a string
+   * @post-condition A database with the provided dbName will be created in the browser's IndexedDB
+   */
   constructor(dbName: string) {
     // create a db instance
     super(dbName);
@@ -73,7 +83,8 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * Adds a column to a table
-   * @preconds: The column name must be unique
+   * @pre-condition The column name must be unique@post-condition The column will be added to the database and can be referenced by the
+   *      returned name
    * @param column the column to be added to the database
    * @param tableName the name of table to add column to
    * @return Promise<string> the primary key of the column aka the name of the column
@@ -205,12 +216,12 @@ export default class DbRepository extends Dexie implements Repository {
    * Retrieves the x, y, and z values from the specified columns in the database and returns them as
    * an array of DataPoint objects.
    *
-   * @preconds
+   * @pre-condition
    * - The table name must be either RAW or PCA.
    * - The columns must contain numeric data.
    * - The lengths of the x, y, and z columns must be the same.
    * - The three column names must be distinct.
-   *
+   * @post-condition A set of data points that can be plotted
    * @param {string} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string} columnYName - Column names to use for the y values of the DataPoint.
    * @param {string} columnZName - Column names to use for the z values of the DataPoint.
@@ -266,12 +277,13 @@ export default class DbRepository extends Dexie implements Repository {
   /**
    * Convert the columns into an array of DataPoints
    *
-   * @preconds
+   * @pre-condition
    * - All columns must have the same length.
    * - All columns must contain numeric data.
-   * @param columnX the column to be used as the x-axis
-   * @param columnY the column to be used as the y-axis
-   * @param columnZ the column to be used as the z-axis
+   * @post-condition A row-wise representation of the data
+   * @param {Column} columnX the column to be used as the x-axis
+   * @param {Column} columnY the column to be used as the y-axis
+   * @param {Column} columnZ the column to be used as the z-axis
    * @return Array<DataPoint>
    */
   static convertColumnsIntoDataPoints(
