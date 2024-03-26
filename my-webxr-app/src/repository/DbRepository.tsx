@@ -48,7 +48,6 @@ export default class DbRepository extends Dexie implements Repository {
    *
    * @param {ColumnType} columnType the type of column table to be checked
    */
-
   async isTableEmpty(columnType: ColumnType): Promise<boolean> {
     let count = 0;
 
@@ -73,7 +72,8 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * addColumn adds a column to the database
+   * Adds a column to the column table in the database based on the column type.
+   *
    * @param column the column to be added to the database
    * @param columnType the type of column to be added
    * @return Promise<string> the primary key of the column aka the name of the column
@@ -95,8 +95,8 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * Updates a column in the database based on the column type.
-   * This excludes stats column because stats column is a look up table, and value should not be
-   * updated manually
+   * This excludes stats column because stats column is a look-up table, and value should not be
+   * updated manually.
    *
    * @param {Column<NumericColumn | RawColumn | StatsColumn>} column - The column to be updated.
    * @param {ColumnType} columnType - The type of the column to be updated.
@@ -189,12 +189,11 @@ export default class DbRepository extends Dexie implements Repository {
    * Retrieves the x, y, and z values from the specified columns in the database and returns them as
    * an array of DataPoint objects.
    *
-   * This assumes a column from the raw data table is numeric, and both RAW and PCA tables are not
-   * empty.
-   *
-   * If the specified column type is not RAW or PCA, an error is thrown.
-   * If the lengths of the x, y, and z columns are not the same, an error is thrown.
-   * If any error occurs during the execution of the function, an empty array is returned.
+   * @preconds
+   * - The columnType must be either RAW or PCA.
+   * - The columns must contain numeric data.
+   * - The lengths of the x, y, and z columns must be the same.
+   * - The three column names must be distinct.
    *
    * @param {string} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string} columnYName - Column names to use for the y values of the DataPoint.
@@ -202,9 +201,7 @@ export default class DbRepository extends Dexie implements Repository {
    * @param {ColumnType} columnType - The type of the columns to retrieve data from. Must be either
    * RAW or PCA.
    * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
-   * @throws {Error} If the columnType is not RAW or PCA, or if the lengths of the x, y, and z
-   * columns are not the same.
-   * @pre-condition 3 column names must be distinct and existing in the db
+   * @throws {Error} If violates preconditions.
    */
   async getPoints(
     columnXName: string,
@@ -251,8 +248,11 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * convertColumnsIntoDataPoints converts the columns into an array of DataPoints
+   * Convert the columns into an array of DataPoints
    *
+   * @preconds
+   * - All columns must have the same length.
+   * - All columns must contain numeric data.
    * @param columnX the column to be used as the x-axis
    * @param columnY the column to be used as the y-axis
    * @param columnZ the column to be used as the z-axis

@@ -111,9 +111,8 @@ export default class DataLayer implements DataAbstractor {
   /**
    * Helper function for calculateStatistics()
    *
-   * Calculate the statistical values for a given column. This assumes that all values in the
-   * column are numbers.
-   *
+   * Calculate the statistical values for a given column.
+   * @preconds Column values are array of numbers.
    * @param {Column<NumericColumn>} column The column of data to calculate statistics for.
    * @param {string} columnName The name of the column.
    * @returns {Column<StatsColumn>} containing the statistical values.
@@ -152,9 +151,8 @@ export default class DataLayer implements DataAbstractor {
    * This function retrieves all column names from the repository. For each raw column, it retrieves
    * the data, check if the data are all numeric, calculates statistics, and adds a new statistic
    * column to the Look-up table (stats table) in the repository.
-   * This assumes the column is not empty
    *
-   *
+   * @preconds Column is not empty.
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
    * @throws {Error} If the raw data table in the repository is empty or if an error occurs during
@@ -208,9 +206,9 @@ export default class DataLayer implements DataAbstractor {
    * and stats column. For each entry in the raw data column, it standardizes the data using the
    * mean and standard deviation from the stats column.
    *
-   * This assumes if a column name is in look up table (stats table) then the column data are
-   * numeric in the raw data table
-   *
+   * @preconds
+   * - Column name is in look up table (stats table).
+   * - Corresponding column name in raw data table is numeric, which must be true.
    * @param {string} columnName - The name of the numeric column to be standardized.
    * @return {Promise<Column<NumericColumn>>} A promise that resolves to a Column object containing
    * the standardized data.
@@ -258,7 +256,7 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Retrieves column data for PCA calculation. (Raw data or standardized data columns)
+   * Retrieves column data for PCA calculation, either raw or standardized.
    * Helper for calculatePca()
    *
    * This function accepts an array of column names, retrieves the corresponding data for each
@@ -269,12 +267,13 @@ export default class DataLayer implements DataAbstractor {
    *
    * If an error occurs during the operation (e.g., a column does not exist, table empty), the
    * function will catch the error and return an empty Matrix.
-   *
+   * @preconds
+   * - Column type is either RAW or STANDARDIZED.
+   * - Column names are in the the table (Raw of Standardized table base on provide column type).
    * @param {string[]} columnNames - The names of the columns to retrieve data for.
-   * @param columnType
+   * @param columnType - The type of the columns (RAW or STANDARDIZED).
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
    * retrieved data.
-   *
    * @throws {Error} If the columnType is not RAW or STANDARDIZED.
    */
   async getColumnsForPca(
@@ -314,6 +313,7 @@ export default class DataLayer implements DataAbstractor {
    * If an error occurs during the operation (e.g., the raw or standardized data is empty), the
    * function will catch the error and return an empty Matrix.
    *
+   * @preconds Column names are in the table, both raw and standardized.
    * @param {string[]} columnNames - The names of the columns to perform PCA on.
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
    * PCA-transformed data.
@@ -407,26 +407,6 @@ export default class DataLayer implements DataAbstractor {
   }
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed
-
-  /**
-   * TODO
-   * Select a raw data column or PCA column from the repository for graphing
-   */
-  // temp disable
-  // eslint-disable-next-line class-methods-use-this
-  async selectAxes() {
-    return Promise.resolve(true);
-  }
-
-  /**
-   * TODO
-   * Select a PCA column from the repository for graphing
-   */
-  // temp disable
-  // eslint-disable-next-line class-methods-use-this
-  async selectPCA() {
-    return Promise.resolve(true);
-  }
 }
 
 /**
