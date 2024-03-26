@@ -50,11 +50,14 @@ export default class DbRepository extends Dexie implements Repository {
     return this.columns.add(column);
   }
 
-  /*
-        getColumn gets a column from the database
-        @param columnName: the name of the column to be retrieved
-        @return Promise<Column>
-         */
+  /**
+   * Asynchronously Gets a column from the database
+   * @param {string} columnName The name of the column in the database
+   * @return {Promise<Column>} The data column
+   * @private
+   * @pre-condition A column with the provided name is in the database
+   * @post-condition The column with the provided name and its associated data
+   */
   private async getColumn(columnName: string) {
     const column = await this.columns
       .where('name')
@@ -153,9 +156,11 @@ export default class DbRepository extends Dexie implements Repository {
     return dataPoints;
   }
 
-  /*
-        closeConnection closes the connection to the database
-         */
+  /**
+   * Closes the database connection
+   * @pre-condition The database connection is open
+   * @post-condition The database connection is closed
+   */
   closeConnection() {
     this.close();
   }
