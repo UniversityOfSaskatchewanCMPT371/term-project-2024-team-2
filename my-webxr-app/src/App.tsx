@@ -102,6 +102,7 @@ export default function App() {
             <ambientLight />
             <pointLight position={[10, 10, 10]} />
             <Controllers />
+            {/** return from createGraphingDataPoints */}
             {plottedDataPoints}
             <GenerateXYZ
               minValue={minNum}

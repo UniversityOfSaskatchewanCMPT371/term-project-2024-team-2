@@ -22,7 +22,7 @@ import GraphingDataPoint from '../components/GraphingDataPoint';
  * the data layer.
  */
 // Function to create data points
-export async function fectchDataPoints(
+export async function fetchDataPoints(
   dataLayer: DataLayer,
   xColumnName: string,
   yColumnName: string,
