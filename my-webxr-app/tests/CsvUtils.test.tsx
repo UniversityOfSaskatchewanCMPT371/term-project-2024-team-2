@@ -1,23 +1,22 @@
 import { openDB } from 'idb';
 import * as Papa from 'papaparse';
-import { handleParsedData, validateDbAndStore, parseAndHandleUrlCsv } from '../src/utils/CsvUtils';
+import { Mock } from 'vitest';
+import { handleParsedData, parseAndHandleUrlCsv, validateDbAndStore } from '../src/utils/CsvUtils';
 
-jest.mock('idb', () => ({
-  openDB: jest.fn(),
+vi.mock('idb', () => ({
+  openDB: vi.fn(),
 }));
-jest.mock('papaparse', () => ({
-  parse: jest.fn(),
-}));
+vi.mock('papaparse');
 
 describe('validateDbAndStore functions', () => {
   it('should throw an error if the database does not exist', async () => {
-    (openDB as jest.Mock).mockResolvedValueOnce(undefined);
+    (openDB as Mock).mockResolvedValueOnce(undefined);
 
     await expect(validateDbAndStore('testDb', 'testStore')).rejects.toThrow('Database "testDb" does not exist');
   });
 
   it('should throws an error when the store does not exist within database', async () => {
-    (openDB as jest.Mock).mockResolvedValueOnce({
+    (openDB as Mock).mockResolvedValueOnce({
       objectStoreNames: {
         contains: () => false,
       },
@@ -27,7 +26,7 @@ describe('validateDbAndStore functions', () => {
   });
 
   it('should not throw an error if the database and store exist', async () => {
-    (openDB as jest.Mock).mockResolvedValueOnce({
+    (openDB as Mock).mockResolvedValueOnce({
       objectStoreNames: {
         contains: () => true,
       },
@@ -43,10 +42,10 @@ describe('handleParsedData functions', () => {
     const dbName = 'testDb';
     const storeName = 'testStore';
 
-    const mockClear = jest.fn().mockResolvedValue(undefined);
-    const mockPut = jest.fn().mockResolvedValue(undefined);
+    const mockClear = vi.fn().mockResolvedValue(undefined);
+    const mockPut = vi.fn().mockResolvedValue(undefined);
 
-    (openDB as jest.Mock).mockResolvedValueOnce({
+    (openDB as Mock).mockResolvedValueOnce({
       transaction: () => ({
         objectStore: () => ({
           clear: mockClear,
@@ -69,10 +68,10 @@ describe('handleParsedData functions', () => {
     const dbName = 'testDb';
     const storeName = 'testStore';
 
-    const mockClear = jest.fn().mockResolvedValue(undefined);
-    const mockPut = jest.fn().mockResolvedValue(undefined);
+    const mockClear = vi.fn().mockResolvedValue(undefined);
+    const mockPut = vi.fn().mockResolvedValue(undefined);
 
-    (openDB as jest.Mock).mockResolvedValueOnce({
+    (openDB as Mock).mockResolvedValueOnce({
       transaction: () => ({
         objectStore: () => ({
           clear: mockClear,
@@ -94,11 +93,12 @@ describe('parseAndHandleUrlCsv function', () => {
     const url = 'https://support.staffbase.com/hc/en-us/article_attachments/360009197031/username.csv';
     const dbName = 'testDb';
     const storeName = 'testStore';
-    const setMessage = jest.fn();
+    const setMessage = vi.fn();
 
     await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
 
-    expect(Papa.parse).toHaveBeenCalledWith(url, expect.objectContaining({
+    // @ts-expect-error The default property is external and TypeScript won't recognise it.
+    expect((Papa as object).default.parse).toHaveBeenCalledWith(url, expect.objectContaining({
       download: true,
       dynamicTyping: true,
       complete: expect.any(Function),

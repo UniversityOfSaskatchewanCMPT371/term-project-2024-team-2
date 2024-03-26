@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "NODE_ENV=test jest",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "coverage": "vitest run --coverage",
     "build": "NODE_ENV=production tsc -p tsconfig.prod.json && vite build",
     "lint": "eslint . --fix --max-warnings 0",
     "preview": "vite preview"
@@ -17,6 +19,7 @@
     "@react-three/xr": "^5.7.1",
     "@rollbar/react": "^0.11.2",
     "dexie": "^3.2.5",
+    "dotenv": "^16.4.5",
     "idb": "^8.0.0",
     "log4js": "^6.9.1",
     "ml-matrix": "^6.11.0",
@@ -27,10 +30,7 @@
     "three": "^0.160.1"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.23.9",
-    "@babel/preset-typescript": "^7.23.3",
     "@react-three/test-renderer": "^8.2.1",
-    "@types/jest": "^29.5.11",
     "@types/papaparse": "^5.3.14",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
@@ -38,7 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "babel-jest": "^29.7.0",
+    "@vitest/coverage-v8": "^1.4.0",
     "eslint": "^8.56.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
@@ -49,11 +49,12 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "fake-indexeddb": "^5.0.2",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.2",
+    "msw": "^2.2.10",
     "typescript": "^5.2.2",
     "uuid": "^8.3.2",
     "vite": "^5.0.8",
-    "vite-plugin-node-polyfills": "^0.21.0"
+    "vite-plugin-node-polyfills": "^0.21.0",
+    "vitest": "^1.4.0",
+    "vitest-canvas-mock": "^0.3.3"
   }
 }
