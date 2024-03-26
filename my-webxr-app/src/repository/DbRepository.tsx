@@ -357,9 +357,11 @@ export default class DbRepository extends Dexie implements Repository {
     return await this.standardizedColumns.toCollection().keys() as string[];
   }
 
-  /**
-   * closeConnection closes the connection to the database
-   */
+    /**
+     * Closes the database connection
+     * @pre-condition The database connection is open
+     * @post-condition The database connection is closed
+     */
   closeConnection() {
     this.close();
   }
