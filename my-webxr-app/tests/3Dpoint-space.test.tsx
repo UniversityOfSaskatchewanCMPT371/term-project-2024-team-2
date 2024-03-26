@@ -3,7 +3,6 @@ import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
 import GraphingDataPoint from '../src/components/GraphingDataPoint';
-import GenerateXYZ from '../src/components/GenerateXYZ';
 import createPosition from '../src/components/Positions';
 import MockServer from './MockServer';
 
