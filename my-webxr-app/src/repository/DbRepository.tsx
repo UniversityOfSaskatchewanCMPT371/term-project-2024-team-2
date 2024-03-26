@@ -227,9 +227,9 @@ export default class DbRepository extends Dexie implements Repository {
     const columnY = (await this.getColumn(columnYName, columnType));
     const columnZ = (await this.getColumn(columnZName, columnType));
 
-    assert.ok(columnX.values[0] === 'number', 'ColumnX must be numeric!');
-    assert.ok(columnY.values[0] === 'number', 'ColumnY must be numeric!');
-    assert.ok(columnZ.values[0] === 'number', 'ColumnZ must be numeric!');
+    assert.ok(typeof columnX.values[0] === 'number', 'ColumnX must be numeric!');
+    assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');
+    assert.ok(typeof columnZ.values[0] === 'number', 'ColumnZ must be numeric!');
 
     const sameLength = new Set([columnX.values.length,
       columnY.values.length,
