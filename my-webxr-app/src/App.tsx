@@ -96,7 +96,7 @@ export default function App() {
   return (
     <>
       <div>
-        {import.meta.env.VITE_IS_TESTING && <TestingOptions />}
+        {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
