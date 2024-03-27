@@ -1,6 +1,6 @@
 import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
-import DataLayer from './DataLayer.tsx';
+import DataLayer from './DataLayer';
 
 /**
  * The DataAbstractor interface defines a set of common operations available to the Data
@@ -21,4 +21,4 @@ export default interface DataAbstractor {
   ) => Promise<DataPoint[]>;
 }
 
-export const getDatabase = () => new DataLayer('OculusAppDatabase') as DataAbstractor;
+export const getDatabase = () => new DataLayer('CsvDataBase') as DataAbstractor;

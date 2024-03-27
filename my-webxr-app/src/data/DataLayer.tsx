@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import { Matrix } from 'ml-matrix';
+// eslint-disable-next-line import/no-cycle
 import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
