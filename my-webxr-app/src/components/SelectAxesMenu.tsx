@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import assert from '../utils/Assert';
-import DataAbstractor from '../data/DataAbstractor';
+import DataAbstractor from '../data/DataAbstractor.tsx';
 
 interface SelectAxesColumnsProps {
   database: DataAbstractor;
@@ -61,17 +61,11 @@ function DropDown({
 export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) {
   assert(database != null, 'Database name cannot be null');
   const [AxisOptions, setAxisOptions] = useState<{ value: string; label: string }[]>([]);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // @ts-ignore
   const [xAxis, setXAxis] = useState('');
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // @ts-ignore
   const [yAxis, setYAxis] = useState('');
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // @ts-ignore
   const [zAxis, setZAxis] = useState('');
 
   useEffect(() => {
