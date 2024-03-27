@@ -6,8 +6,7 @@ import Column, {
 // The repository interface defines operations that can be
 // done to/on the db.
 export interface Repository {
-  getPoints: (
-    columnXName: string,
+  getPoints: (columnXName: string,
     columnYName: string,
     columnZName: string,
     columnType: TableName) => Promise<Array<DataPoint>>;

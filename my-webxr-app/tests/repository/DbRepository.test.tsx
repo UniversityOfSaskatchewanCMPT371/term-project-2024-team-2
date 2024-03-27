@@ -10,6 +10,7 @@ import Column, {
   RawColumn,
   StatsColumn,
 } from '../../src/repository/Column';
+import DataPoint from '../../src/repository/DataPoint';
 
 describe('DbRepository Test', () => {
   let repository: DbRepository;
@@ -217,5 +218,106 @@ describe('DbRepository Test', () => {
     await expect(repository.getColumn('nonExistentColumn', TableName.RAW))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
+  });
+});
+
+describe('DbRepository - Test getPoints()', () => {
+  let repository: DbRepository;
+  let testDbName: string;
+
+  beforeEach(() => {
+    // create a new unique db name for each test
+    testDbName = `TestDb${uuidv4()}`;
+    // confirm this db does not exist yet
+    expect(Dexie.exists(testDbName)).resolves.toBe(false);
+
+    // create a new repository for each test
+    repository = new DbRepository(testDbName);
+  });
+
+  afterEach(async () => {
+    // have to close the connection before deleting the db
+    // not closing the connection will cause Dexie.delete to hang
+    repository.closeConnection();
+    await Dexie.delete(testDbName);
+  });
+
+  test('getPoints - Given duplicate column name - expect Exception', async () => {
+    const column = new Column<RawColumn>('test', [1, 2]);
+    await repository.addColumn(column, TableName.RAW);
+
+    await expect(repository.getPoints('test', 'test', 'test', TableName.RAW))
+      .rejects
+    // confirm that it did throw an assertion error with the correct message
+      .toThrow(new assert.AssertionError({ message: 'The three columns must be distinct but got: test,test,test!' }));
+  });
+
+  test('getPoints - Given non-existent column name - expect Exception', async () => {
+    const column = new Column<RawColumn>('test', [1, 2]);
+    await repository.addColumn(column, TableName.RAW);
+
+    await expect(repository.getPoints('test', 'nonExistentColumn1', 'nonExistentColumn2', TableName.RAW))
+      .rejects
+      .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
+  });
+
+  test('getPoints - Given One column of string type - expect Exception', async () => {
+    const column1 = new Column<RawColumn>('column1', [1.1, 2.2, 3.3]);
+    const column2 = new Column('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
+    const column3 = new Column('column3', [-1.1, -2.2, -3.3]);
+    await repository.addColumn(column1, TableName.RAW);
+    await repository.addColumn(column2, TableName.RAW);
+    await repository.addColumn(column3, TableName.RAW);
+
+    await expect(repository.getPoints('column1', 'column2', 'column3', TableName.RAW))
+      .rejects
+      .toThrow(new assert.AssertionError({ message: 'ColumnY must be numeric!' }));
+  });
+
+  test('getPoints - Get points of STANDARDIZED column types - expect Exception', async () => {
+    const column1 = new Column<NumericColumn>('column1', [1.1, 2.2, 3.3]);
+    const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
+    const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
+    await repository.addColumn(column1, TableName.STANDARDIZED);
+    await repository.addColumn(column2, TableName.STANDARDIZED);
+    await repository.addColumn(column3, TableName.STANDARDIZED);
+
+    await expect(repository.getPoints('column1', 'column2', 'column3', TableName.STANDARDIZED))
+      .rejects
+      .toThrow(new assert.AssertionError({ message: 'Invalid column type. Must be either RAW or PCA.' }));
+  });
+
+  test('getPoints - Get points of 3 RAW DATA columns', async () => {
+    const column1 = new Column<RawColumn>('column1', [1.1, 2.2, 3.3]);
+    const column2 = new Column<RawColumn>('column2', [0.1, 0.2, 0.3]);
+    const column3 = new Column<RawColumn>('column3', [-1.1, -2.2, -3.3]);
+    await repository.addColumn(column1, TableName.RAW);
+    await repository.addColumn(column2, TableName.RAW);
+    await repository.addColumn(column3, TableName.RAW);
+
+    const result = await repository.getPoints('column1', 'column2', 'column3', TableName.RAW);
+
+    expect(result).toHaveLength(3);
+    const expected = [new DataPoint(1.1, 0.1, -1.1),
+      new DataPoint(2.2, 0.2, -2.2),
+      new DataPoint(3.3, 0.3, -3.3)];
+    expect(result).toEqual(expect.arrayContaining(expected));
+  });
+
+  test('getPoints - Get points of 3 PCA DATA columns', async () => {
+    const column1 = new Column<NumericColumn>('column1', [1.1, 2.2, 3.3]);
+    const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
+    const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
+    await repository.addColumn(column1, TableName.PCA);
+    await repository.addColumn(column2, TableName.PCA);
+    await repository.addColumn(column3, TableName.PCA);
+
+    const result = await repository.getPoints('column1', 'column2', 'column3', TableName.PCA);
+
+    expect(result).toHaveLength(3);
+    const expected = [new DataPoint(1.1, 0.1, -1.1),
+      new DataPoint(2.2, 0.2, -2.2),
+      new DataPoint(3.3, 0.3, -3.3)];
+    expect(result).toEqual(expect.arrayContaining(expected));
   });
 });

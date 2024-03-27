@@ -72,8 +72,8 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * Adds a column to the column table in the database based on the column type.
-   *
+   * Adds a column to a table
+   * @preconds: The column name must be unique
    * @param column the column to be added to the database
    * @param tableName the name of table to add column to
    * @return Promise<string> the primary key of the column aka the name of the column
@@ -81,13 +81,29 @@ export default class DbRepository extends Dexie implements Repository {
   async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, tableName: TableName) {
     switch (tableName) {
       case TableName.STATS:
-        return this.statsColumns.add(column as Column<StatsColumn>);
+        return this.statsColumns.add(column as Column<StatsColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       case TableName.RAW:
-        return this.rawColumns.add(column as Column<RawColumn>);
+        return this.rawColumns.add(column as Column<RawColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       case TableName.STANDARDIZED:
-        return this.standardizedColumns.add(column as Column<NumericColumn>);
+        return this.standardizedColumns.add(column as Column<NumericColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       case TableName.PCA:
-        return this.pcaColumns.add(column as Column<NumericColumn>);
+        return this.pcaColumns.add(column as Column<NumericColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       default: // This shouldn't ever occur because of the Enum usage
         throw new Error(`Invalid table name: ${tableName}`);
     }
@@ -235,9 +251,9 @@ export default class DbRepository extends Dexie implements Repository {
       columnY.values.length,
       columnZ.values.length]);
     assert.equal(sameLength.size, 1, 'The number of values in the given columns must be the same, but '
-            + `column ${columnXName} has ${columnX.values.length} values, `
-            + `column ${columnYName} has ${columnY.values.length} values, and `
-            + `column ${columnZName} has ${columnZ.values.length} values!`);
+        + `column ${columnXName} has ${columnX.values.length} values, `
+        + `column ${columnYName} has ${columnY.values.length} values, and `
+        + `column ${columnZName} has ${columnZ.values.length} values!`);
 
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
       columnX as Column<NumericColumn>,
@@ -263,13 +279,24 @@ export default class DbRepository extends Dexie implements Repository {
     columnY: Column<NumericColumn>,
     columnZ: Column<NumericColumn>,
   ): Array<DataPoint> {
+    // assert that all columns have the same length
+    assert.equal(
+      columnX.values.length,
+      columnY.values.length,
+      `The number of values in the given columns must be the same but column X has ${columnX.values.length} values and column Y has ${columnY.values.length} values!`,
+    );
+    assert.equal(
+      columnY.values.length,
+      columnZ.values.length,
+      `The number of values in the given columns must be the same but column Y has ${columnY.values.length} values and column Z has ${columnZ.values.length} values!`,
+    );
+
     const dataPoints: Array<DataPoint> = [];
 
     for (let i = 0; i < columnX.values.length; i += 1) {
       const xValue = (columnX.values[i]);
       const yValue = (columnY.values[i]);
       const zValue = (columnZ.values[i]);
-
       dataPoints.push(new DataPoint(xValue, yValue, zValue));
     }
     return dataPoints;
