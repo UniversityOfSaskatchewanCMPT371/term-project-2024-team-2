@@ -80,6 +80,7 @@ export default class DataLayer implements DataAbstractor {
 
         if (this.isFirstBatch) {
           columnName = String(column[0]);
+          // TODO handle duplicate column names here, and add test to DataLayer.test.ts
           newValues = column.slice(1);
           const aColumn = new Column<RawColumn>(columnName, newValues);
           await this.repository.addColumn(aColumn, ColumnType.RAW);
