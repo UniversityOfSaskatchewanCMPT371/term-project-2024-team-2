@@ -2,11 +2,10 @@ import Dexie from 'dexie';
 import * as assert from 'assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
-import Column from './Column';
-import getColumnNames from './FilterAxis';
 import Column, {
   ColumnType, RawColumn, NumericColumn, StatsColumn,
 } from './Column';
+import getColumnNames from './FilterAxis';
 
 export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
@@ -269,8 +268,6 @@ export default class DbRepository extends Dexie implements Repository {
     return dataPoints;
   }
 
-  
-  
   /*
         getPossibleAxes retrieves the column names that contain only integer values
         @return Promise<string[]>: an array of the column names with integers only
@@ -294,9 +291,7 @@ export default class DbRepository extends Dexie implements Repository {
   /*
         closeConnection closes the connection to the database
          */
-  
-  
-  
+
   /**
    * Retrieves all column names from the raw data table in the database.
    *

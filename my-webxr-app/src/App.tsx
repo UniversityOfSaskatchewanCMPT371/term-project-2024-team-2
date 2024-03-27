@@ -109,7 +109,7 @@ export default function App() {
         >
           Print Data to Console
         </button>
-         <SelectAxesColumns dbName={dbName} />
+        <SelectAxesColumns dbName={dbName} />
       </div>
       <VRButton />
       <PointSelectionProvider>
