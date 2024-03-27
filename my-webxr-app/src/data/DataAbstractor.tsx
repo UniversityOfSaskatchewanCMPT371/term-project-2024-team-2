@@ -1,4 +1,4 @@
-import { ColumnType } from '../repository/Column';
+import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
 
 /**
@@ -14,6 +14,6 @@ export default interface DataAbstractor {
     columnX: string,
     ColumnY: string,
     ColumnZ: string,
-    columnType: ColumnType,
+    columnType: TableName,
   ) => Promise<DataPoint[]>;
 }

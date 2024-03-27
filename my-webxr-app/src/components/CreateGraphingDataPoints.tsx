@@ -1,5 +1,5 @@
 import DataLayer from '../data/DataLayer';
-import { ColumnType } from '../repository/Column';
+import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
 import createPosition from './Positions';
 import GraphingDataPoint from './GraphingDataPoint';
@@ -17,7 +17,7 @@ import GraphingDataPoint from './GraphingDataPoint';
  * @param {string} xColumnName - The name of the column to use for the x-values of the data points.
  * @param {string} yColumnName - The name of the column to use for the y-values of the data points.
  * @param {string} zColumnName - The name of the column to use for the z-values of the data points.
- * @param {ColumnType} columnType - The type of the columns to use for the data points.
+ * @param {TableName} columnType - The type of the columns to use for the data points.
  * @returns {Promise<DataPoint[]>} A promise that resolves to an array of data points fetched from
  * the data layer.
  */
@@ -27,7 +27,7 @@ export async function fetchDataPoints(
   xColumnName: string,
   yColumnName: string,
   zColumnName: string,
-  columnType: ColumnType,
+  columnType: TableName,
 ) {
   return dataLayer.createDataPointsFrom3Columns(xColumnName, yColumnName, zColumnName, columnType);
 }
