@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, StatsColumn,
+  TableName, RawColumn, NumericColumn, StatsColumn,
 } from './Column';
 
 export default class DbRepository extends Dexie implements Repository {
@@ -46,77 +46,76 @@ export default class DbRepository extends Dexie implements Repository {
   /**
    * Checks if the table is empty
    *
-   * @param {ColumnType} columnType the type of column table to be checked
+   * @param {TableName}  tableName the name of table to be checked
    */
-
-  async isTableEmpty(columnType: ColumnType): Promise<boolean> {
+  async isTableEmpty(tableName: TableName): Promise<boolean> {
     let count = 0;
 
-    switch (columnType) {
-      case ColumnType.RAW:
+    switch (tableName) {
+      case TableName.RAW:
         count = await this.rawColumns.count();
         break;
-      case ColumnType.STATS:
+      case TableName.STATS:
         count = await this.statsColumns.count();
         break;
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         count = await this.standardizedColumns.count();
         break;
-      case ColumnType.PCA:
+      case TableName.PCA:
         count = await this.pcaColumns.count();
         break;
       default:
-        throw new Error(`Unknown column type: ${columnType}`);
+        throw new Error(`Unknown table name: ${tableName}`);
     }
 
     return count === 0;
   }
 
   /**
-   * addColumn adds a column to the database
+   * Adds a column to a table
    * @preconds: The column name must be unique
    * @param column the column to be added to the database
-   * @param columnType the type of column to be added
+   * @param tableName the name of table to add column to
    * @return Promise<string> the primary key of the column aka the name of the column
    */
-  async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, columnType: ColumnType) {
-    switch (columnType) {
-      case ColumnType.STATS:
+  async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, tableName: TableName) {
+    switch (tableName) {
+      case TableName.STATS:
         return this.statsColumns.add(column as Column<StatsColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
             throw e;
           });
-      case ColumnType.RAW:
+      case TableName.RAW:
         return this.rawColumns.add(column as Column<RawColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
             throw e;
           });
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         return this.standardizedColumns.add(column as Column<NumericColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
             throw e;
           });
-      case ColumnType.PCA:
+      case TableName.PCA:
         return this.pcaColumns.add(column as Column<NumericColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
             throw e;
           });
       default: // This shouldn't ever occur because of the Enum usage
-        throw new Error(`Invalid columnType: ${columnType}`);
+        throw new Error(`Invalid table name: ${tableName}`);
     }
   }
 
   /**
-   * Updates a column in the database based on the column type.
-   * This excludes stats column because stats column is a look up table, and value should not be
-   * updated manually
+   * Updates a column in the database.
+   * This excludes stats column because stats column is a look-up table, and value should not be
+   * updated manually.
    *
    * @param {Column<NumericColumn | RawColumn | StatsColumn>} column - The column to be updated.
-   * @param {ColumnType} columnType - The type of the column to be updated.
+   * @param {TableName} tableName - The table name contains column to be updated.
    * @returns {Promise<boolean>} - Returns a promise that resolves to a boolean indicating whether
    * the update was successful.
    * @throws {Error} - Throws an error if an invalid column type is provided.
@@ -124,21 +123,21 @@ export default class DbRepository extends Dexie implements Repository {
 
   async updateColumn(
     column: Column<NumericColumn | RawColumn>,
-    columnType: ColumnType,
+    tableName: TableName,
   ): Promise<boolean> {
     let columnsTable;
-    switch (columnType) {
-      case ColumnType.RAW:
+    switch (tableName) {
+      case TableName.RAW:
         columnsTable = this.rawColumns;
         break;
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         columnsTable = this.standardizedColumns;
         break;
-      case ColumnType.PCA:
+      case TableName.PCA:
         columnsTable = this.pcaColumns;
         break;
       default: // This shouldn't ever occur because of the Enum usage
-        throw new Error(`Invalid columnType: ${columnType}`);
+        throw new Error(`Invalid table name: ${tableName}`);
     }
     try {
       await columnsTable.put(column);
@@ -153,7 +152,7 @@ export default class DbRepository extends Dexie implements Repository {
    * name and type.
    *
    * @param {string} columnName - The name of the column to be retrieved.
-   * @param {ColumnType} columnType - The type of the column to be retrieved. This determines the
+   * @param {TableName} tableName - The name of table to retrieve column from. This determines the
    * table to fetch the column from.
    * @returns {Promise<Column<NumericColumn | RawColumn>>} - Returns a promise that resolves to the
    * column object.
@@ -162,21 +161,21 @@ export default class DbRepository extends Dexie implements Repository {
    */
   async getColumn(
     columnName: string,
-    columnType: ColumnType,
+    tableName: TableName,
   ): Promise<Column<RawColumn | NumericColumn>> {
     let columnsTable;
-    switch (columnType) {
-      case ColumnType.RAW:
+    switch (tableName) {
+      case TableName.RAW:
         columnsTable = this.rawColumns;
         break;
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         columnsTable = this.standardizedColumns;
         break;
-      case ColumnType.PCA:
+      case TableName.PCA:
         columnsTable = this.pcaColumns;
         break;
       default: // This shouldn't ever occur because of the Enum usage
-        throw new Error(`Invalid columnType: ${columnType}`);
+        throw new Error(`Invalid table name: ${tableName}`);
     }
 
     const column = await columnsTable
@@ -207,7 +206,7 @@ export default class DbRepository extends Dexie implements Repository {
    * an array of DataPoint objects.
    *
    * @preconds
-   * - The columnType must be either RAW or PCA.
+   * - The table name must be either RAW or PCA.
    * - The columns must contain numeric data.
    * - The lengths of the x, y, and z columns must be the same.
    * - The three column names must be distinct.
@@ -215,7 +214,7 @@ export default class DbRepository extends Dexie implements Repository {
    * @param {string} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string} columnYName - Column names to use for the y values of the DataPoint.
    * @param {string} columnZName - Column names to use for the z values of the DataPoint.
-   * @param {ColumnType} columnType - The type of the columns to retrieve data from. Must be either
+   * @param {TableName} tableName - The name of the table to retrieve columns from. Must be either
    * RAW or PCA.
    * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
    * @throws {Error} If violates preconditions.
@@ -224,7 +223,7 @@ export default class DbRepository extends Dexie implements Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string,
-    columnType: ColumnType,
+    tableName: TableName,
   ): Promise<Array<DataPoint>> {
     // verify the three columns are distinct
     assert.equal(
@@ -235,14 +234,14 @@ export default class DbRepository extends Dexie implements Repository {
     );
 
     assert.ok(
-      columnType === ColumnType.RAW || columnType === ColumnType.PCA,
+      tableName === TableName.RAW || tableName === TableName.PCA,
       'Invalid column type. Must be either RAW or PCA.',
     );
 
     // get the three columns
-    const columnX = (await this.getColumn(columnXName, columnType));
-    const columnY = (await this.getColumn(columnYName, columnType));
-    const columnZ = (await this.getColumn(columnZName, columnType));
+    const columnX = (await this.getColumn(columnXName, tableName));
+    const columnY = (await this.getColumn(columnYName, tableName));
+    const columnZ = (await this.getColumn(columnZName, tableName));
 
     assert.ok(typeof columnX.values[0] === 'number', 'ColumnX must be numeric!');
     assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');
@@ -265,7 +264,11 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * convertColumnsIntoDataPoints converts the columns into an array of DataPoints
+   * Convert the columns into an array of DataPoints
+   *
+   * @preconds
+   * - All columns must have the same length.
+   * - All columns must contain numeric data.
    * @param columnX the column to be used as the x-axis
    * @param columnY the column to be used as the y-axis
    * @param columnZ the column to be used as the z-axis
@@ -291,8 +294,6 @@ export default class DbRepository extends Dexie implements Repository {
     const dataPoints: Array<DataPoint> = [];
 
     for (let i = 0; i < columnX.values.length; i += 1) {
-      // Force type cast to string | number | null.
-      // We can guarantee this, given the DataColumn generic consists of these types.
       const xValue = (columnX.values[i]);
       const yValue = (columnY.values[i]);
       const zValue = (columnZ.values[i]);

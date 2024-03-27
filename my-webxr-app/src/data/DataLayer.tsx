@@ -4,10 +4,15 @@ import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, StatsColumn,
+  TableName,
+  DataRow,
+  NumericColumn,
+  RawColumn,
+  StatsColumn,
 } from '../repository/Column';
 import { computeCovariancePCA } from '../utils/PcaCovariance';
 import { BatchedDataStream } from '../utils/CsvUtils';
+import DataPoint from '../repository/DataPoint';
 
 /**
  * The Data Layer provides a set of methods for working with CSV and PCA data.
@@ -80,18 +85,17 @@ export default class DataLayer implements DataAbstractor {
         let newValues: RawColumn;
 
         if (this.isFirstBatch) {
-          columnName = String(column[0]);
-          // TODO handle duplicate column names here, and add test to DataLayer.test.ts
+          columnName = String(column[0]); // Type cast numeric field header to string
           newValues = column.slice(1);
           const aColumn = new Column<RawColumn>(columnName, newValues);
-          await this.repository.addColumn(aColumn, ColumnType.RAW);
+          await this.repository.addColumn(aColumn, TableName.RAW);
         } else {
           const columnNames = await this.repository.getCsvColumnNames();
           columnName = columnNames[index];
           newValues = column;
-          const existingColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+          const existingColumn = await this.repository.getColumn(columnName, TableName.RAW);
           (existingColumn.values as (string | number)[]).push(...newValues);
-          await this.repository.updateColumn(existingColumn, ColumnType.RAW);
+          await this.repository.updateColumn(existingColumn, TableName.RAW);
         }
       });
       await Promise.all(promises);
@@ -159,20 +163,20 @@ export default class DataLayer implements DataAbstractor {
    */
   async calculateStatistics(): Promise<boolean> {
     try {
-      const isEmpty = await this.repository.isTableEmpty(ColumnType.RAW);
+      const isEmpty = await this.repository.isTableEmpty(TableName.RAW);
       assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
       const rawColumnNames = await this.repository.getCsvColumnNames();
 
       // eslint-disable-next-line consistent-return -- return undefined if column is not numeric
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
-        const rawDataColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+        const rawDataColumn = await this.repository.getColumn(columnName, TableName.RAW);
         assert.ok(rawDataColumn.values.length > 0, 'Column values must not be empty');
 
         // Check if is a numeric column
         if (typeof rawDataColumn.values[0] === 'number') {
           const numericRawColumn = rawDataColumn as Column<NumericColumn>;
           const statsColumn = DataLayer.calculateColumnStatistics(numericRawColumn, columnName);
-          await this.repository.addColumn(statsColumn, ColumnType.STATS);
+          await this.repository.addColumn(statsColumn, TableName.STATS);
           return statsColumn;
         }
       });
@@ -198,6 +202,27 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
+   * Retrieve the all column names from PCA table
+   * Intend use for user to select which 3 PCA columns to be plotted.
+   *
+   * @returns {Promise<string[]>} A promise that resolves to an array of column names.
+   */
+  async getAllPcaColumnNames(): Promise<string[]> {
+    return this.repository.getPcaColumnNames();
+  }
+
+  /**
+   * Retrieve all the numeric column names in Raw/CSV data.
+   * Intended to be used for user to select which 3 Raw columns to be plotted.
+   *
+   * @preconds - Stat table contains only and the names of all numeric Raw/CSV columns.
+   * @returns {Promise<string[]>} A promise that resolves to an array of column names.
+   */
+  async getAllNumericRawColumnNames(): Promise<string[]> {
+    return this.repository.getStatsColumnNames();
+  }
+
+  /**
    * Helper for storeStandardizedData()
    * This function standardizes a specified numeric column in the repository.
    *
@@ -205,9 +230,9 @@ export default class DataLayer implements DataAbstractor {
    * and stats column. For each entry in the raw data column, it standardizes the data using the
    * mean and standard deviation from the stats column.
    *
-   * This assumes if a column name is in look up table (stats table) then the column data are
-   * numeric in the raw data table
-   *
+   * @preconds
+   * - Column name is in look up table (stats table).
+   * - Corresponding column name in raw data table is numeric, which must be true.
    * @param {string} columnName - The name of the numeric column to be standardized.
    * @return {Promise<Column<NumericColumn>>} A promise that resolves to a Column object containing
    * the standardized data.
@@ -217,7 +242,7 @@ export default class DataLayer implements DataAbstractor {
     const statsColumn = await this.repository.getStatsColumn(columnName);
     const { mean } = statsColumn.values;
     const { stdDev } = statsColumn.values;
-    const rawDataColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+    const rawDataColumn = await this.repository.getColumn(columnName, TableName.RAW);
 
     assert.ok(typeof rawDataColumn.values[0] === 'number', 'Column must be numeric to be standardized');
     const numericalRawDataColumn = rawDataColumn as Column<NumericColumn>;
@@ -237,13 +262,13 @@ export default class DataLayer implements DataAbstractor {
    */
   async storeStandardizedData(): Promise<boolean> {
     try {
-      const isEmpty = await this.repository.isTableEmpty(ColumnType.STATS);
+      const isEmpty = await this.repository.isTableEmpty(TableName.STATS);
       assert.ok(!isEmpty, 'Stats table is empty, can not pull numeric columns.');
       const columnNames = await this.repository.getStatsColumnNames();
 
       const promises = columnNames.map(async (name) => {
         const standardizedColumn = await this.standardizeColumn(name);
-        await this.repository.addColumn(standardizedColumn, ColumnType.STANDARDIZED);
+        await this.repository.addColumn(standardizedColumn, TableName.STANDARDIZED);
       });
 
       await Promise.all(promises);
@@ -255,30 +280,29 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Retrieves column data for PCA calculation. (Raw data or standardized data columns)
+   * Retrieves column data for PCA calculation, either raw or standardized.
    * Helper for calculatePca()
    *
-   * This function accepts an array of column names, retrieves the corresponding data for each
-   * column based on the specified column type, and returns a new Matrix instance with the retrieved
-   * data.
+   * This function accepts an array of column names, retrieves the corresponding data from table for
+   * each column based on the specified table name, and returns a new Matrix instance with the
+   * retrieved data.
    *
    * The Matrix size could be too large and exceed the memory limit. TODO handle this case.
    *
    * If an error occurs during the operation (e.g., a column does not exist, table empty), the
    * function will catch the error and return an empty Matrix.
-   *
+   * @preconds - Columns are in the table, either RAW or STANDARDIZED.
    * @param {string[]} columnNames - The names of the columns to retrieve data for.
-   * @param columnType
+   * @param {TableName} tableName - The name of the table to pull columns (RAW or STANDARDIZED).
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
    * retrieved data.
-   *
-   * @throws {Error} If the columnType is not RAW or STANDARDIZED.
+   * @throws {Error} If the table name is neither RAW nor STANDARDIZED.
    */
   async getColumnsForPca(
     columnNames: string[],
-    columnType: ColumnType,
+    tableName: TableName,
   ): Promise<Matrix> {
-    if (columnType !== ColumnType.RAW && columnType !== ColumnType.STANDARDIZED) {
+    if (tableName !== TableName.RAW && tableName !== TableName.STANDARDIZED) {
       throw new Error('Invalid column type. Must be either RAW or STANDARDIZED.');
     }
 
@@ -287,7 +311,7 @@ export default class DataLayer implements DataAbstractor {
 
       // Assume all the columns are numeric
       const promises = columnNames.map((columnName) => this.repository
-        .getColumn(columnName, columnType)
+        .getColumn(columnName, tableName)
         .then((columnData) => columnDataArray.push(columnData.values as number[])));
       await Promise.all(promises);
 
@@ -311,6 +335,7 @@ export default class DataLayer implements DataAbstractor {
    * If an error occurs during the operation (e.g., the raw or standardized data is empty), the
    * function will catch the error and return an empty Matrix.
    *
+   * @preconds Column names are in the table, both raw and standardized.
    * @param {string[]} columnNames - The names of the columns to perform PCA on.
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
    * PCA-transformed data.
@@ -318,7 +343,7 @@ export default class DataLayer implements DataAbstractor {
    */
   async calculatePCA(columnNames: string[]): Promise<Matrix> {
     try {
-      const standardizedData = await this.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
+      const standardizedData = await this.getColumnsForPca(columnNames, TableName.STANDARDIZED);
       if (standardizedData.rows === 0 || standardizedData.columns === 0) {
         throw new Error('Standardized data is empty');
       }
@@ -356,7 +381,7 @@ export default class DataLayer implements DataAbstractor {
         const promises = columns.map((column, i) => {
           const columnName = `PC${i + 1}`;
           const columnData = new Column<NumericColumn>(columnName, column);
-          return this.repository.addColumn(columnData, ColumnType.PCA);
+          return this.repository.addColumn(columnData, TableName.PCA);
         });
         await Promise.all(promises);
       }
@@ -367,25 +392,41 @@ export default class DataLayer implements DataAbstractor {
     }
   }
 
+  /**
+   * This function retrieves data points from the repository based on the provided column names
+   * and table name.
+   *
+   * @param {string} columnX - The name of the column to be used for the x-axis values.
+   * @param {string} columnY - The name of the column to be used for the y-axis values.
+   * @param {string} columnZ - The name of the column to be used for the z-axis values.
+   * @param {TableName} tableName - The type of the table (RAW or PCA).
+   *
+   * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
+   * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
+   */
+
+  public async createDataPointsFrom3Columns(
+    columnX: string,
+    columnY: string,
+    columnZ: string,
+    tableName: TableName,
+  ): Promise<DataPoint[]> {
+    return this.repository.getPoints(columnX, columnY, columnZ, tableName);
+  }
+
+  /**
+   * This function retrieves the values for a given column from the raw or pca table.
+   *
+   * This assumes the column relives are numeric from raw table is numeric
+   *
+   * @param {string} columnName - The name of the column to retrieve values for.
+   * @param {TableName} tableName - The name of table (RAW or PCA).
+   * @returns {Promise<NumericColumn>} A promise that resolves to a NumericColumn object.
+   */
+  public async getColumnValues(columnName: string, tableName: TableName): Promise<NumericColumn> {
+    return this.repository.getColumn(columnName, tableName)
+      .then((column) => column.values as number[]);
+  }
+
   // TODO add function to calculate and store variance explained by each PC? maybe not needed
-
-  /**
-   * TODO
-   * Select a raw data column or PCA column from the repository for graphing
-   */
-  // temp disable
-  // eslint-disable-next-line class-methods-use-this
-  async selectAxes() {
-    return Promise.resolve(true);
-  }
-
-  /**
-   * TODO
-   * Select a PCA column from the repository for graphing
-   */
-  // temp disable
-  // eslint-disable-next-line class-methods-use-this
-  async selectPCA() {
-    return Promise.resolve(true);
-  }
 }

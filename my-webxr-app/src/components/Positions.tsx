@@ -23,7 +23,7 @@ const createPosition = ({
   length: number,
   scale: number,
   max: number
-}) => {
+}): Vector3 => {
   assert(
     data.length === 3,
 
