@@ -20,6 +20,8 @@ interface DropDownProps {
       - id: the id of the dropdown (to classify x, y, or z)
       - options: this will be the choices that can fill the dropdowns
       - chosenValue: will be the value chosen for from each dropdown
+  @pre-condition: the options should be loaded up with column names
+  @post-condition: chosenValue is updated with the selection
   @return: the dropdown menu
  */
 function DropDown({
@@ -51,6 +53,8 @@ function DropDown({
   this function will allow the user to choose their axis values
   @params:
       - dbName: the name of the database to get the data from
+  @pre-condition: dB name cannot be empty, relies on database
+  @post-condition: setting the proper x,y,z coordinates for the data point
   @return: the dropdown menus
   (think also needs to return the columns chosen and assign the values to x,y,z of data points)
  */
