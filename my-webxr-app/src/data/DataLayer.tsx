@@ -5,7 +5,6 @@ import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
   TableName,
-  DataRow,
   NumericColumn,
   RawColumn,
   StatsColumn,

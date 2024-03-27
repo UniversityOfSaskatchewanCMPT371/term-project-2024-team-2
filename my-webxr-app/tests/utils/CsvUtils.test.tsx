@@ -3,7 +3,7 @@ import * as Papa from 'papaparse';
 import { Mock } from 'vitest';
 import {
   BatchedDataStream, handleParsedData, parseAndHandleUrlCsv, validateDbAndStore,
-} from '../src/utils/CsvUtils';
+} from '../../src/utils/CsvUtils';
 
 vi.mock('idb', () => ({
   openDB: vi.fn(),
