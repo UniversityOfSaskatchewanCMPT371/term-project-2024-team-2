@@ -1,8 +1,10 @@
-import { Sky } from '@react-three/drei';
+import {
+  ScreenSizer, Sky,
+} from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import GraphingDataPoint from './components/GraphingDataPoint';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
@@ -11,6 +13,7 @@ import GenerateXYZ from './components/GenerateXYZ';
 import createPosition from './components/Positions';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
+import ScaleSlider from './components/ScaleSlider';
 import TestingOptions from './testing/TestingOptions';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
@@ -36,6 +39,9 @@ export default function App() {
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
+
+  // the scale state of the graph
+  const [graphScale, setGraphScale] = useState(10);
 
   // hard coded data. example data would be replaced with PCA results for coordinates
   // also would like to make a new type for GenerateXYZ info, allowing for easier use
@@ -109,6 +115,7 @@ export default function App() {
           Print Data to Console
         </button>
       </div>
+      <ScaleSlider scale={graphScale} setScale={setGraphScale} />
       <VRButton />
       <PointSelectionProvider>
         <Canvas>
@@ -118,73 +125,74 @@ export default function App() {
             <ambientLight />
             <pointLight position={[10, 10, 10]} />
             <Controllers />
+            <ScreenSizer scale={graphScale}>
+              <GenerateXYZ
+                minValue={minNum}
+                maxValue={maxNum}
+                scaleFactor={scaleFactor}
+                startX={startPointX}
+                startY={startPointY}
+                startZ={startPointZ}
+                endPoint={Length}
+                radius={radius}
+                labelOffset={labelOffset}
+              />
 
-            <GenerateXYZ
-              minValue={minNum}
-              maxValue={maxNum}
-              scaleFactor={scaleFactor}
-              startX={startPointX}
-              startY={startPointY}
-              startZ={startPointZ}
-              endPoint={Length}
-              radius={radius}
-              labelOffset={labelOffset}
-            />
-
-            {/* Temporary display/test of the data points.
+              {/* Temporary display/test of the data points.
               These will eventually be created by the plot itself */}
-            <GraphingDataPoint
-              id={0}
-              marker="circle"
-              color="gray"
-              columnX="John Doe"
-              columnY="cmpt 145"
-              columnZ={97}
-              meshProps={{ position: datapoint1 }}
-              actualData={exampleData[0]}
-            />
-            <GraphingDataPoint
-              id={1}
-              marker="circle"
-              color="gray"
-              columnX="Bob Johnson"
-              columnY="math 110"
-              columnZ={81}
-              meshProps={{ position: datapoint2 }}
-              actualData={exampleData[1]}
-            />
-            <GraphingDataPoint
-              id={2}
-              marker="circle"
-              color="gray"
-              columnX="Bob John"
-              columnY="math 116"
-              columnZ={87}
-              meshProps={{ position: datapoint3 }}
-              actualData={exampleData[2]}
-            />
-            <GraphingDataPoint
-              id={3}
-              marker="circle"
-              color="gray"
-              columnX="Alice Smith"
-              columnY="stat 245"
-              columnZ={75}
-              meshProps={{ position: datapoint4 }}
-              actualData={exampleData[3]}
-            />
-            <GraphingDataPoint
-              id={4}
-              marker="circle"
-              color="gray"
-              columnX="Bob Smith"
-              columnY="math 115"
-              columnZ={85}
-              meshProps={{ position: datapoint5 }}
-              actualData={exampleData[4]}
-            />
+              <GraphingDataPoint
+                id={0}
+                marker="circle"
+                color="gray"
+                columnX="John Doe"
+                columnY="cmpt 145"
+                columnZ={97}
+                meshProps={{ position: datapoint1 }}
+                actualData={exampleData[0]}
+              />
+              <GraphingDataPoint
+                id={1}
+                marker="circle"
+                color="gray"
+                columnX="Bob Johnson"
+                columnY="math 110"
+                columnZ={81}
+                meshProps={{ position: datapoint2 }}
+                actualData={exampleData[1]}
+              />
+              <GraphingDataPoint
+                id={2}
+                marker="circle"
+                color="gray"
+                columnX="Bob John"
+                columnY="math 116"
+                columnZ={87}
+                meshProps={{ position: datapoint3 }}
+                actualData={exampleData[2]}
+              />
+              <GraphingDataPoint
+                id={3}
+                marker="circle"
+                color="gray"
+                columnX="Alice Smith"
+                columnY="stat 245"
+                columnZ={75}
+                meshProps={{ position: datapoint4 }}
+                actualData={exampleData[3]}
+              />
+              <GraphingDataPoint
+                id={4}
+                marker="circle"
+                color="gray"
+                columnX="Bob Smith"
+                columnY="math 115"
+                columnZ={85}
+                meshProps={{ position: datapoint5 }}
+                actualData={exampleData[4]}
+              />
 
-            <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+              <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+            </ScreenSizer>
           </XR>
         </Canvas>
       </PointSelectionProvider>
