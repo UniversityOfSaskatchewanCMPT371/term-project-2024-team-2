@@ -1,5 +1,5 @@
 import { Matrix } from 'ml-matrix';
-import standardizeDataset from '../src/utils/StandardizeDataset';
+import standardizeDataset from '../../src/utils/StandardizeDataset';
 
 describe('standardizeDataset', () => {
   test('returns a Matrix', () => {

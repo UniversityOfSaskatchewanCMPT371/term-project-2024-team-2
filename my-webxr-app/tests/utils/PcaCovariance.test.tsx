@@ -3,8 +3,8 @@ import {
   calculateCovarianceMatrix, computeCovariancePCA,
   computeEigenvaluesFromCovarianceMatrix,
   computeEigenvectorsFromCovarianceMatrix,
-} from '../src/utils/PcaCovariance';
-import standardizeDataset from '../src/utils/StandardizeDataset';
+} from '../../src/utils/PcaCovariance';
+import standardizeDataset from '../../src/utils/StandardizeDataset';
 
 let matrix: Matrix;
 let covarianceMatrix: Matrix;

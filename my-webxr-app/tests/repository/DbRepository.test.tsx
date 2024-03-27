@@ -5,7 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 import * as assert from 'assert';
 import DbRepository from '../../src/repository/DbRepository';
 import Column, {
-  ColumnType, NumericColumn, RawColumn, StatsColumn,
+  TableName,
+  NumericColumn,
+  RawColumn,
+  StatsColumn,
 } from '../../src/repository/Column';
 import DataPoint from '../../src/repository/DataPoint';
 
@@ -31,10 +34,10 @@ describe('DbRepository Test', () => {
   });
 
   test('isTableEmpty - Check all empty tables', async () => {
-    const isRawEmpty = await repository.isTableEmpty(ColumnType.RAW);
-    const isStatsEmpty = await repository.isTableEmpty(ColumnType.STATS);
-    const isStandardizedEmpty = await repository.isTableEmpty(ColumnType.STANDARDIZED);
-    const isPcaEmpty = await repository.isTableEmpty(ColumnType.PCA);
+    const isRawEmpty = await repository.isTableEmpty(TableName.RAW);
+    const isStatsEmpty = await repository.isTableEmpty(TableName.STATS);
+    const isStandardizedEmpty = await repository.isTableEmpty(TableName.STANDARDIZED);
+    const isPcaEmpty = await repository.isTableEmpty(TableName.PCA);
 
     expect(isRawEmpty).toBe(true);
     expect(isStatsEmpty).toBe(true);
@@ -44,8 +47,8 @@ describe('DbRepository Test', () => {
 
   test('isTableEmpty - Check a non empty table', async () => {
     const column = new Column<RawColumn>('test', [1, 2, 3]);
-    await repository.addColumn(column, ColumnType.RAW);
-    const isEmpty = await repository.isTableEmpty(ColumnType.RAW);
+    await repository.addColumn(column, TableName.RAW);
+    const isEmpty = await repository.isTableEmpty(TableName.RAW);
 
     expect(isEmpty).toBe(false);
   });
@@ -53,20 +56,49 @@ describe('DbRepository Test', () => {
   test('addColumn - add points when db has duplicate columns - expect Exception', async () => {
     const column = new Column<RawColumn>('test', ['CMPT371', 'Osgood', 'Oculus']);
     const dup = new Column<RawColumn>('test', [1, 2, 3]);
-    await repository.addColumn(column, ColumnType.RAW);
+    await repository.addColumn(column, TableName.RAW);
 
-    await expect(repository.addColumn(dup, ColumnType.RAW))
+    await expect(repository.addColumn(dup, TableName.RAW))
       .rejects
       .toBeInstanceOf(Error);
+  });
+
+  test('getPoints - Given duplicate column name - expect Exception', async () => {
+    const column = new Column<RawColumn>('test', [1, 2]);
+    await repository.addColumn(column, TableName.RAW);
+
+    await expect(repository.getPoints(
+      'test',
+      'test',
+      'test',
+      TableName.RAW,
+    ))
+      .rejects
+    // confirm that it did throw an assertion error with the correct message
+      .toThrow(new assert.AssertionError({ message: 'The three columns must be distinct but got: test,test,test!' }));
+  });
+
+  test('getPoints - Given non-existent column name - expect Exception', async () => {
+    const column = new Column<RawColumn>('test', [1, 2]);
+    await repository.addColumn(column, TableName.RAW);
+
+    await expect(repository.getPoints(
+      'test',
+      'nonExistentColumn1',
+      'nonExistentColumn2',
+      TableName.RAW,
+    ))
+      .rejects
+      .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
   });
 
   test('getCSvColumnNames - Get all column names from raw data table', async () => {
     const testColumn1 = new Column<RawColumn>('column1', [1, 2, 3]);
     const testColumn2 = new Column<RawColumn>('column2', ['a', 'b', 'c']);
     const testColumn3 = new Column<RawColumn>('column3', [1.1, 2.2, 3.3]);
-    repository.addColumn(testColumn1, ColumnType.RAW);
-    repository.addColumn(testColumn2, ColumnType.RAW);
-    repository.addColumn(testColumn3, ColumnType.RAW);
+    repository.addColumn(testColumn1, TableName.RAW);
+    repository.addColumn(testColumn2, TableName.RAW);
+    repository.addColumn(testColumn3, TableName.RAW);
 
     const columnNames = await repository.getCsvColumnNames();
 
@@ -83,9 +115,9 @@ describe('DbRepository Test', () => {
     const testColumn1 = new Column<NumericColumn>('column1', [1, 2, 3]);
     const testColumn2 = new Column<NumericColumn>('column2', [10, 20, 30]);
     const testColumn3 = new Column<NumericColumn>('column3', [1.1, 2.2, 3.3]);
-    repository.addColumn(testColumn1, ColumnType.PCA);
-    repository.addColumn(testColumn2, ColumnType.PCA);
-    repository.addColumn(testColumn3, ColumnType.PCA);
+    repository.addColumn(testColumn1, TableName.PCA);
+    repository.addColumn(testColumn2, TableName.PCA);
+    repository.addColumn(testColumn3, TableName.PCA);
 
     const columnNames = await repository.getPcaColumnNames();
 
@@ -102,9 +134,9 @@ describe('DbRepository Test', () => {
     const testColumn1 = new Column<NumericColumn>('column1', [1, 2, 3]);
     const testColumn2 = new Column<NumericColumn>('column2', [10, 20, 30]);
     const testColumn3 = new Column<NumericColumn>('column3', [1.1, 2.2, 3.3]);
-    repository.addColumn(testColumn1, ColumnType.STANDARDIZED);
-    repository.addColumn(testColumn2, ColumnType.STANDARDIZED);
-    repository.addColumn(testColumn3, ColumnType.STANDARDIZED);
+    repository.addColumn(testColumn1, TableName.STANDARDIZED);
+    repository.addColumn(testColumn2, TableName.STANDARDIZED);
+    repository.addColumn(testColumn3, TableName.STANDARDIZED);
 
     const columnNames = await repository.getStandardizedColumnNames();
 
@@ -139,9 +171,9 @@ describe('DbRepository Test', () => {
       mean: 2,
       stdDev: 1,
     });
-    repository.addColumn(testColumn1, ColumnType.STATS);
-    repository.addColumn(testColumn2, ColumnType.STATS);
-    repository.addColumn(testColumn3, ColumnType.STATS);
+    repository.addColumn(testColumn1, TableName.STATS);
+    repository.addColumn(testColumn2, TableName.STATS);
+    repository.addColumn(testColumn3, TableName.STATS);
 
     const columnNames = await repository.getStatsColumnNames();
 
@@ -162,7 +194,7 @@ describe('DbRepository Test', () => {
       mean: 2,
       stdDev: 1,
     });
-    await repository.addColumn(testColumn, ColumnType.STATS);
+    await repository.addColumn(testColumn, TableName.STATS);
 
     const retrievedColumn = await repository.getStatsColumn('test');
     expect(retrievedColumn).toEqual(testColumn);
@@ -176,14 +208,14 @@ describe('DbRepository Test', () => {
 
   test('getColumn - Retrieve a data column from Raw data table', async () => {
     const testColumn = new Column<RawColumn>('testColumn', [1, 2, 3]);
-    await repository.addColumn(testColumn, ColumnType.RAW);
+    await repository.addColumn(testColumn, TableName.RAW);
 
-    const retrievedColumn = await repository.getColumn('testColumn', ColumnType.RAW);
+    const retrievedColumn = await repository.getColumn('testColumn', TableName.RAW);
     expect(retrievedColumn).toEqual(testColumn);
   });
 
   test('getColumn - Retrieve non-existent data column', async () => {
-    await expect(repository.getColumn('nonExistentColumn', ColumnType.RAW))
+    await expect(repository.getColumn('nonExistentColumn', TableName.RAW))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn does not exist!' }));
   });
@@ -212,9 +244,9 @@ describe('DbRepository - Test getPoints()', () => {
 
   test('getPoints - Given duplicate column name - expect Exception', async () => {
     const column = new Column<RawColumn>('test', [1, 2]);
-    await repository.addColumn(column, ColumnType.RAW);
+    await repository.addColumn(column, TableName.RAW);
 
-    await expect(repository.getPoints('test', 'test', 'test', ColumnType.RAW))
+    await expect(repository.getPoints('test', 'test', 'test', TableName.RAW))
       .rejects
     // confirm that it did throw an assertion error with the correct message
       .toThrow(new assert.AssertionError({ message: 'The three columns must be distinct but got: test,test,test!' }));
@@ -222,9 +254,9 @@ describe('DbRepository - Test getPoints()', () => {
 
   test('getPoints - Given non-existent column name - expect Exception', async () => {
     const column = new Column<RawColumn>('test', [1, 2]);
-    await repository.addColumn(column, ColumnType.RAW);
+    await repository.addColumn(column, TableName.RAW);
 
-    await expect(repository.getPoints('test', 'nonExistentColumn1', 'nonExistentColumn2', ColumnType.RAW))
+    await expect(repository.getPoints('test', 'nonExistentColumn1', 'nonExistentColumn2', TableName.RAW))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
   });
@@ -233,11 +265,11 @@ describe('DbRepository - Test getPoints()', () => {
     const column1 = new Column<RawColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column('column2', ['CheeseCake', 'Takoyaki', 'Poutine']);
     const column3 = new Column('column3', [-1.1, -2.2, -3.3]);
-    await repository.addColumn(column1, ColumnType.RAW);
-    await repository.addColumn(column2, ColumnType.RAW);
-    await repository.addColumn(column3, ColumnType.RAW);
+    await repository.addColumn(column1, TableName.RAW);
+    await repository.addColumn(column2, TableName.RAW);
+    await repository.addColumn(column3, TableName.RAW);
 
-    await expect(repository.getPoints('column1', 'column2', 'column3', ColumnType.RAW))
+    await expect(repository.getPoints('column1', 'column2', 'column3', TableName.RAW))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'ColumnY must be numeric!' }));
   });
@@ -246,11 +278,11 @@ describe('DbRepository - Test getPoints()', () => {
     const column1 = new Column<NumericColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
-    await repository.addColumn(column1, ColumnType.STANDARDIZED);
-    await repository.addColumn(column2, ColumnType.STANDARDIZED);
-    await repository.addColumn(column3, ColumnType.STANDARDIZED);
+    await repository.addColumn(column1, TableName.STANDARDIZED);
+    await repository.addColumn(column2, TableName.STANDARDIZED);
+    await repository.addColumn(column3, TableName.STANDARDIZED);
 
-    await expect(repository.getPoints('column1', 'column2', 'column3', ColumnType.STANDARDIZED))
+    await expect(repository.getPoints('column1', 'column2', 'column3', TableName.STANDARDIZED))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Invalid column type. Must be either RAW or PCA.' }));
   });
@@ -259,11 +291,11 @@ describe('DbRepository - Test getPoints()', () => {
     const column1 = new Column<RawColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column<RawColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<RawColumn>('column3', [-1.1, -2.2, -3.3]);
-    await repository.addColumn(column1, ColumnType.RAW);
-    await repository.addColumn(column2, ColumnType.RAW);
-    await repository.addColumn(column3, ColumnType.RAW);
+    await repository.addColumn(column1, TableName.RAW);
+    await repository.addColumn(column2, TableName.RAW);
+    await repository.addColumn(column3, TableName.RAW);
 
-    const result = await repository.getPoints('column1', 'column2', 'column3', ColumnType.RAW);
+    const result = await repository.getPoints('column1', 'column2', 'column3', TableName.RAW);
 
     expect(result).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
@@ -276,11 +308,11 @@ describe('DbRepository - Test getPoints()', () => {
     const column1 = new Column<NumericColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
-    await repository.addColumn(column1, ColumnType.PCA);
-    await repository.addColumn(column2, ColumnType.PCA);
-    await repository.addColumn(column3, ColumnType.PCA);
+    await repository.addColumn(column1, TableName.PCA);
+    await repository.addColumn(column2, TableName.PCA);
+    await repository.addColumn(column3, TableName.PCA);
 
-    const result = await repository.getPoints('column1', 'column2', 'column3', ColumnType.PCA);
+    const result = await repository.getPoints('column1', 'column2', 'column3', TableName.PCA);
 
     expect(result).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
