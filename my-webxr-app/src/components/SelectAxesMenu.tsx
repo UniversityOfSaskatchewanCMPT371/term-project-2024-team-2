@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getColumnTitles, setRepresentingColumns } from '../utils/GetColumnNames';
 import assert from '../utils/Assert';
+import DataAbstractor from '../data/DataAbstractor.tsx';
 
 interface SelectAxesColumnsProps {
-  dbName: string;
+  database: DataAbstractor;
 }
 interface DropDownProps {
   label: string;
@@ -58,17 +58,20 @@ function DropDown({
   @return: the dropdown menus
   (think also needs to return the columns chosen and assign the values to x,y,z of data points)
  */
-export default function SelectAxesColumns({ dbName }: SelectAxesColumnsProps) {
-  assert(dbName != null, 'Database name cannot be null');
+export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) {
+  assert(database != null, 'Database name cannot be null');
   const [AxisOptions, setAxisOptions] = useState<{ value: string; label: string }[]>([]);
+  // @ts-ignore
   const [xAxis, setXAxis] = useState('');
+  // @ts-ignore
   const [yAxis, setYAxis] = useState('');
+  // @ts-ignore
   const [zAxis, setZAxis] = useState('');
 
   useEffect(() => {
     async function fetchColumnTitles() {
       try {
-        const Axes = await getColumnTitles(dbName);
+        const Axes = await database.getAvailableFields();
 
         setAxisOptions(Axes.map((title: string) => ({ value: title, label: title })));
       } catch (error) {
@@ -77,11 +80,12 @@ export default function SelectAxesColumns({ dbName }: SelectAxesColumnsProps) {
       }
     }
     fetchColumnTitles();
-  }, [dbName]);
+  }, [database]);
 
   const handleCompleteSelection = async () => {
     try {
-      await setRepresentingColumns(dbName, xAxis, yAxis, zAxis);
+      // await setRepresentingColumns(database, xAxis, yAxis, zAxis);
+      // TODO: plot the graph with the selected axes
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error setting representing columns:', error);
