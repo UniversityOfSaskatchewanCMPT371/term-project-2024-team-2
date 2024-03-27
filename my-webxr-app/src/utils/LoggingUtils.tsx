@@ -39,8 +39,19 @@ export default class LogAppender extends Dexie {
    */
   private testTable!: Dexie.Table<LogObject, number>;
 
+  /**
+   * Construct a new LoggingUtils object.
+   * @post-condition existing logs in IndexedDB are cleared.
+   * @constructor
+   */
   constructor() {
     super('loggingDB');
+
+    this.version(1).stores({
+      infoTable: '++id',
+      errorTable: '++id',
+      testTable: '++id',
+    });
 
     if (this.infoTable) {
       this.infoTable.clear();
@@ -54,12 +65,6 @@ export default class LogAppender extends Dexie {
       this.testTable.clear();
     }
 
-    this.version(1).stores({
-      infoTable: '++id',
-      errorTable: '++id',
-      testTable: '++id',
-    });
-
     this.open();
   }
 
@@ -68,7 +73,8 @@ export default class LogAppender extends Dexie {
    * @param log The log to store.
    */
   async appendLog(log: LogObject) {
-    if (log.level === 'info' || log.level === 'warning' || log.level === 'error' || log.level === 'critical') {
+    if (log.level === 'info' || log.level === 'warning'
+      || log.level === 'error' || log.level === 'critical') {
       await this.infoTable.add(log);
     }
     if (log.level === 'error' || log.level === 'critical') {
@@ -91,7 +97,7 @@ export default class LogAppender extends Dexie {
         return this.errorTable.toArray();
       case LogTableType.test:
         return this.testTable.toArray();
-      default:
+      default: /* This should never occur with an ENUM. */
         throw new Error('Invalid LogTableType ENUM type');
     }
   }
@@ -111,13 +117,20 @@ export default class LogAppender extends Dexie {
       case LogTableType.test:
         this.testTable.clear();
         break;
-      default:
+      default: /* This should never occur with an ENUM. */
         break;
     }
   }
 }
 
+/**
+ * Create an instance of the LogAppender for when Rollbar receives a log.
+ */
 export const logAppender = new LogAppender();
+
+/**
+ * Define the configuration for Rollbar.
+ */
 export const rollbarConfig: Rollbar.Configuration = {
   accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
   environment: import.meta.env.VITE_ROLLBAR_ENVIRONMENT,
@@ -126,25 +139,52 @@ export const rollbarConfig: Rollbar.Configuration = {
   payload: {
     client: {
       javascript: {
-        // Set code_version to the project's release version to see it reflected in Rollbar.
-        code_version: 'ID4.0.0',
+        // TODO: Set the project's release version to see it reflected in Rollbar's error stats
+        code_version: 'ID5.0.0',
         source_map_enabled: true,
       },
     },
   },
   transmit: import.meta.env.VITE_ROLLBAR_ENVIRONMENT === 'production',
   reportLevel: (import.meta.env.VITE_ROLLBAR_ENVIRONMENT === 'production') ? 'warning' : 'debug',
+  // This callback runs whenever something is logged in Rollbar. We can tie in our own custom
+  // behaviour.
   onSendCallback: (
     _isUncaught: boolean,
     _args: Rollbar.LogArgument,
     payload: Rollbar.Payload,
   ) => {
+    // Only capture logs on the client-side when NOT in production (in development/staging).
     if (import.meta.env.VITE_ROLLBAR_ENVIRONMENT !== 'production') {
       logAppender.appendLog({
         level: payload.level,
         message: payload.body.message.body,
         time: payload?.client?.timestamp,
       }).then(); // Wait for the promise to return; can't 'await' since this isn't asynchronous.
+
+      // These console statements relay the logs from Rollbar when NOT in production (in
+      // development/staging).
+      switch (payload.level) {
+        case 'debug':
+        case 'info':
+          // eslint-disable-next-line no-console
+          console.log(`Rollbar@${payload.level}: ${payload.body.message.body}`);
+          break;
+        case 'warning':
+        case 'error':
+        case 'critical':
+          // eslint-disable-next-line no-console
+          console.error(`Rollbar@${payload.level}: ${payload.body.message.body}`);
+          break;
+        default:
+          break;
+      }
     }
   },
 };
+
+/**
+ * Define an instance of rollbar for use when not in React.
+ * If in React, use the getRollbar() hook.
+ */
+export const rollbar = new Rollbar(rollbarConfig);

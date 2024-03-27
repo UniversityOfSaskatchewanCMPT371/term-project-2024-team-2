@@ -1,11 +1,10 @@
-// have to import fake-indexeddb/auto before dexie
-import 'fake-indexeddb/auto';
 import Rollbar from 'rollbar';
 import { logAppender, LogTableType, rollbarConfig } from '../src/utils/LoggingUtils';
 
 describe('Logger Configuration', () => {
   const rollbar = new Rollbar(rollbarConfig);
 
+  // Ensure all tables are cleared
   beforeEach(async () => {
     await logAppender.clearLogs(LogTableType.info);
     await logAppender.clearLogs(LogTableType.error);
@@ -18,7 +17,7 @@ describe('Logger Configuration', () => {
     await logAppender.clearLogs(LogTableType.test);
   });
 
-  it('should log message correctly', async () => {
+  test('Local loggers should function correctly', async () => {
     // Write log messages to logger
     rollbar.debug('Test info message from INFO and above log config test');
     rollbar.info('Test info message from INFO and above log config test');
@@ -26,6 +25,7 @@ describe('Logger Configuration', () => {
     rollbar.error('Test error message from INFO and above log config test');
     rollbar.critical('Test fatal message from INFO and above log config test');
 
+    // Verify each severity level is found in the correct type of logger.
     expect(await logAppender.getLogs(LogTableType.info)).toEqual([
       {
         level: 'info',
