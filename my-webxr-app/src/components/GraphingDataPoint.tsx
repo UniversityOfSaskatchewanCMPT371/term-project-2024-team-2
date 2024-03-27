@@ -7,7 +7,6 @@ import { DataPointProps } from '../types/DataPointTypes';
 
 export default function GraphingDataPoint({
   id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
-
 }: DataPointProps) {
   /* State for the count of controllers hovering over the GraphingDataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -59,6 +58,7 @@ export default function GraphingDataPoint({
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
       <mesh
+        name="point sphere"
         {...meshProps}
         scale={outlineScale}
         visible={hoverCount !== 0 || selectedDataPoint?.id === id}

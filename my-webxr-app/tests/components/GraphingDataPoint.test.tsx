@@ -2,8 +2,8 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { Provider } from '@rollbar/react';
-import { PointSelectionProvider } from '../src/contexts/PointSelectionContext';
-import GraphingDataPoint from '../src/components/GraphingDataPoint';
+import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
+import GraphingDataPoint from '../../src/components/GraphingDataPoint';
 import { rollbarConfig } from '../src/utils/LoggingUtils';
 
 describe('GraphingDataPoint Creation and Interaction', () => {
@@ -12,14 +12,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
-            <GraphingDataPoint
-              id={0}
-              marker="circle"
-              color="gray"
-              columnX="John Doe"
-              columnY="cmpt 145"
-              columnZ={97}
-            />
+            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" />
           </XR>
         </PointSelectionProvider>
       </Provider>,
@@ -36,15 +29,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
-            <GraphingDataPoint
-              id={0}
-              marker="circle"
-              color="gray"
-              columnX="John Doe"
-              columnY="cmpt 145"
-              columnZ={97}
-              meshProps={{ position: [1, 2, 3] }}
-            />
+            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" meshProps={{ position: [1, 2, 3] }} />
           </XR>
         </PointSelectionProvider>
       </Provider>,
@@ -61,15 +46,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
-            <GraphingDataPoint
-              id={0}
-              marker="circle"
-              color="gray"
-              columnX="John Doe"
-              columnY="cmpt 145"
-              columnZ={97}
-              outlineScale={2}
-            />
+            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" outlineScale={2} />
           </XR>
         </PointSelectionProvider>
       </Provider>,
@@ -88,7 +65,7 @@ describe('GraphingDataPoint UI Interaction', () => {
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
-            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ={97} />
+            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" />
           </XR>
         </PointSelectionProvider>
       </Provider>,
@@ -109,6 +86,6 @@ describe('GraphingDataPoint UI Interaction', () => {
     // Check if the point column2 value is accurate.
     expect(renderer.scene.children[1].children[0].instance.userData.columnY).toBe('cmpt 145');
     // Check if the point column3 value is accurate.
-    expect(renderer.scene.children[1].children[0].instance.userData.columnZ).toBe(97);
+    expect(renderer.scene.children[1].children[0].instance.userData.columnZ).toBe('97');
   });
 });
