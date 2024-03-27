@@ -10,7 +10,6 @@ import GenerateXYZ from './components/GenerateXYZ';
 import SelectAxesColumns from './components/SelectAxesMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
-import TestingOptions from './testing/TestingOptions';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
@@ -95,7 +94,6 @@ export default function App() {
   return (
     <>
       <div>
-        {import.meta.env.VITE_IS_TESTING && <TestingOptions />}
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
@@ -116,7 +114,7 @@ export default function App() {
       <PointSelectionProvider>
         <Canvas>
           <XR>
-            <Sky sunPosition={[0, 1, 0]} />
+            <Sky sunPosition={[0.5, 0, 0.5]} />
             <Floor />
             <ambientLight />
             <pointLight position={[10, 10, 10]} />
@@ -135,7 +133,7 @@ export default function App() {
               labelOffset={labelOffset}
             />
 
-            <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+            <GraphingDataPointMenu position={[0, 2.2, -1.5]} />
           </XR>
         </Canvas>
       </PointSelectionProvider>
