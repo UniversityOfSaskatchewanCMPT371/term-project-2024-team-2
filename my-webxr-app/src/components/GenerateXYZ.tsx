@@ -1,4 +1,3 @@
-import { Interactive } from '@react-three/xr';
 import SingleAxis from './SingleAxis';
 
 interface AxisProps {
@@ -14,7 +13,7 @@ interface AxisProps {
 }
 
 // this will create the 3d axis by calling single axis for each axis
-export default function Axis({
+export default function GenerateXYZ({
   minValue,
   maxValue,
   labelOffset,
@@ -26,15 +25,13 @@ export default function Axis({
   radius,
 }: AxisProps) {
   return (
-    <Interactive>
-      {/* adjust position of the whole axis */}
+    <group name="Axes">
       {/* X-axis */}
       <SingleAxis
         startX={startX}
         startY={startY}
         startZ={startZ}
-                    // need this calculation to find full length of axis
-        endX={startX + endPoint}
+        endX={startX + endPoint} // need this calculation to find full length of axis
         endY={startY}
         endZ={startZ}
         radius={radius}
@@ -42,6 +39,7 @@ export default function Axis({
         scaleFactor={scaleFactor}
         minValue={minValue}
         maxValue={maxValue}
+        axis="x"
       />
       {/* Y-axis */}
       <SingleAxis
@@ -56,6 +54,7 @@ export default function Axis({
         scaleFactor={scaleFactor}
         minValue={minValue}
         maxValue={maxValue}
+        axis="y"
       />
       {/* Z-axis */}
       <SingleAxis
@@ -70,7 +69,8 @@ export default function Axis({
         scaleFactor={scaleFactor}
         minValue={minValue}
         maxValue={maxValue}
+        axis="z"
       />
-    </Interactive>
+    </group>
   );
 }

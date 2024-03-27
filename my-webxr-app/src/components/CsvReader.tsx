@@ -3,7 +3,6 @@ import {
   validateDbAndStore, handleParsedData, parseAndHandleUrlCsv,
 } from '../utils/CsvUtils';
 import assert from '../utils/Assert';
-
 interface CsvReaderProps {
   dbName: string;
   storeName: string;
@@ -33,7 +32,7 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
     assert(selectedFile!==undefined || selectedFile!==null, 'Error in LocalCsvReader.tsx: selectedFile is undefined')
     assert(dbName!==undefined || dbName!==null, 'Error in LocalCsvReader.tsx: dbName is undefined')
     assert(storeName!==undefined || storeName!==null, 'Error in LocalCsvReader.tsx: storeName is undefined')
-    
+
 
     let batch: Array<Array<string | number | null>> = [];
     const reader = selectedFile?.stream().getReader();
@@ -58,7 +57,7 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
           if (batch.length >= BATCHSIZE) {
             handleParsedData(batch, dbName, storeName, counter);
             batch = [];
-          } 
+          }
         // Handles the final batch or whatever information is left in the file
         decoder.decode();
         if (batch.length > 0) {

@@ -11,6 +11,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Vitest results
+.vite/vitest/
+
 
 ### https://github.com/github/gitignore/blob/main/Node.gitignore
 # Logs
