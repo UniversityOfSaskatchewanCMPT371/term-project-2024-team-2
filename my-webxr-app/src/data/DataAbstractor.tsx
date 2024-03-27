@@ -7,6 +7,8 @@ import DataPoint from '../repository/DataPoint';
  */
 export default interface DataAbstractor {
   getAvailableFields: () => Promise<string[]>;
+  getAllPcaColumnNames: () => Promise<string[]>;
+  getAllNumericRawColumnNames: () => Promise<string[]>;
   storeCSV: (batchItems: Array<Array<string> | Array<number>>) => Promise<boolean>;
   storePCA: (columnNames: string[]) => Promise<boolean>;
   calculateStatistics:() => Promise<boolean>;

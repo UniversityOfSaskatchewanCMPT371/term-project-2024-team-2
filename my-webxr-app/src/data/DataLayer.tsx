@@ -199,6 +199,27 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
+   * Retrieve the all column names from PCA table
+   * Intend use for user to select which 3 PCA columns to be plotted.
+   *
+   * @returns {Promise<string[]>} A promise that resolves to an array of column names.
+   */
+  async getAllPcaColumnNames(): Promise<string[]> {
+    return this.repository.getPcaColumnNames();
+  }
+
+  /**
+   * Retrieve all the numeric column names in Raw/CSV data.
+   * Intended to be used for user to select which 3 Raw columns to be plotted.
+   *
+   * @preconds - Stat table contains only and the names of all numeric Raw/CSV columns.
+   * @returns {Promise<string[]>} A promise that resolves to an array of column names.
+   */
+  async getAllNumericRawColumnNames(): Promise<string[]> {
+    return this.repository.getStatsColumnNames();
+  }
+
+  /**
    * Helper for storeStandardizedData()
    * This function standardizes a specified numeric column in the repository.
    *
