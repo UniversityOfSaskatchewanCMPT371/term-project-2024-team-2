@@ -5,7 +5,6 @@ import DataPoint from './DataPoint';
 import Column, {
   TableName, RawColumn, NumericColumn, StatsColumn,
 } from './Column';
-import getColumnNames from './FilterAxis';
 
 export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
@@ -301,26 +300,6 @@ export default class DbRepository extends Dexie implements Repository {
       dataPoints.push(new DataPoint(xValue, yValue, zValue));
     }
     return dataPoints;
-  }
-
-  /*
-        getPossibleAxes retrieves the column names that contain only integer values
-        @return Promise<string[]>: an array of the column names with integers only
-         */
-  async getPossibleAxes(): Promise<string[]> {
-    const allColumns = await this.columns.toArray();
-    return getColumnNames(allColumns);
-  }
-
-  /*
-    selectRepresentingColumn gets the columns which will represent the XYZ axes
-    @return an array of the XYZ axes columns
- */
-  async selectRepresentingColumn(xName: string, yName: string, zName: string): Promise<Column[]> {
-    const xAxisCol = await this.getColumn(xName);
-    const yAxisCol = await this.getColumn(yName);
-    const zAxisCol = await this.getColumn(zName);
-    return [xAxisCol, yAxisCol, zAxisCol];
   }
 
   /*

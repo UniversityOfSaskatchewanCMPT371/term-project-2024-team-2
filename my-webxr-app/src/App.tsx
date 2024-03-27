@@ -15,6 +15,7 @@ import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
 import DataPoint from './repository/DataPoint';
+import { getDatabase } from './data/DataAbstractor';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -39,6 +40,8 @@ export default function App() {
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
+
+  const database = getDatabase();
 
   // Initialize the database and store for csv data
   useEffect(() => {
@@ -107,7 +110,7 @@ export default function App() {
         >
           Print Data to Console
         </button>
-        <SelectAxesColumns dbName={dbName} />
+        <SelectAxesColumns database={database} />
       </div>
       <VRButton />
       <PointSelectionProvider>
