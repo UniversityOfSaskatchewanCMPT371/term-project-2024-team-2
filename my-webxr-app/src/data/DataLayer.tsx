@@ -4,9 +4,10 @@ import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, DataRow, StatsColumn,
+  ColumnType, RawColumn, NumericColumn, StatsColumn,
 } from '../repository/Column';
 import { computeCovariancePCA } from '../utils/PcaCovariance';
+import { BatchedDataStream } from '../utils/CsvUtils';
 
 /**
  * The Data Layer provides a set of methods for working with CSV and PCA data.
@@ -388,8 +389,3 @@ export default class DataLayer implements DataAbstractor {
     return Promise.resolve(true);
   }
 }
-
-/**
- * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
- */
-export type BatchedDataStream = Array<DataRow>;

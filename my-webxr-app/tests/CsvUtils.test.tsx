@@ -1,7 +1,9 @@
 import { openDB } from 'idb';
 import * as Papa from 'papaparse';
 import { Mock } from 'vitest';
-import { handleParsedData, parseAndHandleUrlCsv, validateDbAndStore } from '../src/utils/CsvUtils';
+import {
+  BatchedDataStream, handleParsedData, parseAndHandleUrlCsv, validateDbAndStore,
+} from '../src/utils/CsvUtils';
 
 vi.mock('idb', () => ({
   openDB: vi.fn(),
@@ -38,7 +40,7 @@ describe('validateDbAndStore functions', () => {
 
 describe('handleParsedData functions', () => {
   it('should handle parsed data correctly, clearing the store first and then putting data', async () => {
-    const results: Array<Array<string | number | null>> = [['value1', 'value2']];
+    const results: BatchedDataStream = [['value1', 'value2']];
     const dbName = 'testDb';
     const storeName = 'testStore';
 
@@ -64,7 +66,7 @@ describe('handleParsedData functions', () => {
   });
 
   it('should clear the store but no put is called due to empty array', async () => {
-    const items: Array<Array<string | number | null>> = [];
+    const items: BatchedDataStream = [];
     const dbName = 'testDb';
     const storeName = 'testStore';
 

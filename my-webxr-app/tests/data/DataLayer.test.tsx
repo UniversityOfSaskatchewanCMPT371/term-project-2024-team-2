@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto';
 import { describe, expect } from 'vitest';
 import { Matrix } from 'ml-matrix';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
-import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
+import DataLayer from '../../src/data/DataLayer';
 import Column, {
   ColumnType,
   NumericColumn,
@@ -11,6 +11,7 @@ import Column, {
 } from '../../src/repository/Column';
 import { Repository } from '../../src/repository/Repository';
 import DbRepository from '../../src/repository/DbRepository';
+import { BatchedDataStream } from '../../src/utils/CsvUtils';
 
 describe('Validate transposeData() operation', () => {
   test('transposeData with an empty data table (0x0)', async () => {

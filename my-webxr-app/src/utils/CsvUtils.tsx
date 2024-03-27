@@ -2,6 +2,7 @@ import { openDB } from 'idb';
 import Papa from 'papaparse';
 import React from 'react';
 import assert from './Assert';
+import { DataRow } from '../repository/Column';
 
 /**
  * Validates the existence of a database and a store within that database.
@@ -23,14 +24,14 @@ export const validateDbAndStore = async (dbName: string, storeName: string) => {
  * Handles the parsed CSV data by storing it in the specified IndexedDB database and store.
  * This clears the store before adding new data, i.e, overwriting existing data.
  *
- * @param {Array<Array<string | number | null>>} items - The parsed CSV data to be stored.
+ * @param {BatchedDataStream} items - The parsed CSV data to be stored.
  * @param {string} dbName - The name of the database where the data should be stored.
  * @param {string} storeName - The name of the store within the database where the data should be
  * stored.
  * @param {number} start - The starting index for the data to be stored.
  */
 export const handleParsedData = async (
-  items: Array<Array<string | number | null>>,
+  items: BatchedDataStream,
   dbName: string,
   storeName: string,
   start: number,
@@ -46,6 +47,12 @@ export const handleParsedData = async (
 
   await tx.done;
 };
+
+/**
+ * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
+ */
+export type BatchedDataStream = Array<DataRow>;
+
 /**
  * Parses a local CSV file and handles the parsed data in batches of 1000 rows.
  *
@@ -63,12 +70,12 @@ export async function parseAndHandleLocalCsv(
   setMessage: React.Dispatch<React.SetStateAction<string | null>>,
 ) {
   let i = 0;
-  let batch :Array<Array<string | number | null>> = [];
+  let batch: BatchedDataStream = [] as BatchedDataStream;
   const batchSize = 1000; // # of rows per batch
   Papa.parse(file, {
     dynamicTyping: true, // Convert data to number type if applicable
     step: async (results) => {
-      batch.push(results.data as Array<string | number | null>);
+      batch.push(results.data as DataRow);
       if (batch.length >= batchSize) {
         await handleParsedData(batch, dbName, storeName, i);
         i += batch.length;
@@ -101,13 +108,13 @@ export async function parseAndHandleUrlCsv(
   setMessage: React.Dispatch<React.SetStateAction<string | null>>,
 ) {
   let i = 0;
-  let batch :Array<Array<string | number | null>> = [];
+  let batch : BatchedDataStream = [];
   const batchSize = 1000; // # of rows per batch
   Papa.parse(url, {
     download: true,
     dynamicTyping: true, // Convert data to number type if applicable
     step: async (results) => {
-      batch.push(results.data as Array<string | number | null>);
+      batch.push(results.data as DataRow);
       if (batch.length >= batchSize) {
         await handleParsedData(batch, dbName, storeName, i);
         i += batch.length;
