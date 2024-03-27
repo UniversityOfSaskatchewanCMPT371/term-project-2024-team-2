@@ -1,11 +1,8 @@
 import { Matrix } from 'ml-matrix';
 import {
-  calculateCovarianceMatrix,
+  calculateCovarianceMatrix, computeCovariancePCA,
   computeEigenvaluesFromCovarianceMatrix,
   computeEigenvectorsFromCovarianceMatrix,
-  computeCovariancePCA,
-  selectPrincipalComponent,
-  calculateVarianceExplained,
 } from '../src/utils/PcaCovariance';
 import standardizeDataset from '../src/utils/StandardizeDataset';
 
@@ -121,6 +118,7 @@ describe('computePCA', () => {
       [5, 3, 2, 1],
       [8, 1, 2, 2],
     ]);
+    const standardizedDataset = standardizeDataset(dataset);
     const expected: Matrix = new Matrix([
       [-0.014003307840190604, 0.7559747649563959, 0.941199614594691, -0.10185222583403578],
       [2.5565339942868186, -0.7804317748323727, -0.10686986110059982, -0.00575705265323978],
@@ -128,7 +126,7 @@ describe('computePCA', () => {
       [-1.0141500183909433, 0.0002388083099344046, -0.6798861824511148, -0.20122464897453102],
       [-1.5798608599203967, -1.2289165024864557, 0.24222982589933767, 0.1266926853399502],
     ]);
-    const covariancePCA = computeCovariancePCA(dataset);
+    const covariancePCA = computeCovariancePCA(standardizedDataset);
     for (let i = 0; i < covariancePCA.rows; i += 1) {
       for (let j = 0; j < covariancePCA.columns; j += 1) {
         expect(covariancePCA.get(i, j)).toBeCloseTo(expected.get(i, j), 12);
@@ -152,82 +150,5 @@ describe('computePCA', () => {
     const datasetMatrix = new Matrix(2, 1);
     const result = computeCovariancePCA(datasetMatrix);
     expect(() => result.columns === 0 && result.rows === 0);
-  });
-});
-
-describe('selectPrincipalComponent', () => {
-  test('returns a Matrix', () => {
-    const dataset = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-    matrix = new Matrix(dataset);
-    const result = selectPrincipalComponent(matrix, 1);
-    expect(result).toBeInstanceOf(Matrix);
-  });
-
-  test('throws error if componentIndex is out of range', () => {
-    const dataset = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-    matrix = new Matrix(dataset);
-    expect(() => selectPrincipalComponent(matrix, -1)).toThrow();
-    expect(() => selectPrincipalComponent(matrix, matrix.columns)).toThrow();
-    expect(() => selectPrincipalComponent(matrix, 3)).toThrow();
-  });
-
-  it('should return correct component', () => {
-    const dataset = new Matrix([
-      [1, 2, 3, 4],
-      [5, 5, 6, 7],
-      [1, 4, 2, 3],
-      [5, 3, 2, 1],
-      [8, 1, 2, 2],
-    ]);
-    const expected: Matrix = new Matrix([
-      [0.941199614594691],
-      [-0.10686986110059982],
-      [-0.39667339694231407],
-      [-0.6798861824511148],
-      [0.24222982589933767],
-    ]);
-    const result = selectPrincipalComponent(computeCovariancePCA(dataset), 2);
-    for (let i = 0; i < result.rows; i += 1) {
-      for (let j = 0; j < result.columns; j += 1) {
-        expect(result.get(i, j)).toBeCloseTo(expected.get(i, j), 12);
-      }
-    }
-  });
-});
-
-describe('calculateVarianceExplained', () => {
-  test('returns an array', () => {
-    covarianceMatrix = new Matrix([[1, 0.8], [0.8, 1]]);
-    const result = calculateVarianceExplained(covarianceMatrix);
-    expect(result).toBeInstanceOf(Array);
-  });
-
-  test('returns an empty array if an error occurs during the PCA computation', () => {
-    covarianceMatrix = new Matrix([[1, 2], [3, 4]]);
-    const result = calculateVarianceExplained(covarianceMatrix);
-    expect(result).toEqual(expect.arrayContaining([]));
-  });
-
-  test('returns an empty array if covarianceMatrix is empty', () => {
-    covarianceMatrix = new Matrix(0, 0);
-    const result = calculateVarianceExplained(covarianceMatrix);
-    expect(result).toEqual(expect.arrayContaining([]));
-  });
-
-  it('returns an array of variances explained by each principal component', () => {
-    const dataset = new Matrix([
-      [1, 2, 3, 4],
-      [5, 5, 6, 7],
-      [1, 4, 2, 3],
-      [5, 3, 2, 1],
-      [8, 1, 2, 2],
-    ]);
-    const expected = [0.628948, 0.266322, 0.098472, 0.006258];
-    const standardizedDataset = standardizeDataset(dataset);
-    covarianceMatrix = calculateCovarianceMatrix(standardizedDataset);
-    const result = calculateVarianceExplained(covarianceMatrix);
-    for (let i = 0; i < result.length; i += 1) {
-      expect(result[i]).toBeCloseTo(expected[i], 6);
-    }
   });
 });
