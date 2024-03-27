@@ -74,6 +74,7 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * addColumn adds a column to the database
+   * @preconds: The column name must be unique
    * @param column the column to be added to the database
    * @param columnType the type of column to be added
    * @return Promise<string> the primary key of the column aka the name of the column
@@ -81,13 +82,29 @@ export default class DbRepository extends Dexie implements Repository {
   async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, columnType: ColumnType) {
     switch (columnType) {
       case ColumnType.STATS:
-        return this.statsColumns.add(column as Column<StatsColumn>);
+        return this.statsColumns.add(column as Column<StatsColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       case ColumnType.RAW:
-        return this.rawColumns.add(column as Column<RawColumn>);
+        return this.rawColumns.add(column as Column<RawColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       case ColumnType.STANDARDIZED:
-        return this.standardizedColumns.add(column as Column<NumericColumn>);
+        return this.standardizedColumns.add(column as Column<NumericColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       case ColumnType.PCA:
-        return this.pcaColumns.add(column as Column<NumericColumn>);
+        return this.pcaColumns.add(column as Column<NumericColumn>)
+          .catch((e) => {
+            e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
+            throw e;
+          });
       default: // This shouldn't ever occur because of the Enum usage
         throw new Error(`Invalid columnType: ${columnType}`);
     }
@@ -186,21 +203,28 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * getPoints gets the points from the database
-   * TODO: allow this to also get points from the pca table, only gets points from the raw table now
+   * Retrieves the x, y, and z values from the specified columns in the database and returns them as
+   * an array of DataPoint objects.
    *
-   * @param qualifyingPointOnly if true, only return points that have no missing data
-   * @param columnXName the name of the column to be used as the x-axis
-   * @param columnYName the name of the column to be used as the y-axis
-   * @param columnZName the name of the column to be used as the z-axis
-   * @pre-condition 3 column names must be distinct and existing in the db
-   * @return Promise<Array<DataPoint>>
+   * @preconds
+   * - The columnType must be either RAW or PCA.
+   * - The columns must contain numeric data.
+   * - The lengths of the x, y, and z columns must be the same.
+   * - The three column names must be distinct.
+   *
+   * @param {string} columnXName - Column names to use for the x values of the DataPoint.
+   * @param {string} columnYName - Column names to use for the y values of the DataPoint.
+   * @param {string} columnZName - Column names to use for the z values of the DataPoint.
+   * @param {ColumnType} columnType - The type of the columns to retrieve data from. Must be either
+   * RAW or PCA.
+   * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
+   * @throws {Error} If violates preconditions.
    */
   async getPoints(
-    qualifyingPointOnly: boolean,
     columnXName: string,
     columnYName: string,
     columnZName: string,
+    columnType: ColumnType,
   ): Promise<Array<DataPoint>> {
     // verify the three columns are distinct
     assert.equal(
@@ -210,45 +234,60 @@ export default class DbRepository extends Dexie implements Repository {
         columnYName},${columnZName}!`,
     );
 
+    assert.ok(
+      columnType === ColumnType.RAW || columnType === ColumnType.PCA,
+      'Invalid column type. Must be either RAW or PCA.',
+    );
+
     // get the three columns
-    const columnX = (await this.getColumn(columnXName, ColumnType.RAW)) as
-      Column<RawColumn>;
-    const columnY = (await this.getColumn(columnYName, ColumnType.RAW)) as
-      Column<RawColumn>;
-    const columnZ = (await this.getColumn(columnZName, ColumnType.RAW)) as
-      Column<RawColumn>;
+    const columnX = (await this.getColumn(columnXName, columnType));
+    const columnY = (await this.getColumn(columnYName, columnType));
+    const columnZ = (await this.getColumn(columnZName, columnType));
+
+    assert.ok(typeof columnX.values[0] === 'number', 'ColumnX must be numeric!');
+    assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');
+    assert.ok(typeof columnZ.values[0] === 'number', 'ColumnZ must be numeric!');
 
     const sameLength = new Set([columnX.values.length,
       columnY.values.length,
       columnZ.values.length]);
     assert.equal(sameLength.size, 1, 'The number of values in the given columns must be the same, but '
-            + `column ${columnXName} has ${columnX.values.length} values, `
-            + `column ${columnYName} has ${columnY.values.length} values, and `
-            + `column ${columnZName} has ${columnZ.values.length} values!`);
+        + `column ${columnXName} has ${columnX.values.length} values, `
+        + `column ${columnYName} has ${columnY.values.length} values, and `
+        + `column ${columnZName} has ${columnZ.values.length} values!`);
 
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
-      qualifyingPointOnly,
-      columnX,
-      columnY,
-      columnZ,
+      columnX as Column<NumericColumn>,
+      columnY as Column<NumericColumn>,
+      columnZ as Column<NumericColumn>,
     );
     return Promise.resolve(dataPoints);
   }
 
   /**
    * convertColumnsIntoDataPoints converts the columns into an array of DataPoints
-   * @param qualifyingPointOnly if true, only return points that have no missing data
    * @param columnX the column to be used as the x-axis
    * @param columnY the column to be used as the y-axis
    * @param columnZ the column to be used as the z-axis
    * @return Array<DataPoint>
    */
   static convertColumnsIntoDataPoints(
-    qualifyingPointOnly: boolean,
-    columnX: Column<RawColumn | NumericColumn>,
-    columnY: Column<RawColumn | NumericColumn>,
-    columnZ: Column<RawColumn | NumericColumn>,
+    columnX: Column<NumericColumn>,
+    columnY: Column<NumericColumn>,
+    columnZ: Column<NumericColumn>,
   ): Array<DataPoint> {
+    // assert that all columns have the same length
+    assert.equal(
+      columnX.values.length,
+      columnY.values.length,
+      `The number of values in the given columns must be the same but column X has ${columnX.values.length} values and column Y has ${columnY.values.length} values!`,
+    );
+    assert.equal(
+      columnY.values.length,
+      columnZ.values.length,
+      `The number of values in the given columns must be the same but column Y has ${columnY.values.length} values and column Z has ${columnZ.values.length} values!`,
+    );
+
     const dataPoints: Array<DataPoint> = [];
 
     for (let i = 0; i < columnX.values.length; i += 1) {
@@ -257,12 +296,7 @@ export default class DbRepository extends Dexie implements Repository {
       const xValue = (columnX.values[i]);
       const yValue = (columnY.values[i]);
       const zValue = (columnZ.values[i]);
-      const hasMissingData = xValue === null || yValue === null || zValue === null;
-
-      // if only qualifying points are requested, add the point only if it has no missing data
-      if (!qualifyingPointOnly || (qualifyingPointOnly && !hasMissingData)) {
-        dataPoints.push(new DataPoint(hasMissingData, xValue, yValue, zValue));
-      }
+      dataPoints.push(new DataPoint(xValue, yValue, zValue));
     }
     return dataPoints;
   }

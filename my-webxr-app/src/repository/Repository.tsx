@@ -6,10 +6,10 @@ import Column, {
 // The repository interface defines operations that can be
 // done to/on the db.
 export interface Repository {
-  getPoints: (qualifyingPointOnly : boolean,
-    columnXName: string,
+  getPoints: (columnXName: string,
     columnYName: string,
-    columnZName: string) => Promise<Array<DataPoint>>;
+    columnZName: string,
+    columnType: ColumnType) => Promise<Array<DataPoint>>;
   addColumn: (column: Column<RawColumn | StatsColumn | NumericColumn>,
     columnType: ColumnType) => Promise<string>;
   getCsvColumnNames: () => Promise<string[]>;
