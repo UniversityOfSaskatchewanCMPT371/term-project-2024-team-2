@@ -2,7 +2,7 @@ import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import Floor from './components/Floor';
@@ -23,9 +23,9 @@ const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
 // starting point of the axis
-const startPointX: number = -0.2;
-const startPointY: number = 1.6;
-const startPointZ: number = -0.5;
+const startPointX: number = 0;
+const startPointY: number = 1.5;
+const startPointZ: number = -1.5;
 // const startPointY: number = 0;
 // const startPointZ: number = 0;
 // endPoint is used to determine what axis is being calculated, should not need to change
@@ -54,26 +54,40 @@ export default function App() {
     initializeDB();
   }, [dbName, storeName]);
 
-  // TEST PlottedData
-  const exampleDataPoints = [[-1, -1, -1], [2, 3, 0], [4, 3, 0], [1, 1, 1], [3, 2, 2]];
+  // Demo createGraphingDataPoints
+  const exampleDataPoints = [
+    [5, 5, 5],
+    [-5, 5, 5],
+    [5, -5, 5],
+    [-5, -5, 5],
+    [5, 5, -5],
+    [-5, 5, -5],
+    [5, -5, -5],
+    [-5, -5, -5],
+    [0, 5, 5],
+    [0, -5, 5],
+    [0, 5, -5],
+    [0, -5, -5],
+    [5, 0, 5],
+    [-5, 0, 5],
+    [5, 0, -5],
+    [-5, 0, -5],
+    [5, 5, 0],
+    [-5, 5, 0],
+    [5, -5, 0],
+    [-5, -5, 0],
+  ];
   const dataPoints = exampleDataPoints.map((point) => new DataPoint(point[0], point[1], point[2]));
-
-  const [plottedDataPoints, setPlottedDataPoints] = useState<JSX.Element[]>([]);
-  useEffect(() => {
-    if (dataPoints.length > 0) {
-      const plottedPoints = createGraphingDataPoints(
-        dataPoints,
-        'columnX',
-        'columnY',
-        'columnZ',
-        [startPointX, startPointY, startPointZ],
-        Length,
-        scaleFactor,
-        maxNum,
-      );
-      setPlottedDataPoints(plottedPoints);
-    }
-  }, [dataPoints]);
+  const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
+    dataPoints,
+    'columnX',
+    'columnY',
+    'columnZ',
+    [startPointX, startPointY, startPointZ],
+    Length,
+    scaleFactor,
+    maxNum,
+  ) : [];
   return (
     <>
       <div>
