@@ -4,7 +4,7 @@ import { Matrix } from 'ml-matrix';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
 import Column, {
-  ColumnType,
+  TableName,
   NumericColumn,
   RawColumn,
   StatsColumn,
@@ -195,8 +195,8 @@ describe('Validate storeCSV() operation', () => {
     const resolve = await dataLayer.storeCSV(batchItems);
     expect(resolve).toEqual(true);
 
-    const column1 = await repository.getColumn('column1', ColumnType.RAW);
-    const column2 = await repository.getColumn('column2', ColumnType.RAW);
+    const column1 = await repository.getColumn('column1', TableName.RAW);
+    const column2 = await repository.getColumn('column2', TableName.RAW);
 
     expect(column1.values).toEqual(['value1a', 'value1b', 'value1c']);
     expect(column2.values).toEqual(['value2a', 'value2b', 'value2c']);
@@ -222,8 +222,8 @@ describe('Validate storeCSV() operation', () => {
     expect(resolve1).toEqual(true);
     expect(resolve2).toEqual(true);
 
-    const column1 = await repository.getColumn('column1', ColumnType.RAW);
-    const column2 = await repository.getColumn('column2', ColumnType.RAW);
+    const column1 = await repository.getColumn('column1', TableName.RAW);
+    const column2 = await repository.getColumn('column2', TableName.RAW);
 
     expect(column1.values).toEqual(['value1a', 'value1b', 'value1c', 'value1d', 'value1e', 'value1f']);
     expect(column2.values).toEqual(['value2a', 'value2b', 'value2c', 'value2d', 'value2e', 'value2f']);
@@ -252,8 +252,8 @@ describe('Validate storeCSV() operation', () => {
     expect(resolve2).toEqual(true);
     expect(resolve3).toEqual(true);
 
-    const column1 = await repository.getColumn('column1', ColumnType.RAW);
-    const column2 = await repository.getColumn('column2', ColumnType.RAW);
+    const column1 = await repository.getColumn('column1', TableName.RAW);
+    const column2 = await repository.getColumn('column2', TableName.RAW);
 
     expect(column1.values).toEqual(['value1a', 'value1b', 'value1c', 'value1d', 'value1e', 'value1f']);
     expect(column2.values).toEqual(['value2a', 'value2b', 'value2c', 'value2d', 'value2e', 'value2f']);
@@ -276,9 +276,9 @@ describe('Validate standardizeQualityColumn() operation', () => {
 
   test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [1, 5, 1, 5, 8]);
-    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    await repository.addColumn(testRawColumn, TableName.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
-    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    await repository.addColumn(testStatsColumn, TableName.STATS);
     resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [-1, 0.333, -1, 0.333, 1.333];
@@ -289,9 +289,9 @@ describe('Validate standardizeQualityColumn() operation', () => {
 
   test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [2, 5, 4, 3, 1]);
-    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    await repository.addColumn(testRawColumn, TableName.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
-    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    await repository.addColumn(testStatsColumn, TableName.STATS);
     resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [-0.632, 1.265, 0.632, 0, -1.265];
@@ -302,9 +302,9 @@ describe('Validate standardizeQualityColumn() operation', () => {
 
   test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [3, 6, 2, 2, 2]);
-    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    await repository.addColumn(testRawColumn, TableName.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
-    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    await repository.addColumn(testStatsColumn, TableName.STATS);
     resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [0, 1.732, -0.577, -0.577, -0.577];
@@ -315,9 +315,9 @@ describe('Validate standardizeQualityColumn() operation', () => {
 
   test('standardizeColumn - Standardize a numeric column', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [4, 7, 3, 1, 2]);
-    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    await repository.addColumn(testRawColumn, TableName.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
-    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    await repository.addColumn(testStatsColumn, TableName.STATS);
     resultColumn = await dataLayer.standardizeColumn('testColumn');
 
     expectStandardizedColumn = [0.261, 1.564, -0.174, -1.042, -0.608];
@@ -341,14 +341,14 @@ describe('Validate writeStandardizedData() operation', () => {
 
   test('writeStandardizedData - Standardize on quality column and save', async () => {
     testRawColumn = new Column<NumericColumn>('testColumn', [1, 5, 1, 5, 8]);
-    await repository.addColumn(testRawColumn, ColumnType.RAW);
+    await repository.addColumn(testRawColumn, TableName.RAW);
     testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, 'testColumn');
-    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    await repository.addColumn(testStatsColumn, TableName.STATS);
 
     const result = await dataLayer.storeStandardizedData();
     expect(result).toEqual(true);
 
-    const standardizedColumn = await repository.getColumn('testColumn', ColumnType.STANDARDIZED);
+    const standardizedColumn = await repository.getColumn('testColumn', TableName.STANDARDIZED);
     const expectedValues = [-1, 0.333, -1, 0.333, 1.333];
     standardizedColumn.values.forEach((value, index) => {
       expect(value).toBeCloseTo(expectedValues[index], 3);
@@ -367,10 +367,10 @@ describe('Validate writeStandardizedData() operation', () => {
       const dataSet = dataSets[i];
       testRawColumn = new Column<NumericColumn>(`testColumn${i}`, dataSet.data);
       // eslint-disable-next-line no-await-in-loop
-      await repository.addColumn(testRawColumn, ColumnType.RAW);
+      await repository.addColumn(testRawColumn, TableName.RAW);
       testStatsColumn = PrivilegedDataLayer.calculateColumnStatistics(testRawColumn, `testColumn${i}`);
       // eslint-disable-next-line no-await-in-loop
-      await repository.addColumn(testStatsColumn, ColumnType.STATS);
+      await repository.addColumn(testStatsColumn, TableName.STATS);
     }
 
     const result = await dataLayer.storeStandardizedData();
@@ -379,7 +379,7 @@ describe('Validate writeStandardizedData() operation', () => {
     for (let i = 0; i < dataSets.length; i += 1) {
       const dataSet = dataSets[i];
       // eslint-disable-next-line no-await-in-loop
-      const standardizedColumn = await repository.getColumn(`testColumn${i}`, ColumnType.STANDARDIZED);
+      const standardizedColumn = await repository.getColumn(`testColumn${i}`, TableName.STANDARDIZED);
       // console.log(standardizedColumn);
       // eslint-disable-next-line @typescript-eslint/no-loop-func
       standardizedColumn.values.forEach((value, index) => {
@@ -410,8 +410,8 @@ describe('Validate getAvailableFields operation', () => {
       stdDev: 1,
     });
     testPCAColumn = new Column<NumericColumn>('pcaCol', [1, 5, 1, 5, 8]);
-    await repository.addColumn(testPCAColumn, ColumnType.PCA);
-    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    await repository.addColumn(testPCAColumn, TableName.PCA);
+    await repository.addColumn(testStatsColumn, TableName.STATS);
 
     const result = await dataLayer.getAvailableFields();
     expect(result).toEqual(['statCol', 'pcaCol']);
@@ -425,7 +425,7 @@ describe('Validate getAvailableFields operation', () => {
       mean: 2,
       stdDev: 1,
     });
-    await repository.addColumn(testStatsColumn, ColumnType.STATS);
+    await repository.addColumn(testStatsColumn, TableName.STATS);
 
     const result = await dataLayer.getAvailableFields();
     expect(result).toEqual(['statCol']);
@@ -433,7 +433,7 @@ describe('Validate getAvailableFields operation', () => {
 
   test('getAvailableFields - Get column from both tables, stat table empty', async () => {
     testPCAColumn = new Column<NumericColumn>('pcaCol', [1, 5, 1, 5, 8]);
-    await repository.addColumn(testPCAColumn, ColumnType.PCA);
+    await repository.addColumn(testPCAColumn, TableName.PCA);
 
     const result = await dataLayer.getAvailableFields();
     expect(result).toEqual(['pcaCol']);
@@ -462,10 +462,10 @@ describe('Validate getColumnsForPca operation', () => {
     columnNames = ['column1', 'column2'];
     column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
     column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
-    await repository.addColumn(column1, ColumnType.STANDARDIZED);
-    await repository.addColumn(column2, ColumnType.STANDARDIZED);
+    await repository.addColumn(column1, TableName.STANDARDIZED);
+    await repository.addColumn(column2, TableName.STANDARDIZED);
 
-    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
+    const result = await dataLayer.getColumnsForPca(columnNames, TableName.STANDARDIZED);
 
     expect(result).toBeInstanceOf(Matrix);
     expect(result.to2DArray()).toEqual([[1, 4], [2, 5], [3, 6]]);
@@ -475,10 +475,10 @@ describe('Validate getColumnsForPca operation', () => {
     columnNames = ['column1', 'column2'];
     column1 = new Column<NumericColumn>('column1', [1, 2, 3]);
     column2 = new Column<NumericColumn>('column2', [4, 5, 6]);
-    await repository.addColumn(column1, ColumnType.RAW);
-    await repository.addColumn(column2, ColumnType.RAW);
+    await repository.addColumn(column1, TableName.RAW);
+    await repository.addColumn(column2, TableName.RAW);
 
-    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.RAW);
+    const result = await dataLayer.getColumnsForPca(columnNames, TableName.RAW);
 
     expect(result).toBeInstanceOf(Matrix);
     expect(result.to2DArray()).toEqual([[1, 4], [2, 5], [3, 6]]);
@@ -486,7 +486,7 @@ describe('Validate getColumnsForPca operation', () => {
 
   test('getStandardizedColumnsForPca - get non exist standardized columns, return empty matrix', async () => {
     columnNames = ['col1', 'col2'];
-    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
+    const result = await dataLayer.getColumnsForPca(columnNames, TableName.STANDARDIZED);
 
     expect(result).toBeInstanceOf(Matrix);
     expect(result.rows).toEqual(0);
@@ -495,7 +495,7 @@ describe('Validate getColumnsForPca operation', () => {
 
   test('getStandardizedColumnsForPca - get non exist raw columns, return empty matrix', async () => {
     columnNames = ['col1', 'col2'];
-    const result = await dataLayer.getColumnsForPca(columnNames, ColumnType.RAW);
+    const result = await dataLayer.getColumnsForPca(columnNames, TableName.RAW);
 
     expect(result).toBeInstanceOf(Matrix);
     expect(result.rows).toEqual(0);
@@ -525,10 +525,10 @@ describe('Validate calculatePCA operation', () => {
     rawCol2 = new Column<RawColumn>('col2', [2, 5, 4, 3, 1]);
     rawCol3 = new Column<RawColumn>('col3', [3, 6, 2, 2, 2]);
     rawCol4 = new Column<RawColumn>('col4', [4, 7, 3, 1, 2]);
-    await repository.addColumn(rawCol1, ColumnType.RAW);
-    await repository.addColumn(rawCol2, ColumnType.RAW);
-    await repository.addColumn(rawCol3, ColumnType.RAW);
-    await repository.addColumn(rawCol4, ColumnType.RAW);
+    await repository.addColumn(rawCol1, TableName.RAW);
+    await repository.addColumn(rawCol2, TableName.RAW);
+    await repository.addColumn(rawCol3, TableName.RAW);
+    await repository.addColumn(rawCol4, TableName.RAW);
 
     const response1 = await dataLayer.calculateStatistics();
     expect(response1).toEqual(true);
@@ -576,10 +576,10 @@ describe('Validate storePCA operation', () => {
     rawCol2 = new Column<RawColumn>('col2', [2, 5, 4, 3, 1]);
     rawCol3 = new Column<RawColumn>('col3', [3, 6, 2, 2, 2]);
     rawCol4 = new Column<RawColumn>('col4', [4, 7, 3, 1, 2]);
-    await repository.addColumn(rawCol1, ColumnType.RAW);
-    await repository.addColumn(rawCol2, ColumnType.RAW);
-    await repository.addColumn(rawCol3, ColumnType.RAW);
-    await repository.addColumn(rawCol4, ColumnType.RAW);
+    await repository.addColumn(rawCol1, TableName.RAW);
+    await repository.addColumn(rawCol2, TableName.RAW);
+    await repository.addColumn(rawCol3, TableName.RAW);
+    await repository.addColumn(rawCol4, TableName.RAW);
 
     const response1 = await dataLayer.calculateStatistics();
     expect(response1).toEqual(true);
@@ -591,28 +591,28 @@ describe('Validate storePCA operation', () => {
     const resultPcaColumnNames = await repository.getPcaColumnNames();
     expect(resultPcaColumnNames).toEqual(pcaColumnNames);
 
-    const resultPC1 = await repository.getColumn('PC1', ColumnType.PCA);
+    const resultPC1 = await repository.getColumn('PC1', TableName.PCA);
     expect(resultPC1.values).toEqual([
       -0.014003307840190604,
       2.5565339942868186,
       0.051480191864712074,
       -1.0141500183909433,
       -1.5798608599203967]);
-    const resultPC2 = await repository.getColumn('PC2', ColumnType.PCA);
+    const resultPC2 = await repository.getColumn('PC2', TableName.PCA);
     expect(resultPC2.values).toEqual([
       0.7559747649563959,
       -0.7804317748323727,
       1.2531347040524978,
       0.0002388083099344046,
       -1.2289165024864557]);
-    const resultPC3 = await repository.getColumn('PC3', ColumnType.PCA);
+    const resultPC3 = await repository.getColumn('PC3', TableName.PCA);
     expect(resultPC3.values).toEqual([
       0.941199614594691,
       -0.10686986110059982,
       -0.39667339694231407,
       -0.6798861824511148,
       0.24222982589933767]);
-    const resultPC4 = await repository.getColumn('PC4', ColumnType.PCA);
+    const resultPC4 = await repository.getColumn('PC4', TableName.PCA);
     expect(resultPC4.values).toEqual([
       -0.10185222583403578,
       -0.00575705265323978,
