@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, StatsColumn,
+  TableName, RawColumn, NumericColumn, StatsColumn,
 } from './Column';
 
 export default class DbRepository extends Dexie implements Repository {
@@ -46,23 +46,23 @@ export default class DbRepository extends Dexie implements Repository {
   /**
    * Checks if the table is empty
    *
-   * @param {ColumnType} columnType the type of column table to be checked
+   * @param {TableName} columnType the type of column table to be checked
    */
 
-  async isTableEmpty(columnType: ColumnType): Promise<boolean> {
+  async isTableEmpty(columnType: TableName): Promise<boolean> {
     let count = 0;
 
     switch (columnType) {
-      case ColumnType.RAW:
+      case TableName.RAW:
         count = await this.rawColumns.count();
         break;
-      case ColumnType.STATS:
+      case TableName.STATS:
         count = await this.statsColumns.count();
         break;
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         count = await this.standardizedColumns.count();
         break;
-      case ColumnType.PCA:
+      case TableName.PCA:
         count = await this.pcaColumns.count();
         break;
       default:
@@ -79,27 +79,27 @@ export default class DbRepository extends Dexie implements Repository {
    * @param columnType the type of column to be added
    * @return Promise<string> the primary key of the column aka the name of the column
    */
-  async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, columnType: ColumnType) {
+  async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, columnType: TableName) {
     switch (columnType) {
-      case ColumnType.STATS:
+      case TableName.STATS:
         return this.statsColumns.add(column as Column<StatsColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
             throw e;
           });
-      case ColumnType.RAW:
+      case TableName.RAW:
         return this.rawColumns.add(column as Column<RawColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
             throw e;
           });
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         return this.standardizedColumns.add(column as Column<NumericColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
             throw e;
           });
-      case ColumnType.PCA:
+      case TableName.PCA:
         return this.pcaColumns.add(column as Column<NumericColumn>)
           .catch((e) => {
             e.inner.message = `Failed to add column: ${column.name} \n ${e.inner.message}`;
@@ -116,7 +116,7 @@ export default class DbRepository extends Dexie implements Repository {
    * updated manually
    *
    * @param {Column<NumericColumn | RawColumn | StatsColumn>} column - The column to be updated.
-   * @param {ColumnType} columnType - The type of the column to be updated.
+   * @param {TableName} columnType - The type of the column to be updated.
    * @returns {Promise<boolean>} - Returns a promise that resolves to a boolean indicating whether
    * the update was successful.
    * @throws {Error} - Throws an error if an invalid column type is provided.
@@ -124,17 +124,17 @@ export default class DbRepository extends Dexie implements Repository {
 
   async updateColumn(
     column: Column<NumericColumn | RawColumn>,
-    columnType: ColumnType,
+    columnType: TableName,
   ): Promise<boolean> {
     let columnsTable;
     switch (columnType) {
-      case ColumnType.RAW:
+      case TableName.RAW:
         columnsTable = this.rawColumns;
         break;
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         columnsTable = this.standardizedColumns;
         break;
-      case ColumnType.PCA:
+      case TableName.PCA:
         columnsTable = this.pcaColumns;
         break;
       default: // This shouldn't ever occur because of the Enum usage
@@ -153,7 +153,7 @@ export default class DbRepository extends Dexie implements Repository {
    * name and type.
    *
    * @param {string} columnName - The name of the column to be retrieved.
-   * @param {ColumnType} columnType - The type of the column to be retrieved. This determines the
+   * @param {TableName} columnType - The type of the column to be retrieved. This determines the
    * table to fetch the column from.
    * @returns {Promise<Column<NumericColumn | RawColumn>>} - Returns a promise that resolves to the
    * column object.
@@ -162,17 +162,17 @@ export default class DbRepository extends Dexie implements Repository {
    */
   async getColumn(
     columnName: string,
-    columnType: ColumnType,
+    columnType: TableName,
   ): Promise<Column<RawColumn | NumericColumn>> {
     let columnsTable;
     switch (columnType) {
-      case ColumnType.RAW:
+      case TableName.RAW:
         columnsTable = this.rawColumns;
         break;
-      case ColumnType.STANDARDIZED:
+      case TableName.STANDARDIZED:
         columnsTable = this.standardizedColumns;
         break;
-      case ColumnType.PCA:
+      case TableName.PCA:
         columnsTable = this.pcaColumns;
         break;
       default: // This shouldn't ever occur because of the Enum usage
@@ -215,7 +215,7 @@ export default class DbRepository extends Dexie implements Repository {
    * @param {string} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string} columnYName - Column names to use for the y values of the DataPoint.
    * @param {string} columnZName - Column names to use for the z values of the DataPoint.
-   * @param {ColumnType} columnType - The type of the columns to retrieve data from. Must be either
+   * @param {TableName} columnType - The type of the columns to retrieve data from. Must be either
    * RAW or PCA.
    * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
    * @throws {Error} If violates preconditions.
@@ -224,7 +224,7 @@ export default class DbRepository extends Dexie implements Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string,
-    columnType: ColumnType,
+    columnType: TableName,
   ): Promise<Array<DataPoint>> {
     // verify the three columns are distinct
     assert.equal(
@@ -235,7 +235,7 @@ export default class DbRepository extends Dexie implements Repository {
     );
 
     assert.ok(
-      columnType === ColumnType.RAW || columnType === ColumnType.PCA,
+      columnType === TableName.RAW || columnType === TableName.PCA,
       'Invalid column type. Must be either RAW or PCA.',
     );
 

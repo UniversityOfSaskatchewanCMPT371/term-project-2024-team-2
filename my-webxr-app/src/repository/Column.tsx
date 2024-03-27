@@ -34,7 +34,7 @@ export type StatsColumn = {
   stdDev: number;
 };
 
-export enum ColumnType {
+export enum TableName {
   STATS,
   RAW,
   STANDARDIZED,

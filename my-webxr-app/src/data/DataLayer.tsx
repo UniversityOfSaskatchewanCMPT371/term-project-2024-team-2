@@ -4,7 +4,7 @@ import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
-  ColumnType, RawColumn, NumericColumn, DataRow, StatsColumn,
+  TableName, RawColumn, NumericColumn, DataRow, StatsColumn,
 } from '../repository/Column';
 import { computeCovariancePCA } from '../utils/PcaCovariance';
 
@@ -82,14 +82,14 @@ export default class DataLayer implements DataAbstractor {
           columnName = String(column[0]);
           newValues = column.slice(1);
           const aColumn = new Column<RawColumn>(columnName, newValues);
-          await this.repository.addColumn(aColumn, ColumnType.RAW);
+          await this.repository.addColumn(aColumn, TableName.RAW);
         } else {
           const columnNames = await this.repository.getCsvColumnNames();
           columnName = columnNames[index];
           newValues = column;
-          const existingColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+          const existingColumn = await this.repository.getColumn(columnName, TableName.RAW);
           (existingColumn.values as (string | number)[]).push(...newValues);
-          await this.repository.updateColumn(existingColumn, ColumnType.RAW);
+          await this.repository.updateColumn(existingColumn, TableName.RAW);
         }
       });
       await Promise.all(promises);
@@ -157,20 +157,20 @@ export default class DataLayer implements DataAbstractor {
    */
   async calculateStatistics(): Promise<boolean> {
     try {
-      const isEmpty = await this.repository.isTableEmpty(ColumnType.RAW);
+      const isEmpty = await this.repository.isTableEmpty(TableName.RAW);
       assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
       const rawColumnNames = await this.repository.getCsvColumnNames();
 
       // eslint-disable-next-line consistent-return -- return undefined if column is not numeric
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
-        const rawDataColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+        const rawDataColumn = await this.repository.getColumn(columnName, TableName.RAW);
         assert.ok(rawDataColumn.values.length > 0, 'Column values must not be empty');
 
         // Check if is a numeric column
         if (typeof rawDataColumn.values[0] === 'number') {
           const numericRawColumn = rawDataColumn as Column<NumericColumn>;
           const statsColumn = DataLayer.calculateColumnStatistics(numericRawColumn, columnName);
-          await this.repository.addColumn(statsColumn, ColumnType.STATS);
+          await this.repository.addColumn(statsColumn, TableName.STATS);
           return statsColumn;
         }
       });
@@ -215,7 +215,7 @@ export default class DataLayer implements DataAbstractor {
     const statsColumn = await this.repository.getStatsColumn(columnName);
     const { mean } = statsColumn.values;
     const { stdDev } = statsColumn.values;
-    const rawDataColumn = await this.repository.getColumn(columnName, ColumnType.RAW);
+    const rawDataColumn = await this.repository.getColumn(columnName, TableName.RAW);
 
     assert.ok(typeof rawDataColumn.values[0] === 'number', 'Column must be numeric to be standardized');
     const numericalRawDataColumn = rawDataColumn as Column<NumericColumn>;
@@ -235,13 +235,13 @@ export default class DataLayer implements DataAbstractor {
    */
   async storeStandardizedData(): Promise<boolean> {
     try {
-      const isEmpty = await this.repository.isTableEmpty(ColumnType.STATS);
+      const isEmpty = await this.repository.isTableEmpty(TableName.STATS);
       assert.ok(!isEmpty, 'Stats table is empty, can not pull numeric columns.');
       const columnNames = await this.repository.getStatsColumnNames();
 
       const promises = columnNames.map(async (name) => {
         const standardizedColumn = await this.standardizeColumn(name);
-        await this.repository.addColumn(standardizedColumn, ColumnType.STANDARDIZED);
+        await this.repository.addColumn(standardizedColumn, TableName.STANDARDIZED);
       });
 
       await Promise.all(promises);
@@ -274,9 +274,9 @@ export default class DataLayer implements DataAbstractor {
    */
   async getColumnsForPca(
     columnNames: string[],
-    columnType: ColumnType,
+    columnType: TableName,
   ): Promise<Matrix> {
-    if (columnType !== ColumnType.RAW && columnType !== ColumnType.STANDARDIZED) {
+    if (columnType !== TableName.RAW && columnType !== TableName.STANDARDIZED) {
       throw new Error('Invalid column type. Must be either RAW or STANDARDIZED.');
     }
 
@@ -316,7 +316,7 @@ export default class DataLayer implements DataAbstractor {
    */
   async calculatePCA(columnNames: string[]): Promise<Matrix> {
     try {
-      const standardizedData = await this.getColumnsForPca(columnNames, ColumnType.STANDARDIZED);
+      const standardizedData = await this.getColumnsForPca(columnNames, TableName.STANDARDIZED);
       if (standardizedData.rows === 0 || standardizedData.columns === 0) {
         throw new Error('Standardized data is empty');
       }
@@ -354,7 +354,7 @@ export default class DataLayer implements DataAbstractor {
         const promises = columns.map((column, i) => {
           const columnName = `PC${i + 1}`;
           const columnData = new Column<NumericColumn>(columnName, column);
-          return this.repository.addColumn(columnData, ColumnType.PCA);
+          return this.repository.addColumn(columnData, TableName.PCA);
         });
         await Promise.all(promises);
       }
