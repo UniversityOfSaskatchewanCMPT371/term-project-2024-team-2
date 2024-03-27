@@ -79,7 +79,7 @@ export async function parseAndHandleLocalCsv(
       if (batch.length >= batchSize) {
         await handleParsedData(batch, dbName, storeName, i);
         i += batch.length;
-        batch = [];
+        batch = [] as BatchedDataStream;
       }
     },
     complete: async () => {
@@ -118,7 +118,7 @@ export async function parseAndHandleUrlCsv(
       if (batch.length >= batchSize) {
         await handleParsedData(batch, dbName, storeName, i);
         i += batch.length;
-        batch = [];
+        batch = [] as BatchedDataStream;
       }
     },
     complete: async () => {
