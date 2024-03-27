@@ -10,11 +10,9 @@ import GenerateXYZ from './components/GenerateXYZ';
 import SelectAxesColumns from './components/SelectAxesMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
-import {
-  createGraphingDataPoints,
-} from './components/CreateGraphingDataPoints';
-import DataPoint from './repository/DataPoint';
+import { createGraphingDataPoints } from './components/CreateGraphingDataPoints';
 import { getDatabase } from './data/DataAbstractor';
+import { TableName } from './repository/Column';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -34,13 +32,18 @@ const Length: number = 1;
 // adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
 
-export default function App() {
+const database = getDatabase();
+const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
+  [1, 2, 3, 4, 5],
+  [4, 5, 6, 7, 8],
+  [9, 10, 11, 12, 13]];
+await database.storeCSV(batchItem);
+
+export default async function App() {
   // Database name and store name will be pass as prop to reader components,
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
-
-  const database = getDatabase();
 
   // Initialize the database and store for csv data
   useEffect(() => {
@@ -58,29 +61,8 @@ export default function App() {
   }, [dbName, storeName]);
 
   // Demo createGraphingDataPoints
-  const exampleDataPoints = [
-    [5, 5, 5],
-    [-5, 5, 5],
-    [5, -5, 5],
-    [-5, -5, 5],
-    [5, 5, -5],
-    [-5, 5, -5],
-    [5, -5, -5],
-    [-5, -5, -5],
-    [0, 5, 5],
-    [0, -5, 5],
-    [0, 5, -5],
-    [0, -5, -5],
-    [5, 0, 5],
-    [-5, 0, 5],
-    [5, 0, -5],
-    [-5, 0, -5],
-    [5, 5, 0],
-    [-5, 5, 0],
-    [5, -5, 0],
-    [-5, -5, 0],
-  ];
-  const dataPoints = exampleDataPoints.map((point) => new DataPoint(point[0], point[1], point[2]));
+  const dataPoints = await database
+    .createDataPointsFrom3Columns('col2', 'col4', 'col5', TableName.RAW);
   const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
     dataPoints,
     'columnX',
