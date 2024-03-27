@@ -6,7 +6,7 @@ import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext
 import GraphingDataPoint from '../../src/components/GraphingDataPoint';
 import createPosition from '../../src/components/Positions';
 import MockServer from '../MockServer';
-import { rollbarConfig } from '../src/utils/LoggingUtils';
+import { rollbarConfig } from '../../src/utils/LoggingUtils';
 
 const maxNum: number = 10;
 const scaleFactor: number = 1;

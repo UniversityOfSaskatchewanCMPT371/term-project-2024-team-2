@@ -4,7 +4,7 @@ import { Vector3 } from 'three';
 import { Provider } from '@rollbar/react';
 import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
 import GraphingDataPoint from '../../src/components/GraphingDataPoint';
-import { rollbarConfig } from '../src/utils/LoggingUtils';
+import { rollbarConfig } from '../../src/utils/LoggingUtils';
 
 describe('GraphingDataPoint Creation and Interaction', () => {
   test('creating a basic GraphingDataPoint with defaults', async () => {
