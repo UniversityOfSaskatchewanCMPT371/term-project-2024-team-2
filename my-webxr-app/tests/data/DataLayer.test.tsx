@@ -1,6 +1,8 @@
 import 'fake-indexeddb/auto';
-import { describe, expect } from 'vitest';
+import { afterEach, describe, expect } from 'vitest';
 import { Matrix } from 'ml-matrix';
+import { v4 as uuidv4 } from 'uuid';
+import Dexie from 'dexie';
 import PrivilegedDataLayer from './PrivilegedDataLayer';
 import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
 import Column, {
@@ -175,13 +177,23 @@ describe('Validate calculateColumnsStatistics() operation', () => {
 });
 
 describe('Validate storeCSV() operation', () => {
+  let dbName: string;
   let dataLayer: DataLayer;
   let repository: Repository;
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB');
-    repository = new DbRepository('Test_DB');
-    dataLayer = new DataLayer('Test_DB');
+    dbName = `Test_DB${uuidv4()}`;
+    expect(Dexie.exists(dbName)).resolves.toBe(false);
+
+    dataLayer = new PrivilegedDataLayer(dbName);
+    // We can't create a new repository as that would make two connections to the same DB.
+    repository = (dataLayer as PrivilegedDataLayer).getInternalRepository();
+  });
+
+  afterEach(async () => {
+    // Close connection before deleting; this is private, so we need to typecast.
+    (repository as DbRepository).closeConnection();
+    await Dexie.delete(dbName);
   });
 
   test('should store 1 batch correctly', async () => {
@@ -261,6 +273,7 @@ describe('Validate storeCSV() operation', () => {
 });
 
 describe('Validate standardizeQualityColumn() operation', () => {
+  let dbName: string;
   let dataLayer: DataLayer;
   let repository: Repository;
   let testRawColumn: Column<NumericColumn>;
@@ -269,9 +282,18 @@ describe('Validate standardizeQualityColumn() operation', () => {
   let expectStandardizedColumn: Array<number>;
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB1');
-    repository = new DbRepository('Test_DB1');
-    dataLayer = new DataLayer('Test_DB1');
+    dbName = `Test_DB${uuidv4()}`;
+    expect(Dexie.exists(dbName)).resolves.toBe(false);
+
+    dataLayer = new PrivilegedDataLayer(dbName);
+    // We can't create a new repository as that would make two connections to the same DB.
+    repository = (dataLayer as PrivilegedDataLayer).getInternalRepository();
+  });
+
+  afterEach(async () => {
+    // Close connection before deleting; this is private, so we need to typecast.
+    (repository as DbRepository).closeConnection();
+    await Dexie.delete(dbName);
   });
 
   test('standardizeColumn - Standardize a numeric column', async () => {
@@ -328,15 +350,25 @@ describe('Validate standardizeQualityColumn() operation', () => {
 });
 
 describe('Validate writeStandardizedData() operation', () => {
+  let dbName: string;
   let dataLayer: DataLayer;
   let repository: Repository;
   let testRawColumn: Column<NumericColumn>;
   let testStatsColumn: Column<StatsColumn>;
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB2');
-    repository = new DbRepository('Test_DB2');
-    dataLayer = new DataLayer('Test_DB2');
+    dbName = `Test_DB${uuidv4()}`;
+    expect(Dexie.exists(dbName)).resolves.toBe(false);
+
+    dataLayer = new PrivilegedDataLayer(dbName);
+    // We can't create a new repository as that would make two connections to the same DB.
+    repository = (dataLayer as PrivilegedDataLayer).getInternalRepository();
+  });
+
+  afterEach(async () => {
+    // Close connection before deleting; this is private, so we need to typecast.
+    (repository as DbRepository).closeConnection();
+    await Dexie.delete(dbName);
   });
 
   test('writeStandardizedData - Standardize on quality column and save', async () => {
@@ -390,15 +422,25 @@ describe('Validate writeStandardizedData() operation', () => {
 });
 
 describe('Validate getAvailableFields operation', () => {
+  let dbName: string;
   let dataLayer: DataLayer;
   let repository: Repository;
   let testPCAColumn: Column<NumericColumn>;
   let testStatsColumn: Column<StatsColumn>;
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB3');
-    repository = new DbRepository('Test_DB3');
-    dataLayer = new DataLayer('Test_DB3');
+    dbName = `Test_DB${uuidv4()}`;
+    expect(Dexie.exists(dbName)).resolves.toBe(false);
+
+    dataLayer = new PrivilegedDataLayer(dbName);
+    // We can't create a new repository as that would make two connections to the same DB.
+    repository = (dataLayer as PrivilegedDataLayer).getInternalRepository();
+  });
+
+  afterEach(async () => {
+    // Close connection before deleting; this is private, so we need to typecast.
+    (repository as DbRepository).closeConnection();
+    await Dexie.delete(dbName);
   });
 
   test('getAvailableFields - Get column from both tables', async () => {
@@ -446,6 +488,7 @@ describe('Validate getAvailableFields operation', () => {
 });
 
 describe('Validate getColumnsForPca operation', () => {
+  let dbName: string;
   let dataLayer: DataLayer;
   let repository: Repository;
   let column1: Column<NumericColumn>;
@@ -453,9 +496,18 @@ describe('Validate getColumnsForPca operation', () => {
   let columnNames: string[];
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB4');
-    repository = new DbRepository('Test_DB4');
-    dataLayer = new DataLayer('Test_DB4');
+    dbName = `Test_DB${uuidv4()}`;
+    expect(Dexie.exists(dbName)).resolves.toBe(false);
+
+    dataLayer = new PrivilegedDataLayer(dbName);
+    // We can't create a new repository as that would make two connections to the same DB.
+    repository = (dataLayer as PrivilegedDataLayer).getInternalRepository();
+  });
+
+  afterEach(async () => {
+    // Close connection before deleting; this is private, so we need to typecast.
+    (repository as DbRepository).closeConnection();
+    await Dexie.delete(dbName);
   });
 
   test('getColumnsForPca - get standardized columns', async () => {
@@ -504,6 +556,7 @@ describe('Validate getColumnsForPca operation', () => {
 });
 
 describe('Validate calculatePCA operation', () => {
+  let dbName: string;
   let dataLayer: DataLayer;
   let repository: Repository;
   let rawCol1: Column<RawColumn>;
@@ -513,9 +566,18 @@ describe('Validate calculatePCA operation', () => {
   let columnNames: string[];
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB5');
-    repository = new DbRepository('Test_DB5');
-    dataLayer = new DataLayer('Test_DB5');
+    dbName = `Test_DB${uuidv4()}`;
+    expect(Dexie.exists(dbName)).resolves.toBe(false);
+
+    dataLayer = new PrivilegedDataLayer(dbName);
+    // We can't create a new repository as that would make two connections to the same DB.
+    repository = (dataLayer as PrivilegedDataLayer).getInternalRepository();
+  });
+
+  afterEach(async () => {
+    // Close connection before deleting; this is private, so we need to typecast.
+    (repository as DbRepository).closeConnection();
+    await Dexie.delete(dbName);
   });
 
   test('getColumnsForPca - test against hard values', async () => {
@@ -553,6 +615,7 @@ describe('Validate calculatePCA operation', () => {
 });
 
 describe('Validate storePCA operation', () => {
+  let dbName: string;
   let dataLayer: DataLayer;
   let repository: Repository;
   let rawCol1: Column<RawColumn>;
@@ -563,9 +626,18 @@ describe('Validate storePCA operation', () => {
   let pcaColumnNames: string[];
 
   beforeEach(() => {
-    indexedDB.deleteDatabase('Test_DB6');
-    repository = new DbRepository('Test_DB6');
-    dataLayer = new DataLayer('Test_DB6');
+    dbName = `Test_DB${uuidv4()}`;
+    expect(Dexie.exists(dbName)).resolves.toBe(false);
+
+    dataLayer = new PrivilegedDataLayer(dbName);
+    // We can't create a new repository as that would make two connections to the same DB.
+    repository = (dataLayer as PrivilegedDataLayer).getInternalRepository();
+  });
+
+  afterEach(async () => {
+    // Close connection before deleting; this is private, so we need to typecast.
+    (repository as DbRepository).closeConnection();
+    await Dexie.delete(dbName);
   });
 
   test('getStorePCA - test that PCA get store correctly', async () => {

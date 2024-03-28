@@ -12,9 +12,9 @@ import { computeCovariancePCA } from '../utils/PcaCovariance';
  * The Data Layer provides a set of methods for working with CSV and PCA data.
  */
 export default class DataLayer implements DataAbstractor {
-  private repository: Repository;
+  protected repository: Repository;
 
-  private isFirstBatch: boolean;
+  protected isFirstBatch: boolean;
 
   /**
    * Create a new Data Layer instance.
