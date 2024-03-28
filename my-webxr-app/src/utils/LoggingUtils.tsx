@@ -4,10 +4,15 @@ import Rollbar from 'rollbar';
  * Define the configuration for Rollbar.
  */
 export const rollbarConfig: Rollbar.Configuration = {
+  // The access token to send logs to for Rollbar's API.
   accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
+  // The environment logs appear under.
   environment: import.meta.env.VITE_ROLLBAR_ENVIRONMENT,
+  // Catch uncaught errors.
   captureUncaught: true,
+  // Catch unhandled errors.
   captureUnhandledRejections: true,
+  // Add custom versioning information to each reported log.
   payload: {
     client: {
       javascript: {
@@ -17,7 +22,9 @@ export const rollbarConfig: Rollbar.Configuration = {
       },
     },
   },
+  // Whether to transmit logs to the Rollbar API (only in production).
   transmit: import.meta.env.VITE_ROLLBAR_ENVIRONMENT === 'production',
+  // What level of logs to report (warning+ in production; all in dev).
   reportLevel: (import.meta.env.VITE_ROLLBAR_ENVIRONMENT === 'production') ? 'warning' : 'debug',
   // This callback runs whenever something is logged in Rollbar. We can tie in our own custom
   // behaviour.
