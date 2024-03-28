@@ -8,6 +8,10 @@ import Column, { NumericColumn } from '../../src/repository/Column';
  * DataLayer that could not be tested otherwise.
  */
 export default class PrivilegedDataLayer extends DataLayer {
+  public getInternalRepository() {
+    return this.repository;
+  }
+
   public static override transposeData(batchItems: BatchedDataStream) {
     return super.transposeData(batchItems);
   }
