@@ -184,6 +184,54 @@ describe('Validate storeCSV() operation', () => {
     dataLayer = new DataLayer('Test_DB');
   });
 
+  test('given a empty batch, expect exception', async () => {
+    const resolve = await dataLayer.storeCSV([]);
+    expect(resolve).toEqual(false);
+
+    const isEmpty = await repository.isTableEmpty(TableName.RAW);
+
+    expect(isEmpty).toBeTruthy();
+  });
+
+  test('given a batch with headers of type number, headers should be cast to type string', async () => {
+    const batchItems: BatchedDataStream = [[1, 2],
+      [-100, -101]];
+
+    const resolve = await dataLayer.storeCSV(batchItems);
+    expect(resolve).toEqual(true);
+
+    const column1 = await repository.getColumn(String(1), TableName.RAW);
+    const column2 = await repository.getColumn(String(2), TableName.RAW);
+
+    expect(column1.values).toEqual([-100]);
+    expect(column2.values).toEqual([-101]);
+  });
+
+  test('given a batch of only one header', async () => {
+    const batchItems: BatchedDataStream = [['column1']];
+
+    const resolve = await dataLayer.storeCSV(batchItems);
+    expect(resolve).toEqual(true);
+
+    const column1 = await repository.getColumn('column1', TableName.RAW);
+    expect(column1.values).toHaveLength(0);
+  });
+
+  test('should store a batch with only header row correctly', async () => {
+    const batchItems: BatchedDataStream = [
+      ['column1', 'column2'],
+    ];
+
+    const resolve = await dataLayer.storeCSV(batchItems);
+    expect(resolve).toEqual(true);
+
+    const column1 = await repository.getColumn('column1', TableName.RAW);
+    const column2 = await repository.getColumn('column2', TableName.RAW);
+
+    expect(column1.values).toHaveLength(0);
+    expect(column2.values).toHaveLength(0);
+  });
+
   test('should store 1 batch correctly', async () => {
     const batchItems: BatchedDataStream = [
       ['column1', 'column2'],

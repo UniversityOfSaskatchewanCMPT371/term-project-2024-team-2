@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import assert from 'node:assert';
 import { Matrix } from 'ml-matrix';
 import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
@@ -7,7 +7,6 @@ import Column, {
   TableName,
   DataRow,
   NumericColumn,
-  RawColumn,
   StatsColumn,
 } from '../repository/Column';
 import { computeCovariancePCA } from '../utils/PcaCovariance';
@@ -68,39 +67,46 @@ export default class DataLayer implements DataAbstractor {
    *
    * If any error occurs during the operation, the method catches the error and returns `false`.
    *
+   * @pre-conditions batchItems is not empty.
    * @param {BatchedDataStream} batchItems - A 2D array of CSV data that is referenced by row.
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
-   *
-   * TODO reset the flag every when user load a different csv file
+   * @post-condition
+   * - The raw data table in the repository contains the new data.
+   * - The column headers of type 'number' will be cast to 'string'
    */
 
   async storeCSV(batchItems: BatchedDataStream): Promise<boolean> {
     try {
-      const transposedData = DataLayer.transposeData(batchItems);
+      assert.ok(batchItems.length > 0, 'Batch items must not be empty');
+      // If it is the first batch, create empty columns in the repository
+      if (this.isFirstBatch) {
+        const columnHeaders = batchItems[0].map((header) => header.toString());
+        for (const header of columnHeaders) {
+          await this.repository.addColumn({ name: header, values: [] }, TableName.RAW);
+        }
 
-      const promises = transposedData.map(async (column, index) => {
-        let columnName: string;
-        let newValues: RawColumn;
+        // Remove the header row (first row) from the batchItems
+        if (batchItems.length >= 1) {
+          batchItems = batchItems.slice(1);
+        }
+      }
 
-        if (this.isFirstBatch) {
-          columnName = String(column[0]); // Type cast numeric field header to string
-          newValues = column.slice(1);
-          const aColumn = new Column<RawColumn>(columnName, newValues);
-          await this.repository.addColumn(aColumn, TableName.RAW);
-        } else {
-          const columnNames = await this.repository.getCsvColumnNames();
-          columnName = columnNames[index];
-          newValues = column;
+      if (batchItems.length > 0) {
+        const transposedData = DataLayer.transposeData(batchItems);
+        const columnNames = await this.repository.getCsvColumnNames();
+        const promises = transposedData.map(async (column, index) => {
+          const columnName = columnNames[index];
+          const newValues = column;
+          // push new values to the column in the repository
           const existingColumn = await this.repository.getColumn(columnName, TableName.RAW);
           (existingColumn.values as (string | number)[]).push(...newValues);
           await this.repository.updateColumn(existingColumn, TableName.RAW);
-        }
-      });
-      await Promise.all(promises);
+        });
+        await Promise.all(promises);
+      }
 
       this.isFirstBatch = false;
-
       return true;
     } catch (error) {
       // Logging the error here
