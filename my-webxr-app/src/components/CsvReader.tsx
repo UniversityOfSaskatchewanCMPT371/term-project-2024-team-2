@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
-import {
-  parseAndHandleUrlCsv,
-} from '../utils/CsvUtils';
-import DataAbstractor, { getDatabase } from '../data/DataAbstractor';
+import DataAbstractor from '../data/DataAbstractor';
+import parseAndHandleUrlCsv from '../utils/CsvUtils';
+
+interface UrlCsvReaderProps {
+  dataBase: DataAbstractor;
+}
 
 /**
- * A React component that reads data from a CSV file at a given URL and stores it in a specified
- * database and store.
+ * `UrlCsvReader` is a React component that provides a user interface for loading CSV data from a
+ * URL.
+ * It takes a `DataAbstractor` instance as a prop, which is used to store the parsed CSV data.
+ * The component maintains two pieces of state: `message` and `url`.
+ * `message` is used to display status messages to the user.
+ * `url` is used to store the URL entered by the user.
+ * The component renders an input field for the URL, a button to initiate the CSV loading, and a
+ * message display.
  *
- * @param {object} props - The properties passed to the component.
- * @param {string} props.dbName - The name of the database where the data should be stored.
- * @param {string} props.storeName - The name of the store within the database where the data should
- * be stored.
- *
- * @returns {JSX.Element} A form with an input field for the CSV URL and a button to load the CSV
- * data. After successful loading, a success message is displayed. If an error occurs, an error
- * message is displayed and let user retry.
+ * @param {UrlCsvReaderProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
  */
-// eslint-disable-next-line import/prefer-default-export
-export function UrlCsvReader(): JSX.Element {
+function UrlCsvReader({ dataBase }: UrlCsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
   const [url, setUrl] = useState('');
 
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
   };
-  const dataBase = getDatabase() as DataAbstractor;
 
   const handleButtonClick = async () => {
     if (!url.endsWith('.csv')) {
@@ -47,3 +47,4 @@ export function UrlCsvReader(): JSX.Element {
     </div>
   );
 }
+export default UrlCsvReader;

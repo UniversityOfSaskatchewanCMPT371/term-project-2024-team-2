@@ -1,11 +1,11 @@
 import * as assert from 'assert';
 import { Matrix } from 'ml-matrix';
+// eslint-disable-next-line import/no-cycle
 import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
   TableName,
-  DataRow,
   NumericColumn,
   RawColumn,
   StatsColumn,
@@ -85,13 +85,14 @@ export default class DataLayer implements DataAbstractor {
 
         if (this.isFirstBatch) {
           columnName = String(column[0]); // Type cast numeric field header to string
-          newValues = column.slice(1);
+          // Once we get the header out, the rest of the column should be numeric ot string
+          newValues = column.slice(1) as RawColumn;
           const aColumn = new Column<RawColumn>(columnName, newValues);
           await this.repository.addColumn(aColumn, TableName.RAW);
         } else {
           const columnNames = await this.repository.getCsvColumnNames();
           columnName = columnNames[index];
-          newValues = column;
+          newValues = column as RawColumn;
           const existingColumn = await this.repository.getColumn(columnName, TableName.RAW);
           (existingColumn.values as (string | number)[]).push(...newValues);
           await this.repository.updateColumn(existingColumn, TableName.RAW);
@@ -431,4 +432,4 @@ export default class DataLayer implements DataAbstractor {
 /**
  * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
  */
-export type BatchedDataStream = Array<DataRow>;
+export type BatchedDataStream = Array<Array<string | number>>;
