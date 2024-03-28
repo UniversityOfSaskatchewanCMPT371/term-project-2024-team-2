@@ -3,7 +3,6 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import Dexie from 'dexie';
-import { useEffect } from 'react';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import Floor from './components/Floor';
@@ -40,6 +39,7 @@ const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
   [4, 5, 6, 7, 8],
   [9, 10, 11, 12, 13]];
 await database.storeCSV(batchItem);
+await database.calculateStatistics();
 const dataPoints = await database
   .createDataPointsFrom3Columns('col2', 'col4', 'col5', TableName.RAW)
   .catch((error) => { console.error(error); return []; });
