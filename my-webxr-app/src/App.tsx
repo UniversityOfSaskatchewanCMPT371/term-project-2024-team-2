@@ -2,6 +2,7 @@ import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
+import Dexie from 'dexie';
 import { useEffect } from 'react';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
@@ -32,37 +33,39 @@ const Length: number = 1;
 // adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
 
+await Dexie.delete('CsvDataBase');
 const database = getDatabase();
 const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
   [1, 2, 3, 4, 5],
   [4, 5, 6, 7, 8],
   [9, 10, 11, 12, 13]];
 await database.storeCSV(batchItem);
+const dataPoints = await database
+  .createDataPointsFrom3Columns('col2', 'col4', 'col5', TableName.RAW)
+  .catch((error) => { console.error(error); return []; });
 
-export default async function App() {
+export default function App() {
   // Database name and store name will be pass as prop to reader components,
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
 
-  // Initialize the database and store for csv data
-  useEffect(() => {
-    const initializeDB = async () => {
-      await openDB(dbName, 1, {
-        upgrade(db) {
-          if (db.objectStoreNames.contains(storeName)) {
-            db.deleteObjectStore(storeName);
-          }
-          db.createObjectStore(storeName);
-        },
-      });
-    };
-    initializeDB();
-  }, [dbName, storeName]);
+  // // Initialize the database and store for csv data
+  // useEffect(() => {
+  //   const initializeDB = async () => {
+  //     await openDB(dbName, 1, {
+  //       upgrade(db) {
+  //         if (db.objectStoreNames.contains(storeName)) {
+  //           db.deleteObjectStore(storeName);
+  //         }
+  //         db.createObjectStore(storeName);
+  //       },
+  //     });
+  //   };
+  //   initializeDB();
+  // }, [dbName, storeName]);
 
   // Demo createGraphingDataPoints
-  const dataPoints = await database
-    .createDataPointsFrom3Columns('col2', 'col4', 'col5', TableName.RAW);
   const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
     dataPoints,
     'columnX',
