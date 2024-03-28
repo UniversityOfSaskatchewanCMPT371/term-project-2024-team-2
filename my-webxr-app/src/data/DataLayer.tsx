@@ -112,7 +112,7 @@ export default class DataLayer implements DataAbstractor {
    * Helper function for calculateStatistics()
    *
    * Calculate the statistical values for a given column.
-   * @preconds Column values are array of numbers.
+   * @pre-conditions Column values are array of numbers.
    * @param {Column<NumericColumn>} column The column of data to calculate statistics for.
    * @param {string} columnName The name of the column.
    * @returns {Column<StatsColumn>} containing the statistical values.
@@ -152,7 +152,7 @@ export default class DataLayer implements DataAbstractor {
    * the data, check if the data are all numeric, calculates statistics, and adds a new statistic
    * column to the Look-up table (stats table) in the repository.
    *
-   * @preconds Column is not empty.
+   * @pre-conditions Column is not empty.
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
    * @throws {Error} If the raw data table in the repository is empty or if an error occurs during
@@ -212,7 +212,7 @@ export default class DataLayer implements DataAbstractor {
    * Retrieve all the numeric column names in Raw/CSV data.
    * Intended to be used for user to select which 3 Raw columns to be plotted.
    *
-   * @preconds - Stat table contains only and the names of all numeric Raw/CSV columns.
+   * @pre-conditions - Stat table contains only and the names of all numeric Raw/CSV columns.
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAllNumericRawColumnNames(): Promise<string[]> {
@@ -227,7 +227,7 @@ export default class DataLayer implements DataAbstractor {
    * and stats column. For each entry in the raw data column, it standardizes the data using the
    * mean and standard deviation from the stats column.
    *
-   * @preconds
+   * @pre-conditions
    * - Column name is in look up table (stats table).
    * - Corresponding column name in raw data table is numeric, which must be true.
    * @param {string} columnName - The name of the numeric column to be standardized.
@@ -288,7 +288,7 @@ export default class DataLayer implements DataAbstractor {
    *
    * If an error occurs during the operation (e.g., a column does not exist, table empty), the
    * function will catch the error and return an empty Matrix.
-   * @preconds - Columns are in the table, either RAW or STANDARDIZED.
+   * @pre-conditions - Columns are in the table, either RAW or STANDARDIZED.
    * @param {string[]} columnNames - The names of the columns to retrieve data for.
    * @param {TableName} tableName - The name of the table to pull columns (RAW or STANDARDIZED).
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
@@ -332,7 +332,7 @@ export default class DataLayer implements DataAbstractor {
    * If an error occurs during the operation (e.g., the raw or standardized data is empty), the
    * function will catch the error and return an empty Matrix.
    *
-   * @preconds Column names are in the table, both raw and standardized.
+   * @pre-conditions Column names are in the table, both raw and standardized.
    * @param {string[]} columnNames - The names of the columns to perform PCA on.
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
    * PCA-transformed data.
