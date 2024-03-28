@@ -7,9 +7,17 @@ import React, {
 /**
  * Create an interface for the return state values of the Context.
  *
- * selectedDataPoint: either the id number of the selected GraphingDataPoint,
+ * selectedXAxis: either the column as a string for selected x-axis,
  *                    or null if one isn't selected.
- * setSelectedDataPoint: React State setter function
+ * setSelectedXAxis: React State setter function
+ *
+ * selectedYAxis: either the column as a string for selected y-axis,
+ *                    or null if one isn't selected.
+ * setSelectedYAxis: React State setter function
+ *
+ * selectedZAxis: either the column as a string for selected z-axis,
+ *                    or null if one isn't selected.
+ * setSelectedZAxis: React State setter function
  */
 interface AxesSelectionContextType {
   selectedXAxis: string | null;
@@ -27,9 +35,9 @@ interface AxesSelectionContextType {
 }
 
 /**
- * Create the PointSelectionContext.
- * There is a default value of null when it used outside a PointSelectionProvider.
- * Otherwise, it is the selectedDataPoint state.
+ * Create the AxisSelectionContext.
+ * There is a default value of null when it used outside a AxisSelectionProvider.
+ * Otherwise, it is the selectedAxis state.
  */
 export const AxesSelectionContext = createContext<AxesSelectionContextType | null>(null);
 
@@ -41,7 +49,7 @@ export const AxesSelectionContext = createContext<AxesSelectionContextType | nul
 export function AxesSelectionProvider({
   children,
 }: React.PropsWithChildren) {
-  /* Create the internal selected GraphingDataPoint State */
+  /* Create the internal selected axis State */
   const [selectedXAxis, setSelectedXAxisInternal] = useState<AxesSelectionContextType['selectedXAxis']>(null);
   const [selectedYAxis, setSelectedYAxisInternal] = useState<AxesSelectionContextType['selectedYAxis']>(null);
   const [selectedZAxis, setSelectedZAxisInternal] = useState<AxesSelectionContextType['selectedZAxis']>(null);
@@ -52,7 +60,7 @@ export function AxesSelectionProvider({
     // log4js
     //   .getLogger()
     //   .debug(
-    //     "PointSelectionContext: updating selectedDataPoint state to " +
+    //     "AxesSelectionContext: updating selectedXAxis state to " +
     //       newValue,
     //   );
     setSelectedXAxisInternal(newValue);
@@ -64,7 +72,7 @@ export function AxesSelectionProvider({
     // log4js
     //   .getLogger()
     //   .debug(
-    //     "PointSelectionContext: updating selectedDataPoint state to " +
+    //     "AxesSelectionContext: updating selectedYAxis state to " +
     //       newValue,
     //   );
     setSelectedYAxisInternal(newValue);
@@ -76,7 +84,7 @@ export function AxesSelectionProvider({
     // log4js
     //   .getLogger()
     //   .debug(
-    //     "PointSelectionContext: updating selectedDataPoint state to " +
+    //     "AxesSelectionContext: updating selectedZAxis state to " +
     //       newValue,
     //   );
     setSelectedZAxisInternal(newValue);
@@ -104,10 +112,10 @@ export function AxesSelectionProvider({
 
 /**
  * Provide a type-guaranteed context (not null) for use within components.
- * Call this function instead of useContext(PointSelectionContext).
+ * Call this function instead of useContext(AxesSelectionContext).
  */
 export const useAxesSelectionContext = () => {
-  // This context will only be null if called from outside a PointSelectionProvider.
+  // This context will only be null if called from outside a AxesSelectionProvider.
   const context = useContext(AxesSelectionContext);
   if (!context) {
     throw new Error(

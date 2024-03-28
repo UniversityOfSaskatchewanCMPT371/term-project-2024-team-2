@@ -396,9 +396,9 @@ export default class DataLayer implements DataAbstractor {
    * This function retrieves data points from the repository based on the provided column names
    * and table name.
    *
-   * @param {string} columnX - The name of the column to be used for the x-axis values.
-   * @param {string} columnY - The name of the column to be used for the y-axis values.
-   * @param {string} columnZ - The name of the column to be used for the z-axis values.
+   * @param {string | null} columnX - The name of the column to be used for the x-axis values.
+   * @param {string | null} columnY - The name of the column to be used for the y-axis values.
+   * @param {string | null} columnZ - The name of the column to be used for the z-axis values.
    * @param {TableName} tableName - The type of the table (RAW or PCA).
    *
    * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.

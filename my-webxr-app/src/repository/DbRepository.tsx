@@ -211,9 +211,9 @@ export default class DbRepository extends Dexie implements Repository {
    * - The lengths of the x, y, and z columns must be the same.
    * - The three column names must be distinct.
    *
-   * @param {string} columnXName - Column names to use for the x values of the DataPoint.
-   * @param {string} columnYName - Column names to use for the y values of the DataPoint.
-   * @param {string} columnZName - Column names to use for the z values of the DataPoint.
+   * @param {string | null} columnXName - Column names to use for the x values of the DataPoint.
+   * @param {string | null} columnYName - Column names to use for the y values of the DataPoint.
+   * @param {string | null} columnZName - Column names to use for the z values of the DataPoint.
    * @param {TableName} tableName - The name of the table to retrieve columns from. Must be either
    * RAW or PCA.
    * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
