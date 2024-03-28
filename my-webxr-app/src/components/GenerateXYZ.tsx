@@ -25,7 +25,7 @@ export default function GenerateXYZ({
   radius,
 }: AxisProps) {
   return (
-    <>
+    <group name="Axes">
       {/* X-axis */}
       <SingleAxis
         startX={startX}
@@ -71,6 +71,6 @@ export default function GenerateXYZ({
         maxValue={maxValue}
         axis="z"
       />
-    </>
+    </group>
   );
 }

@@ -1,16 +1,18 @@
-import { XR, Controllers, VRButton } from '@react-three/xr';
 import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import './styles.css';
-import { useEffect } from 'react';
+import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
+import { useEffect } from 'react';
+import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
+import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import Floor from './components/Floor';
 import GenerateXYZ from './components/GenerateXYZ';
-import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
-import DataPoint from './components/DataPoint';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
-import DataPointMenu from './components/DataPointMenu';
-import createPosition from './components/Positions';
+import './styles.css';
+import {
+  createGraphingDataPoints,
+} from './components/CreateGraphingDataPoints';
+import DataPoint from './repository/DataPoint';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -20,9 +22,9 @@ const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
 // starting point of the axis
-const startPointX: number = -0.2;
-const startPointY: number = 1.6;
-const startPointZ: number = -0.5;
+const startPointX: number = 0;
+const startPointY: number = 1.5;
+const startPointZ: number = -1.5;
 // const startPointY: number = 0;
 // const startPointZ: number = 0;
 // endPoint is used to determine what axis is being calculated, should not need to change
@@ -35,45 +37,6 @@ export default function App() {
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
-
-  // hard coded data. example data would be replaced with PCA results for coordinates
-  // also would like to make a new type for GenerateXYZ info, allowing for easier use
-  const exampleData = [[-1, -1, -1], [2, 3, 0], [4, 3, 0], [1, 1, 1], [3, 2, 2]];
-  const datapoint1 = createPosition({
-    data: exampleData[0],
-    AxisStartPoints: [startPointX, startPointY, startPointZ],
-    length: Length,
-    scale: scaleFactor,
-    max: maxNum,
-  });
-  const datapoint2 = createPosition({
-    data: exampleData[1],
-    AxisStartPoints: [startPointX, startPointY, startPointZ],
-    length: Length,
-    scale: scaleFactor,
-    max: maxNum,
-  });
-  const datapoint3 = createPosition({
-    data: exampleData[2],
-    AxisStartPoints: [startPointX, startPointY, startPointZ],
-    length: Length,
-    scale: scaleFactor,
-    max: maxNum,
-  });
-  const datapoint4 = createPosition({
-    data: exampleData[3],
-    AxisStartPoints: [startPointX, startPointY, startPointZ],
-    length: Length,
-    scale: scaleFactor,
-    max: maxNum,
-  });
-  const datapoint5 = createPosition({
-    data: exampleData[4],
-    AxisStartPoints: [startPointX, startPointY, startPointZ],
-    length: Length,
-    scale: scaleFactor,
-    max: maxNum,
-  });
 
   // Initialize the database and store for csv data
   useEffect(() => {
@@ -89,6 +52,41 @@ export default function App() {
     };
     initializeDB();
   }, [dbName, storeName]);
+
+  // Demo createGraphingDataPoints
+  const exampleDataPoints = [
+    [5, 5, 5],
+    [-5, 5, 5],
+    [5, -5, 5],
+    [-5, -5, 5],
+    [5, 5, -5],
+    [-5, 5, -5],
+    [5, -5, -5],
+    [-5, -5, -5],
+    [0, 5, 5],
+    [0, -5, 5],
+    [0, 5, -5],
+    [0, -5, -5],
+    [5, 0, 5],
+    [-5, 0, 5],
+    [5, 0, -5],
+    [-5, 0, -5],
+    [5, 5, 0],
+    [-5, 5, 0],
+    [5, -5, 0],
+    [-5, -5, 0],
+  ];
+  const dataPoints = exampleDataPoints.map((point) => new DataPoint(point[0], point[1], point[2]));
+  const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
+    dataPoints,
+    'columnX',
+    'columnY',
+    'columnZ',
+    [startPointX, startPointY, startPointZ],
+    Length,
+    scaleFactor,
+    maxNum,
+  ) : [];
   return (
     <>
       <div>
@@ -111,12 +109,13 @@ export default function App() {
       <PointSelectionProvider>
         <Canvas>
           <XR>
-            <Sky sunPosition={[0, 1, 0]} />
+            <Sky sunPosition={[0.5, 0, 0.5]} />
             <Floor />
             <ambientLight />
             <pointLight position={[10, 10, 10]} />
             <Controllers />
-
+            {/** return from createGraphingDataPoints */}
+            {plottedDataPoints}
             <GenerateXYZ
               minValue={minNum}
               maxValue={maxNum}
@@ -129,55 +128,7 @@ export default function App() {
               labelOffset={labelOffset}
             />
 
-            {/* Temporary display/test of the data points.
-              These will eventually be created by the plot itself */}
-            <DataPoint
-              id={0}
-              marker="circle"
-              color="gray"
-              columnX="John Doe"
-              columnY="cmpt 145"
-              columnZ={97}
-              meshProps={{ position: datapoint1 }}
-            />
-            <DataPoint
-              id={1}
-              marker="circle"
-              color="gray"
-              columnX="Bob Johnson"
-              columnY="math 110"
-              columnZ={81}
-              meshProps={{ position: datapoint2 }}
-            />
-            <DataPoint
-              id={2}
-              marker="circle"
-              color="gray"
-              columnX="Bob John"
-              columnY="math 116"
-              columnZ={87}
-              meshProps={{ position: datapoint3 }}
-            />
-            <DataPoint
-              id={3}
-              marker="circle"
-              color="gray"
-              columnX="Alice Smith"
-              columnY="stat 245"
-              columnZ={75}
-              meshProps={{ position: datapoint4 }}
-            />
-            <DataPoint
-              id={4}
-              marker="circle"
-              color="gray"
-              columnX="Bob Smith"
-              columnY="math 115"
-              columnZ={85}
-              meshProps={{ position: datapoint5 }}
-            />
-
-            <DataPointMenu position={[0, 2.2, -0.75]} />
+            <GraphingDataPointMenu position={[0, 2.2, -1.5]} />
           </XR>
         </Canvas>
       </PointSelectionProvider>
