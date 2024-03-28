@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import * as assert from 'assert';
+import assert from 'node:assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
 import Column, {
