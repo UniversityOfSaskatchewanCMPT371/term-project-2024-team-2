@@ -33,7 +33,7 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
   };
 
   const handleButtonClick = async () => {
-    WriteHook('Triggered CSV button');
+    WriteHook('LoadCSVFromURLVisible');
 
     if (file === null) {
       setMessage('No file selected');
@@ -92,6 +92,7 @@ export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element
     try {
       await validateDbAndStore(dbName, storeName);
       await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
+      WriteHook()
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
     }
