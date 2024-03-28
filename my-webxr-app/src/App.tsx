@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { useEffect } from 'react';
-import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
+import { UrlCsvReader } from './components/CsvReader';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import Floor from './components/Floor';
 import GenerateXYZ from './components/GenerateXYZ';
@@ -94,7 +94,6 @@ export default function App() {
         {import.meta.env.VITE_IS_TESTING && <TestingOptions />}
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
-        <LocalCsvReader dbName={dbName} storeName={storeName} />
         <button
           type="button"
           onClick={async () => {
