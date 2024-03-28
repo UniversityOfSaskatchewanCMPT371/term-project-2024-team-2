@@ -81,7 +81,7 @@ export function createGraphingDataPoints(
         key={index}
         id={index}
         marker="circle"
-        color="gray"
+        color="yellow"
         columnX={xColumnName}
         columnY={yColumnName}
         columnZ={zColumnName}

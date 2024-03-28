@@ -13,6 +13,7 @@ import './styles.css';
 import { createGraphingDataPoints } from './components/CreateGraphingDataPoints';
 import { getDatabase } from './data/DataAbstractor';
 import { TableName } from './repository/Column';
+import { useAxesSelectionContext } from './contexts/AxesSelectionContext';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -37,12 +38,26 @@ const database = getDatabase();
 const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
   [1, 2, 3, 4, 5],
   [4, 5, 6, 7, 8],
-  [9, 10, 11, 12, 13]];
+  [9, 10, 1, 2, 3]];
 await database.storeCSV(batchItem);
 await database.calculateStatistics();
+
+const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
+
 const dataPoints = await database
-  .createDataPointsFrom3Columns('col2', 'col4', 'col5', TableName.RAW)
+  .createDataPointsFrom3Columns(selectedXAxis, selectedYAxis, selectedZAxis, TableName.RAW)
   .catch((error) => { console.error(error); return []; });
+
+const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
+  dataPoints,
+  'columnX',
+  'columnY',
+  'columnZ',
+  [startPointX, startPointY, startPointZ],
+  Length,
+  scaleFactor,
+  maxNum,
+) : [];
 
 export default function App() {
   // Database name and store name will be pass as prop to reader components,
@@ -65,17 +80,6 @@ export default function App() {
   //   initializeDB();
   // }, [dbName, storeName]);
 
-  // Demo createGraphingDataPoints
-  const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
-    dataPoints,
-    'columnX',
-    'columnY',
-    'columnZ',
-    [startPointX, startPointY, startPointZ],
-    Length,
-    scaleFactor,
-    maxNum,
-  ) : [];
   return (
     <>
       <div>

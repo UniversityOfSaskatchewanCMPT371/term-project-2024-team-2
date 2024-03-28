@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import assert from '../utils/Assert';
-import DataAbstractor from '../data/DataAbstractor.tsx';
+import DataAbstractor from '../data/DataAbstractor';
+import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 
 interface SelectAxesColumnsProps {
   database: DataAbstractor;
@@ -10,7 +11,6 @@ interface DropDownProps {
   id: string;
   options: { value: string; label: string }[];
   chosenValue: (value: string) => void;
-
 }
 
 /*
@@ -30,7 +30,9 @@ function DropDown({
   const [selectedValue, setSelectedValue] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    // gets value from dropdown
     setSelectedValue(event.target.value);
+    // assigns value to chosenValue arg
     chosenValue(event.target.value);
   };
 
@@ -61,11 +63,8 @@ function DropDown({
 export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) {
   assert(database != null, 'Database name cannot be null');
   const [AxisOptions, setAxisOptions] = useState<{ value: string; label: string }[]>([]);
-  // @ts-ignore
   const [xAxis, setXAxis] = useState('');
-  // @ts-ignore
   const [yAxis, setYAxis] = useState('');
-  // @ts-ignore
   const [zAxis, setZAxis] = useState('');
 
   useEffect(() => {
@@ -88,6 +87,10 @@ export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) 
     try {
       // await setRepresentingColumns(database, xAxis, yAxis, zAxis);
       // TODO: plot the graph with the selected axes
+      const { setSelectedXAxis, setSelectedYAxis, setSelectedZAxis } = useAxesSelectionContext();
+      setSelectedXAxis(xAxis);
+      setSelectedYAxis(yAxis);
+      setSelectedZAxis(zAxis);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error setting representing columns:', error);

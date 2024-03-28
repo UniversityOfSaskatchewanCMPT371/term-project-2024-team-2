@@ -220,18 +220,15 @@ export default class DbRepository extends Dexie implements Repository {
    * @throws {Error} If violates preconditions.
    */
   async getPoints(
-    columnXName: string,
-    columnYName: string,
-    columnZName: string,
+    columnXName: string | null,
+    columnYName: string | null,
+    columnZName: string | null,
     tableName: TableName,
   ): Promise<Array<DataPoint>> {
-    // verify the three columns are distinct
-    assert.equal(
-      (new Set([columnXName, columnYName, columnZName])).size,
-      3,
-      `The three columns must be distinct but got: ${columnXName},${
-        columnYName},${columnZName}!`,
-    );
+    // do nothing if null column entries selected
+    if (columnXName == null || columnYName == null || columnZName == null) {
+      return [];
+    }
 
     assert.ok(
       tableName === TableName.RAW || tableName === TableName.PCA,

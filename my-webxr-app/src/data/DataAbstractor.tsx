@@ -14,9 +14,9 @@ export default interface DataAbstractor {
   storePCA: (columnNames: string[]) => Promise<boolean>;
   calculateStatistics:() => Promise<boolean>;
   createDataPointsFrom3Columns:(
-    columnX: string,
-    ColumnY: string,
-    ColumnZ: string,
+    columnX: string | null,
+    ColumnY: string | null,
+    ColumnZ: string | null,
     columnType: TableName,
   ) => Promise<DataPoint[]>;
 }
