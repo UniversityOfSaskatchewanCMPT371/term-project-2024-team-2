@@ -8,7 +8,7 @@ import GraphingDataPoint from './GraphingDataPoint';
  * Asynchronously fetches data points from the provided data layer using the specified 3 column
  * names and column type.
  *
- * @preconds
+ * @pre-conditions
  * - The columnType must be either 'Raw' or 'PCA'.
  * - If the columnType is 'Raw', all columns must contain numeric data.
  * - All three columns are in the same table.
@@ -38,7 +38,7 @@ export async function fetchDataPoints(
  * should be call in conjunction with createPosition, I split them into two function for the sake of
  * testing.
  *
- * @preconds
+ * @pre-conditions
  * - The dataPoints array must not be empty.
  * - The xColumnName, yColumnName, and zColumnName must correspond to properties of the DataPoint
  * objects.

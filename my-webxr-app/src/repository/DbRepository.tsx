@@ -73,7 +73,7 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * Adds a column to a table
-   * @preconds: The column name must be unique
+   * @pre-conditions: The column name must be unique
    * @param column the column to be added to the database
    * @param tableName the name of table to add column to
    * @return Promise<string> the primary key of the column aka the name of the column
@@ -205,7 +205,7 @@ export default class DbRepository extends Dexie implements Repository {
    * Retrieves the x, y, and z values from the specified columns in the database and returns them as
    * an array of DataPoint objects.
    *
-   * @preconds
+   * @pre-conditions
    * - The table name must be either RAW or PCA.
    * - The columns must contain numeric data.
    * - The lengths of the x, y, and z columns must be the same.
@@ -266,7 +266,7 @@ export default class DbRepository extends Dexie implements Repository {
   /**
    * Convert the columns into an array of DataPoints
    *
-   * @preconds
+   * @pre-conditions
    * - All columns must have the same length.
    * - All columns must contain numeric data.
    * @param columnX the column to be used as the x-axis
