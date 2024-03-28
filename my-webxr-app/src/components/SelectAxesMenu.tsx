@@ -83,6 +83,11 @@ export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) 
     fetchColumnTitles();
   }, [database]);
 
+  /*
+  this function will plot the graph with the selected x,y,z axes
+  @pre-condition:
+  @post-condition:
+ */
   const handleCompleteSelection = async () => {
     try {
       // await setRepresentingColumns(database, xAxis, yAxis, zAxis);

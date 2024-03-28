@@ -10,10 +10,10 @@ import GenerateXYZ from './components/GenerateXYZ';
 import SelectAxesColumns from './components/SelectAxesMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
-import { createGraphingDataPoints } from './components/CreateGraphingDataPoints';
+import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import { getDatabase } from './data/DataAbstractor';
-import { TableName } from './repository/Column';
-import { useAxesSelectionContext } from './contexts/AxesSelectionContext';
+import { useAxesSelectionContext } from './contexts/AxesSelectionContext.tsx';
+import { TableName } from './repository/Column.tsx';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -42,22 +42,22 @@ const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
 await database.storeCSV(batchItem);
 await database.calculateStatistics();
 
-const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
+// const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
+//
+// const dataPoints = await database
+//   .createDataPointsFrom3Columns(selectedXAxis, selectedYAxis, selectedZAxis, TableName.RAW)
+//   .catch((error) => { console.error(error); return []; });
 
-const dataPoints = await database
-  .createDataPointsFrom3Columns(selectedXAxis, selectedYAxis, selectedZAxis, TableName.RAW)
-  .catch((error) => { console.error(error); return []; });
-
-const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
-  dataPoints,
-  'columnX',
-  'columnY',
-  'columnZ',
-  [startPointX, startPointY, startPointZ],
-  Length,
-  scaleFactor,
-  maxNum,
-) : [];
+// const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
+//   dataPoints,
+//   'columnX',
+//   'columnY',
+//   'columnZ',
+//   [startPointX, startPointY, startPointZ],
+//   Length,
+//   scaleFactor,
+//   maxNum,
+// ) : [];
 
 export default function App() {
   // Database name and store name will be pass as prop to reader components,
@@ -109,7 +109,8 @@ export default function App() {
             <pointLight position={[10, 10, 10]} />
             <Controllers />
             {/** return from createGraphingDataPoints */}
-            {plottedDataPoints}
+            {/* {plottedDataPoints} */}
+            <CreateGraphingDataPoints />
             <GenerateXYZ
               minValue={minNum}
               maxValue={maxNum}

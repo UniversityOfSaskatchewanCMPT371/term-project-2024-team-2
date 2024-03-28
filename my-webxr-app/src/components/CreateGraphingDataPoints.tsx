@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
 import DataLayer from '../data/DataLayer';
 import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
 import createPosition from './Positions';
 import GraphingDataPoint from './GraphingDataPoint';
+import { useAxesSelectionContext } from '../contexts/AxesSelectionContext.tsx';
+import { getDatabase } from '../data/DataAbstractor.tsx';
 
 /**
  * Asynchronously fetches data points from the provided data layer using the specified 3 column
@@ -32,6 +35,12 @@ export async function fetchDataPoints(
   return dataLayer.createDataPointsFrom3Columns(xColumnName, yColumnName, zColumnName, columnType);
 }
 
+type createGraphingDataPointsProps = {
+  AxisStartPoints: number[],
+  length: number,
+  scale: number,
+  max: number, };
+
 /**
  * TODO: we may want different scale for each axis and so will required max item of each columns
  * Creates an array of GraphingDataPoint components from the provided data points. This function
@@ -53,42 +62,55 @@ export async function fetchDataPoints(
  * @param {number} length - The length of the axes.
  * @param {number} scale - The scale factor for the data points.
  * @param {number} max - The maximum value among the data points.
- * @returns {JSX.Element[]} An array of GraphingDataPoint components representing the plotted data
+ * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
-export function createGraphingDataPoints(
-  dataPoints: DataPoint[],
-  xColumnName: string,
-  yColumnName: string,
-  zColumnName: string,
-  AxisStartPoints: number[],
-  length: number,
-  scale: number,
-  max: number,
-): JSX.Element[] {
-  return dataPoints.map((dataPoint, index) => {
-    const position = createPosition({
-      data: [dataPoint.xValue, dataPoint.yValue, dataPoint.zValue],
-      AxisStartPoints,
-      length,
-      scale,
-      max,
-    });
+export default function CreateGraphingDataPoints(
+  {
+    AxisStartPoints,
+    length,
+    scale,
+    max,
+  }: createGraphingDataPointsProps,
+): JSX.Element {
+  const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
+  let dataPoints;
+  useEffect(() => {
+    const fetchData = async () => {
+      const database = getDatabase();
+      dataPoints = await database.createDataPointsFrom3Columns(selectedXAxis, selectedYAxis, selectedZAxis, TableName.RAW)
+        .catch((error) => { console.error(error); return []; });
+    };
+    fetchData();
+  }, [selectedXAxis, selectedYAxis, selectedZAxis]);
 
-    return (
-      <GraphingDataPoint
-        /* eslint-disable-next-line react/no-array-index-key */
-        key={index}
-        id={index}
-        marker="circle"
-        color="yellow"
-        columnX={xColumnName}
-        columnY={yColumnName}
-        columnZ={zColumnName}
-        actualData={[dataPoint.xValue, dataPoint.yValue, dataPoint.zValue]}
-        size={[0.02, 32, 32]}
-        meshProps={{ position }}
-      />
-    );
-  });
+  return (
+    <>
+      {dataPoints != null && (dataPoints as DataPoint[]).map((dataPoint, index) => {
+        const position = createPosition({
+          data: [dataPoint.xValue, dataPoint.yValue, dataPoint.zValue],
+          AxisStartPoints,
+          length,
+          scale,
+          max: 10,
+        });
+
+        return (
+          <GraphingDataPoint
+            /* eslint-disable-next-line react/no-array-index-key */
+            key={index}
+            id={index}
+            marker="circle"
+            color="yellow"
+            columnX={selectedXAxis}
+            columnY={selectedYAxis}
+            columnZ={selectedZAxis}
+            actualData={[dataPoint.xValue, dataPoint.yValue, dataPoint.zValue]}
+            size={[0.02, 32, 32]}
+            meshProps={{ position }}
+          />
+        );
+      })}
+    </>
+  );
 }
