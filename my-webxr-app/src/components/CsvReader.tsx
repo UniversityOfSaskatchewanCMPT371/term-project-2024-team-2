@@ -3,6 +3,7 @@ import {
   validateDbAndStore, parseAndHandleUrlCsv,
 } from '../utils/CsvUtils';
 
+
 interface CsvReaderProps {
   dbName: string;
   storeName: string;
@@ -30,13 +31,17 @@ export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element
   };
 
   const handleButtonClick = async () => {
+    WriteHook('Load CSV from URL visible : ');
+
     if (!url.endsWith('.csv')) {
-      setMessage('URL must point to a CSV file or not empty');
+      setMessage('URL must point to a CSV file or not empty : ');
+      WriteHook('Url is empty or not a csv file : ');
       return;
     }
     try {
       await validateDbAndStore(dbName, storeName);
       await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
+      WriteHook('URL CSV has been successfully loaded : ');
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
     }
