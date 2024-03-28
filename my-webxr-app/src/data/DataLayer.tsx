@@ -82,12 +82,15 @@ export default class DataLayer implements DataAbstractor {
       // If it is the first batch, create empty columns in the repository
       if (this.isFirstBatch) {
         const columnHeaders = batchItems[0].map((header) => header.toString());
-        for (const header of columnHeaders) {
-          await this.repository.addColumn({ name: header, values: [] }, TableName.RAW);
-        }
+        const promises = columnHeaders.map(async (columnName) => {
+          const newColumn = new Column<NumericColumn>(columnName, []);
+          await this.repository.addColumn(newColumn, TableName.RAW);
+        });
+        await Promise.all(promises);
 
         // Remove the header row (first row) from the batchItems
         if (batchItems.length >= 1) {
+          /* eslint-disable no-param-reassign */
           batchItems = batchItems.slice(1);
         }
       }
