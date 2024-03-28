@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "vitest run",
+    "test": "vitest run --exclude 'src/smoketest/**'",
+    "smoketest": "vitest run",
     "test:watch": "vitest watch",
     "coverage": "vitest run --coverage",
     "build": "NODE_ENV=production tsc -p tsconfig.prod.json && vite build",
