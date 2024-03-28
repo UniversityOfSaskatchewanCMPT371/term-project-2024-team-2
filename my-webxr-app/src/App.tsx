@@ -13,7 +13,7 @@ import GenerateXYZ from './components/GenerateXYZ';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
-import TestingOptions from './testing/TestingOptions';
+import TestingOptions from './smoketest/TestingOptions';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
