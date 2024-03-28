@@ -1,6 +1,7 @@
 import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
 import { BackSide } from 'three';
+import { useRollbar } from '@rollbar/react';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 
@@ -11,6 +12,7 @@ export default function GraphingDataPoint({
   const [hoverCount, setHoverCount] = useState(0);
   /* Access the selected GraphingDataPoint State from the shared PointSelectionContext */
   const { selectedDataPoint, setSelectedDataPoint } = usePointSelectionContext();
+  const rollbar = useRollbar();
 
   const adjustHoverCount = (amount: number) => {
     if (amount < 0 || amount > 2) {
@@ -18,6 +20,8 @@ export default function GraphingDataPoint({
         'Assertion failed: hoverCount should never be < 0 or > 2',
       );
     }
+
+    rollbar.debug(`GraphingDataPoint #${id}: setting hover count to ${amount}`);
     setHoverCount(amount);
   };
 
