@@ -2,10 +2,12 @@ import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { expect } from 'vitest';
+import { Provider } from '@rollbar/react';
 import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
 import MockServer from '../MockServer';
 import DataPoint from '../../src/repository/DataPoint';
 import { createGraphingDataPoints } from '../../src/components/CreateGraphingDataPoints';
+import { rollbarConfig } from '../../src/utils/LoggingUtils';
 
 const exampleData = [[1, 1, 1], [2, 3, 0], [0, 0, 0], [10, 10, 10], [-1, -1, -1]];
 const dataPoints = exampleData.map((point) => new DataPoint(point[0], point[1], point[2]));
@@ -44,11 +46,13 @@ describe('createGraphingDataPoints', () => {
       max,
     );
     const render = await ReactThreeTestRenderer.create(
-      <PointSelectionProvider>
-        <XR>
-          {dataGraphingPoints}
-        </XR>
-      </PointSelectionProvider>,
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            {dataGraphingPoints}
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
     );
     await waitFor(() => expect(render.scene.children).toBeDefined());
     // The camera is also a child of the scene, with 5 points we have 6 children
