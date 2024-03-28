@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import {
-  validateDbAndStore, parseAndHandleUrlCsv,
+  parseAndHandleUrlCsv,
 } from '../utils/CsvUtils';
+import DataAbstractor, { getDatabase } from '../data/DataAbstractor';
 
-interface CsvReaderProps {
-  dbName: string;
-  storeName: string;
-}
 /**
  * A React component that reads data from a CSV file at a given URL and stores it in a specified
  * database and store.
@@ -21,13 +18,14 @@ interface CsvReaderProps {
  * message is displayed and let user retry.
  */
 // eslint-disable-next-line import/prefer-default-export
-export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element {
+export function UrlCsvReader(): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
   const [url, setUrl] = useState('');
 
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
   };
+  const dataBase = getDatabase() as DataAbstractor;
 
   const handleButtonClick = async () => {
     if (!url.endsWith('.csv')) {
@@ -35,8 +33,7 @@ export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element
       return;
     }
     try {
-      await validateDbAndStore(dbName, storeName);
-      await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
+      await parseAndHandleUrlCsv(url, dataBase, setMessage);
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
     }
