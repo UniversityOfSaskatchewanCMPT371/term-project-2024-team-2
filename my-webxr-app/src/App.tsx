@@ -14,9 +14,6 @@ import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
 import TestingOptions from './smoketest/TestingOptions';
-import {
-  createGraphingDataPoints,
-} from './components/CreateGraphingDataPoints';
 import DataPoint from './repository/DataPoint';
 import { rollbarConfig } from './utils/LoggingUtils';
 
