@@ -4,6 +4,7 @@ import { BackSide } from 'three';
 import { useRollbar } from '@rollbar/react';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
+import WriteHook from '../smoketest/TestHookWrite';
 
 export default function GraphingDataPoint({
   id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
@@ -23,6 +24,7 @@ export default function GraphingDataPoint({
 
     rollbar.debug(`GraphingDataPoint #${id}: setting hover count to ${amount}`);
     setHoverCount(amount);
+    WriteHook('Datapoint is hovered : ');
   };
 
   return (
