@@ -1,6 +1,7 @@
 import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
 import { BackSide } from 'three';
+import { useRollbar } from '@rollbar/react';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 
@@ -11,6 +12,7 @@ export default function GraphingDataPoint({
   const [hoverCount, setHoverCount] = useState(0);
   /* Access the selected GraphingDataPoint State from the shared PointSelectionContext */
   const { selectedDataPoint, setSelectedDataPoint } = usePointSelectionContext();
+  const rollbar = useRollbar();
 
   const adjustHoverCount = (amount: number) => {
     if (amount < 0 || amount > 2) {
@@ -18,6 +20,8 @@ export default function GraphingDataPoint({
         'Assertion failed: hoverCount should never be < 0 or > 2',
       );
     }
+
+    rollbar.debug(`GraphingDataPoint #${id}: setting hover count to ${amount}`);
     setHoverCount(amount);
   };
 
@@ -48,7 +52,7 @@ export default function GraphingDataPoint({
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
         <sphereGeometry args={size} />
-        <meshStandardMaterial />
+        <meshStandardMaterial color="yellow" />
       </mesh>
 
       {/* This second mesh is the outline which works by rendering */}
@@ -61,7 +65,7 @@ export default function GraphingDataPoint({
       >
         <sphereGeometry args={size} />
         <meshStandardMaterial
-          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
+          color={selectedDataPoint?.id === id ? 'darkorange' : 'purple'}
           side={BackSide}
         />
       </mesh>

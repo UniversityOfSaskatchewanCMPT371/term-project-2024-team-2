@@ -14,6 +14,8 @@ dist-ssr
 # Vitest results
 .vite/vitest/
 
+# ignore smoketest log
+.src/smoketest/testLog.txt
 
 ### https://github.com/github/gitignore/blob/main/Node.gitignore
 # Logs

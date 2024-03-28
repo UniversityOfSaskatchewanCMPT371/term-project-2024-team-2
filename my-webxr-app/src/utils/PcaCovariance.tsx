@@ -1,5 +1,6 @@
 import { EVD, Matrix } from 'ml-matrix';
 import assert from './Assert';
+import { rollbar } from './LoggingUtils';
 
 /**
  * Inspired by: https://medium.com/analytics-vidhya/understanding-principle-component-analysis-pca-step-by-step-e7a4bb4031d9
@@ -101,8 +102,7 @@ export function computeCovariancePCA(standardizedDataset: Matrix): Matrix {
     const U = computeEigenvectorsFromCovarianceMatrix(covarianceMatrix);
     return standardizedDataset.mmul(U);
   } catch (e) {
-    // may need to surface this error somewhere
-    // console.log(`An error occurred during covariance PCA computation: ${e}`);
+    rollbar.critical(`An error occurred during covariance PCA computation: ${e}`);
     return new Matrix(0, 0);
   }
 }

@@ -8,7 +8,7 @@ const fs = require('fs');
 const readline = require('readline');
 
 export default async function ContainText(text: string): Promise<boolean> {
-  const filePath = 'src/testing/testLog.txt';
+  const filePath = 'src/smoketest/testLog.txt';
 
   const reader = readline.createInterface({
     input: fs.createReadStream(filePath),
