@@ -3,16 +3,17 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { useEffect } from 'react';
-import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
-import GraphingDataPointMenu from './components/GraphingDataPointMenu';
-import Floor from './components/Floor';
-import GenerateXYZ from './components/GenerateXYZ';
-import { PointSelectionProvider } from './contexts/PointSelectionContext';
-import './styles.css';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
+import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
+import Floor from './components/Floor';
+import GenerateXYZ from './components/GenerateXYZ';
+import GraphingDataPointMenu from './components/GraphingDataPointMenu';
+import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPoint from './repository/DataPoint';
+import './styles.css';
+import TestingOptions from './testing/TestingOptions';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -91,6 +92,7 @@ export default function App() {
     <>
       <div>
         {/* Sample URL box and button */}
+        {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
         <button

@@ -33,7 +33,7 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
   };
 
   const handleButtonClick = async () => {
-    WriteHook('LoadCSVFromURLVisible');
+    WriteHook('LoadCSVFromFileSystemVisible');
 
     if (file === null) {
       setMessage('No file selected');
@@ -82,9 +82,12 @@ export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element
 
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
+
   };
 
   const handleButtonClick = async () => {
+    WriteHook('LoadCSVFromURLVisible');
+
     if (!url.endsWith('.csv')) {
       setMessage('URL must point to a CSV file or not empty');
       return;
@@ -92,7 +95,6 @@ export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element
     try {
       await validateDbAndStore(dbName, storeName);
       await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
-      WriteHook()
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
     }
