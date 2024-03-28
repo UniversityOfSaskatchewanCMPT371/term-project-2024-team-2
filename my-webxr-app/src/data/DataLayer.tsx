@@ -188,15 +188,15 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Retrieve the available fields (column headers) from stats data table and pca data table.
+   * Retrieve the available fields (column headers) from raw data table and pca data table.
    * Intended to be used for user to select which fields to plot
    *
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
-    const statsNames = await this.repository.getStatsColumnNames();
+    const rawNames = await this.repository.getCsvColumnNames();
     const pcaNames = await this.repository.getPcaColumnNames();
-    return [...statsNames, ...pcaNames];
+    return [...rawNames, ...pcaNames];
   }
 
   /**
