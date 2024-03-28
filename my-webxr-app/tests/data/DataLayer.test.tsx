@@ -1,4 +1,3 @@
-import 'fake-indexeddb/auto';
 import { afterEach, describe, expect } from 'vitest';
 import { Matrix } from 'ml-matrix';
 import { v4 as uuidv4 } from 'uuid';
