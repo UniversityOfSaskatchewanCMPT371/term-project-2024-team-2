@@ -1,7 +1,7 @@
 import { openDB } from 'idb';
 import * as Papa from 'papaparse';
 import { Mock } from 'vitest';
-import { handleParsedData, parseAndHandleUrlCsv, validateDbAndStore } from '../src/utils/CsvUtils';
+import { handleParsedData, parseAndHandleUrlCsv, validateDbAndStore } from '../../src/utils/CsvUtils';
 
 vi.mock('idb', () => ({
   openDB: vi.fn(),

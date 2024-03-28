@@ -1,13 +1,11 @@
 import { Interactive } from '@react-three/xr';
 import { useState } from 'react';
 import { BackSide } from 'three';
-// import * as log4js from "log4js";
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 
 export default function GraphingDataPoint({
   id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
-
 }: DataPointProps) {
   /* State for the count of controllers hovering over the GraphingDataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -20,12 +18,6 @@ export default function GraphingDataPoint({
         'Assertion failed: hoverCount should never be < 0 or > 2',
       );
     }
-
-    // Critical Failure: log4js accesses process.env() which vite removes.
-    // We will have to find a way around this.
-    // log4js
-    //   .getLogger()
-    //   .debug("GraphingDataPoint #" + id + ": setting hover count to " + amount);
     setHoverCount(amount);
   };
 
@@ -56,19 +48,20 @@ export default function GraphingDataPoint({
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
         <sphereGeometry args={size} />
-        <meshStandardMaterial />
+        <meshStandardMaterial color="yellow" />
       </mesh>
 
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
       <mesh
+        name="point sphere"
         {...meshProps}
         scale={outlineScale}
         visible={hoverCount !== 0 || selectedDataPoint?.id === id}
       >
         <sphereGeometry args={size} />
         <meshStandardMaterial
-          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
+          color={selectedDataPoint?.id === id ? 'darkorange' : 'purple'}
           side={BackSide}
         />
       </mesh>

@@ -2,9 +2,9 @@ import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { Vector3 } from 'three';
 import { XR } from '@react-three/xr';
 import { ReactThreeTestInstance } from '@react-three/test-renderer/dist/declarations/src/createTestInstance';
-import MockServer from './MockServer';
-import GenerateXYZ from '../src/components/GenerateXYZ';
-import SingleAxis from '../src/components/SingleAxis';
+import MockServer from '../MockServer';
+import GenerateXYZ from '../../src/components/GenerateXYZ';
+import SingleAxis from '../../src/components/SingleAxis';
 
 describe('Axis Tests', () => {
   beforeEach(() => MockServer.listen());
