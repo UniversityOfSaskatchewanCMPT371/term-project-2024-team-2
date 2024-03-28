@@ -72,7 +72,6 @@ export async function parseAndHandleUrlCsv(
     download: true,
     dynamicTyping: true, // Convert data to number type if applicable
     step: async (results) => {
-      console.log(i);
       batch.push(results.data as Array<string | number | null>);
       if (batch.length >= batchSize) {
         await handleParsedData(batch, db, storeName, i);
