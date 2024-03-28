@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import * as assert from 'assert';
+import assert from 'node:assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
 import Column, {
@@ -301,6 +301,10 @@ export default class DbRepository extends Dexie implements Repository {
     }
     return dataPoints;
   }
+
+  /*
+        closeConnection closes the connection to the database
+         */
 
   /**
    * Retrieves all column names from the raw data table in the database.

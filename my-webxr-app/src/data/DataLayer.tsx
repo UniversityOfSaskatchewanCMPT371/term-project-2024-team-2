@@ -1,5 +1,6 @@
-import * as assert from 'assert';
+import assert from 'node:assert';
 import { Matrix } from 'ml-matrix';
+// eslint-disable-next-line import/no-cycle
 import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
@@ -163,6 +164,7 @@ export default class DataLayer implements DataAbstractor {
       const isEmpty = await this.repository.isTableEmpty(TableName.RAW);
       assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
       const rawColumnNames = await this.repository.getCsvColumnNames();
+      console.log('rawColumnNames', rawColumnNames);
 
       // eslint-disable-next-line consistent-return -- return undefined if column is not numeric
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
@@ -173,6 +175,7 @@ export default class DataLayer implements DataAbstractor {
         if (typeof rawDataColumn.values[0] === 'number') {
           const numericRawColumn = rawDataColumn as Column<NumericColumn>;
           const statsColumn = DataLayer.calculateColumnStatistics(numericRawColumn, columnName);
+          console.log('statsColumn', statsColumn);
           await this.repository.addColumn(statsColumn, TableName.STATS);
           return statsColumn;
         }
@@ -187,15 +190,15 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Retrieve the available fields (column headers) from stats data table and pca data table.
+   * Retrieve the available fields (column headers) from raw data table and pca data table.
    * Intended to be used for user to select which fields to plot
    *
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
-    const statsNames = await this.repository.getStatsColumnNames();
+    const rawNames = await this.repository.getCsvColumnNames();
     const pcaNames = await this.repository.getPcaColumnNames();
-    return [...statsNames, ...pcaNames];
+    return [...rawNames, ...pcaNames];
   }
 
   /**
