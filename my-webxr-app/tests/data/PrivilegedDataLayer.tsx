@@ -1,5 +1,6 @@
-import DataLayer, { BatchedDataStream } from '../../src/data/DataLayer';
+import DataLayer from '../../src/data/DataLayer';
 import Column, { NumericColumn } from '../../src/repository/Column';
+import { BatchedDataStream } from '../../src/utils/CsvUtils';
 
 /**
  * Test Hook for DataLayer.

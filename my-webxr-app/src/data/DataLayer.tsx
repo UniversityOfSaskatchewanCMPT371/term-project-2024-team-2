@@ -5,12 +5,12 @@ import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
   TableName,
-  DataRow,
   NumericColumn,
   RawColumn,
   StatsColumn,
 } from '../repository/Column';
 import { computeCovariancePCA } from '../utils/PcaCovariance';
+import { BatchedDataStream } from '../utils/CsvUtils';
 import DataPoint from '../repository/DataPoint';
 
 /**
@@ -111,8 +111,9 @@ export default class DataLayer implements DataAbstractor {
   /**
    * Helper function for calculateStatistics()
    *
-   * Calculate the statistical values for a given column.
-   * @preconds Column values are array of numbers.
+   * Calculate the statistical values for a given column. This assumes that all values in the
+   * column are numbers.
+   *
    * @param {Column<NumericColumn>} column The column of data to calculate statistics for.
    * @param {string} columnName The name of the column.
    * @returns {Column<StatsColumn>} containing the statistical values.
@@ -151,8 +152,9 @@ export default class DataLayer implements DataAbstractor {
    * This function retrieves all column names from the repository. For each raw column, it retrieves
    * the data, check if the data are all numeric, calculates statistics, and adds a new statistic
    * column to the Look-up table (stats table) in the repository.
+   * This assumes the column is not empty
    *
-   * @preconds Column is not empty.
+   *
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
    * @throws {Error} If the raw data table in the repository is empty or if an error occurs during
@@ -427,8 +429,3 @@ export default class DataLayer implements DataAbstractor {
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed
 }
-
-/**
- * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
- */
-export type BatchedDataStream = Array<DataRow>;
