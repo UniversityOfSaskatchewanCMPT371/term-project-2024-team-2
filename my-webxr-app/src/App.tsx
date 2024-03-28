@@ -4,16 +4,16 @@ import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
 import { useEffect } from 'react';
-import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
-import GraphingDataPointMenu from './components/GraphingDataPointMenu';
-import Floor from './components/Floor';
-import GenerateXYZ from './components/GenerateXYZ';
-import { PointSelectionProvider } from './contexts/PointSelectionContext';
-import './styles.css';
-import TestingOptions from './testing/TestingOptions';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
+import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
+import Floor from './components/Floor';
+import GenerateXYZ from './components/GenerateXYZ';
+import GraphingDataPointMenu from './components/GraphingDataPointMenu';
+import { PointSelectionProvider } from './contexts/PointSelectionContext';
+import './styles.css';
+import TestingOptions from './smoketest/TestingOptions';
 import DataPoint from './repository/DataPoint';
 import { rollbarConfig } from './utils/LoggingUtils';
 
