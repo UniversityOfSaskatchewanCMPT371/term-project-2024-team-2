@@ -114,7 +114,7 @@ export default function App() {
         <PointSelectionProvider>
           <Canvas>
             <XR>
-              <Sky sunPosition={[0, 1, 0]} />
+              <Sky sunPosition={[0.5, 0, 0.5]} />
               <Floor />
               <ambientLight />
               <pointLight position={[10, 10, 10]} />

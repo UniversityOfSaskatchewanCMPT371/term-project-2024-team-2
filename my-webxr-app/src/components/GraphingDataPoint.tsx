@@ -52,7 +52,7 @@ export default function GraphingDataPoint({
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
         <sphereGeometry args={size} />
-        <meshStandardMaterial />
+        <meshStandardMaterial color="yellow" />
       </mesh>
 
       {/* This second mesh is the outline which works by rendering */}
@@ -65,7 +65,7 @@ export default function GraphingDataPoint({
       >
         <sphereGeometry args={size} />
         <meshStandardMaterial
-          color={selectedDataPoint?.id === id ? 'blue' : 'aqua'}
+          color={selectedDataPoint?.id === id ? 'darkorange' : 'purple'}
           side={BackSide}
         />
       </mesh>
