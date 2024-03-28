@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import WriteHook from '../testing/TestHookWrite';
+import WriteHook from '../smoketest/TestHookWrite';
 import { parseAndHandleLocalCsv, parseAndHandleUrlCsv, validateDbAndStore } from '../utils/CsvUtils';
 
 interface CsvReaderProps {
@@ -33,22 +33,21 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
   };
 
   const handleButtonClick = async () => {
-    WriteHook('LoadCSVFromFileSystemVisible');
+    WriteHook('Load CSV from file system visible : ');
 
     if (file === null) {
       setMessage('No file selected');
-      WriteHook('Triggered no file selected');
+      WriteHook('No file selected : ');
       return;
     }
     if (file?.type !== 'text/csv') {
       setMessage('File must be a CSV file');
-      WriteHook('Triggered must be a CSV file');
-
       return;
     }
     try {
       await validateDbAndStore(dbName, storeName);
       await parseAndHandleLocalCsv(file, dbName, storeName, setMessage);
+      WriteHook('File system CSV has been successfully loaded : ');
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
     }
@@ -82,19 +81,20 @@ export function UrlCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Element
 
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
-
   };
 
   const handleButtonClick = async () => {
-    WriteHook('LoadCSVFromURLVisible');
+    WriteHook('Load CSV from URL visible : ');
 
     if (!url.endsWith('.csv')) {
-      setMessage('URL must point to a CSV file or not empty');
+      setMessage('URL must point to a CSV file or not empty : ');
+      WriteHook('Url is empty or not a csv file : ');
       return;
     }
     try {
       await validateDbAndStore(dbName, storeName);
       await parseAndHandleUrlCsv(url, dbName, storeName, setMessage);
+      WriteHook('URL CSV has been successfully loaded : ');
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
     }

@@ -13,7 +13,7 @@ import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import DataPoint from './repository/DataPoint';
 import './styles.css';
-import TestingOptions from './testing/TestingOptions';
+import TestingOptions from './smoketest/TestingOptions';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
