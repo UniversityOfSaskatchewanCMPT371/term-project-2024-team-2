@@ -3,15 +3,17 @@ import React from 'react';
 import DataAbstractor from '../data/DataAbstractor';
 
 /**
- * Asynchronously parses a CSV file from a URL and handles the parsed data in batches of 1000 rows.
- * Rows with null values are ignored. The parsed data is stored in the `dataWithoutNull` array.
+ * Asynchronously parses a CSV file from a URL and handles the parsed data.
+ * Rows with null values are ignored. The parsed data is stored in the `sanitizedBatch` array.
  * Once the parsing is complete, the data is sent to `DAL.storeCSV` in batches of 1000 rows.
  *
  * @param {string} url - The URL of the CSV file to parse.
- * @param {DataAbstractor} DAL - The Data Abstractor instance where the parsed CSV data will be
- * stored.
- * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to
- * set the message state in the parent component.
+ * @param {DataAbstractor} DAL - The Data Abstractor instance where the parsed
+ *      CSV data will be stored.
+ * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function
+ *      to call to set the message state in the parent component.
+ * @returns {Promise<void>} - A promise that resolves when the parsing and handling
+ *      of the CSV file is complete.
  */
 async function parseAndHandleUrlCsv(
   url: string,
@@ -19,7 +21,9 @@ async function parseAndHandleUrlCsv(
   setMessage: React.Dispatch<React.SetStateAction<string | null>>,
 ) {
   const completeData = Array<Array<string | number>>();
-
+  assert(url !== null || url !== undefined, 'No URL provided');
+  assert(DAL !== null || DAL !== undefined, 'No Data Abstractor provided');
+  assert(setMessage !== null || setMessage !== undefined, 'No setMessage function provided')
   // Normalize headers by appending a number to duplicate headers, takes in an array of string
   // headers
   const normalizeHeaders = (headers: string[]) => {

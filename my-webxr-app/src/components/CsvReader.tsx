@@ -2,16 +2,28 @@ import React, { useState } from 'react';
 import Papa from 'papaparse';
 import DataAbstractor from '../data/DataAbstractor';
 import parseAndHandleUrlCsv from '../utils/CsvUtils';
-
+import assert from '../utils/Assert';
 interface CsvReaderProps {
   DAL: DataAbstractor;
 }
 
+/**
+ * Component for reading and processing a local CSV file.
+ *
+ * @param {DataAbstractor} DAL - The data access layer for storing the CSV data
+ * @precondition - The DAL must be initialized and connected to the database.
+ * @postcondition - The CSV data is stored in the database.
+ * @returns {JSX.Element} - The JSX element representing the LocalCsvReader component.
+ */
+
 export function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
 
+  assert(DAL !== null || DAL !== undefined, 'Data Abstractor is not initialized');
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] as File;
+
+    assert(selectedFile !== null || selectedFile !== undefined, 'No file selected');
 
     const completeData: Array<Array<string | number>> = [];
     const normalizeHeaders = (headers: string[]) => {
@@ -87,21 +99,23 @@ export function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
  * message display.
  *
  * @param {UrlCsvReaderProps} props - The props for the component.
+ * @precondition The `DAL` prop must be initialized and connected to the database.
  * @returns {JSX.Element} The rendered component.
  */
 function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
   const [url, setUrl] = useState('');
 
+  assert(DAL !== null || DAL !== undefined, 'Data Abstractor is not initialized');
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
   };
 
   const handleButtonClick = async () => {
-    // if (!url.endsWith('.csv')) {
-    //   setMessage('URL must point to a CSV file or not empty : ');
-    //   return;
-    // }
+    if (!url.endsWith('.csv' || !url.endsWith('.txt'))) {
+      setMessage('URL must point to a CSV file or not empty : ');
+      return;
+    }
     try {
       await parseAndHandleUrlCsv(url, DAL, setMessage);
     } catch (e) {
