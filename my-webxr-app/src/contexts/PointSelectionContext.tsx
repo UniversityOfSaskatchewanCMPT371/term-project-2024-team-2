@@ -34,8 +34,8 @@ export const PointSelectionContext = createContext<PointSelectionContextType | n
  *          boolean | undefined | null} children pass-through for the child elements.
  * @return {React.JSX.Element} A context manager for clicking on data points.
  * @constructor
- * @pre-condition: None
- * @post-condition: The children's interaction signals will be handled by the returned object.
+ * @pre-condition None
+ * @post-condition The children's interaction signals will be handled by the returned object.
  */
 export function PointSelectionProvider({
   children,
