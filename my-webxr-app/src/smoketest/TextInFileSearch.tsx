@@ -7,6 +7,14 @@
 const fs = require('fs');
 const readline = require('readline');
 
+/**
+ * Evaluates whether the testing log contains the text
+ * @pre-condition the file 'src/smoketest/testLog.txt' must exist
+ * @post-condition returns a boolean of whether a piece of text is in the file
+ * @param {string} text a piece of text
+ * @return {Promise<boolean>} a boolean of whether a piece of text is in the file
+ * @constructor
+ */
 export default async function ContainText(text: string): Promise<boolean> {
   const filePath = 'src/smoketest/testLog.txt';
 
