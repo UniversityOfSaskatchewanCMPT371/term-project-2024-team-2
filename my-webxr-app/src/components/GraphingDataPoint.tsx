@@ -29,7 +29,7 @@ export default function GraphingDataPoint({
 
   return (
     <Interactive
-      onHover={() => adjustHoverCount(hoverCount + 1)}
+      onHover={() => adjustHoverCount(hoverCount + 1) }
       onBlur={() => adjustHoverCount(hoverCount - 1)}
       onSelect={() => {
         // If currently selected point selected again, de-select by clearing current selection
@@ -41,6 +41,7 @@ export default function GraphingDataPoint({
           setSelectedDataPoint({
             id, marker, color, columnX, columnY, columnZ, actualData, meshProps,
           });
+          WriteHook(String(actualData) + " : ");
         }
       }}
     >

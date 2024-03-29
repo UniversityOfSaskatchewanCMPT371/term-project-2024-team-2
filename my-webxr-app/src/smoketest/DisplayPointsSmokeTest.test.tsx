@@ -14,4 +14,9 @@ describe('Data Point Component in WebXR Application', () => {
     const response = await ContainText('Datapoint is selected');
     expect(response).toBeTruthy();
   });
+  it('When a point is clicked data is displayed (the position is recorded. x,y,z)', async () => {
+    // replace this with the position of the data point you will select
+    const response = await ContainText('-5,0,5');
+    expect(response).toBeTruthy();
+  });
 });
