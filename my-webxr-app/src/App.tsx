@@ -4,6 +4,7 @@ import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
 import { useEffect } from 'react';
+import * as assert from 'assert';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
@@ -16,6 +17,8 @@ import './styles.css';
 import TestingOptions from './smoketest/TestingOptions';
 import DataPoint from './repository/DataPoint';
 import { rollbarConfig } from './utils/LoggingUtils';
+
+assert.strictEqual(1, 1);
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
