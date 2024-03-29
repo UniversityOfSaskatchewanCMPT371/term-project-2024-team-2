@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import assert from '../utils/Assert';
 import DataAbstractor from '../data/DataAbstractor';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
+import { rollbar } from '../utils/LoggingUtils';
 
 interface SelectAxesColumnsProps {
   database: DataAbstractor;
@@ -71,14 +72,11 @@ export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) 
   useEffect(() => {
     async function fetchColumnTitles() {
       try {
-        console.log('fetching column titles');
         const Axes = await database.getAvailableFields();
-        console.log(Axes);
-
         setAxisOptions(Axes.map((title: string) => ({ value: title, label: title })));
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error('Error fetching column titles:', error);
+        rollbar.error(`Error fetching column titles:${error}`);
       }
     }
     fetchColumnTitles();

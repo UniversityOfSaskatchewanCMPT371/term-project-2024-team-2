@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DataLayer from '../data/DataLayer';
 import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
@@ -6,6 +6,7 @@ import createPosition from './Positions';
 import GraphingDataPoint from './GraphingDataPoint';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { getDatabase } from '../data/DataAbstractor';
+import { rollbar } from '../utils/LoggingUtils';
 
 /**
  * Asynchronously fetches data points from the provided data layer using the specified 3 column
@@ -47,42 +48,29 @@ export async function fetchDataPoints(
  * objects.
  * - The AxisStartPoints array must contain exactly three numbers.
  * - The length, scale, and max parameters must be positive numbers.
- *
- * @param {DataPoint[]} dataPoints - The data points to plot.
- * @param {string} xColumnName - The name of the column to use for the x-values of the data points.
- * @param {string} yColumnName - The name of the column to use for the y-values of the data points.
- * @param {string} zColumnName - The name of the column to use for the z-values of the data points.
- * @param {number[]} AxisStartPoints - The starting points of the axes.
- * @param {number} length - The length of the axes.
- * @param {number} scale - The scale factor for the data points.
- * @param {number} max - The maximum value among the data points.
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
 export default function CreateGraphingDataPoints(): JSX.Element {
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
-  let dataPoints;
-  console.log('Start here!');
+  const [dataPoints, setDataPoints] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const database = getDatabase();
-      dataPoints = await database.createDataPointsFrom3Columns(
+      await database.createDataPointsFrom3Columns(
         selectedXAxis,
         selectedYAxis,
         selectedZAxis,
         TableName.RAW,
-      )
-        .catch((error) => { console.error(error); return []; });
-      console.log(dataPoints);
-      console.log(selectedXAxis);
+      ).then((value) => setDataPoints(value as never))
+        .catch((error) => { rollbar.error(error); return []; });
     };
     fetchData();
-    console.log("I'm here!");
   }, [selectedXAxis, selectedYAxis, selectedZAxis]);
 
   return (
     <>
-      {dataPoints != null && (dataPoints as DataPoint[]).map((dataPoint, index) => {
+      { (dataPoints as DataPoint[]).map((dataPoint, index) => {
         const position = createPosition({
           data: [dataPoint.xValue, dataPoint.yValue, dataPoint.zValue],
           AxisStartPoints: [0, 0, 0],

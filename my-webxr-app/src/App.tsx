@@ -84,7 +84,7 @@ export default function App() {
   // }, [dbName, storeName]);
 
   return (
-    <>
+    <AxesSelectionProvider>
       <div>
         {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
         {/* Sample URL box and button */}
@@ -101,9 +101,7 @@ export default function App() {
         >
           Print Data to Console
         </button>
-        <AxesSelectionProvider>
-          <SelectAxesColumns database={database} />
-        </AxesSelectionProvider>
+        <SelectAxesColumns database={database} />
       </div>
       <VRButton />
       <Provider config={rollbarConfig}>
@@ -117,9 +115,7 @@ export default function App() {
               <Controllers />
               {/** return from createGraphingDataPoints */}
               {/* {plottedDataPoints} */}
-              <AxesSelectionProvider>
-                <CreateGraphingDataPoints />
-              </AxesSelectionProvider>
+              <CreateGraphingDataPoints />
               <GenerateXYZ
                 minValue={minNum}
                 maxValue={maxNum}
@@ -137,6 +133,6 @@ export default function App() {
           </Canvas>
         </PointSelectionProvider>
       </Provider>
-    </>
+    </AxesSelectionProvider>
   );
 }

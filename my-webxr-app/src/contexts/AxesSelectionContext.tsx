@@ -57,7 +57,6 @@ export function AxesSelectionProvider({
   const setSelectedXAxis = (
     newValue: React.SetStateAction<string | null>,
   ) => {
-    console.log(newValue);
     // log4js
     //   .getLogger()
     //   .debug(
@@ -70,7 +69,6 @@ export function AxesSelectionProvider({
   const setSelectedYAxis = (
     newValue: React.SetStateAction<string | null>,
   ) => {
-    console.log(newValue);
     // log4js
     //   .getLogger()
     //   .debug(
@@ -83,7 +81,6 @@ export function AxesSelectionProvider({
   const setSelectedZAxis = (
     newValue: React.SetStateAction<string | null>,
   ) => {
-    console.log(newValue);
     // log4js
     //   .getLogger()
     //   .debug(
