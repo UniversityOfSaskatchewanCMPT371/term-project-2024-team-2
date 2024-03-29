@@ -45,43 +45,11 @@ const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
 await database.storeCSV(batchItem);
 await database.calculateStatistics();
 
-// const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
-//
-// const dataPoints = await database
-//   .createDataPointsFrom3Columns(selectedXAxis, selectedYAxis, selectedZAxis, TableName.RAW)
-//   .catch((error) => { console.error(error); return []; });
-
-// const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
-//   dataPoints,
-//   'columnX',
-//   'columnY',
-//   'columnZ',
-//   [startPointX, startPointY, startPointZ],
-//   Length,
-//   scaleFactor,
-//   maxNum,
-// ) : [];
-
 export default function App() {
   // Database name and store name will be pass as prop to reader components,
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
-
-  // // Initialize the database and store for csv data
-  // useEffect(() => {
-  //   const initializeDB = async () => {
-  //     await openDB(dbName, 1, {
-  //       upgrade(db) {
-  //         if (db.objectStoreNames.contains(storeName)) {
-  //           db.deleteObjectStore(storeName);
-  //         }
-  //         db.createObjectStore(storeName);
-  //       },
-  //     });
-  //   };
-  //   initializeDB();
-  // }, [dbName, storeName]);
 
   return (
     <AxesSelectionProvider>
