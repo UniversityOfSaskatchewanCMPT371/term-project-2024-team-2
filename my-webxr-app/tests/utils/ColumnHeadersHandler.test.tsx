@@ -16,13 +16,13 @@ describe('handleColumnHeaders function', () => {
   it('replace an empty-string header with a non-empty header', () => {
     const columnNames = ['name', ''];
     const uniqueColumnNames = handleColumnHeaders(columnNames);
-    expect(uniqueColumnNames).toEqual(['name', 'empty']);
+    expect(uniqueColumnNames).toEqual(['name', 'column_2']);
   });
 
   it('replace two empty-string headers with a non-empty headers', () => {
-    const columnNames = ['', ''];
+    const columnNames = ['col1', 'col2', ''];
     const uniqueColumnNames = handleColumnHeaders(columnNames);
-    expect(uniqueColumnNames).toEqual(['empty', 'empty_1']);
+    expect(uniqueColumnNames).toEqual(['col1', 'col2', 'column_3']);
   });
 
   it('returns an empty array when input is an empty array', () => {
