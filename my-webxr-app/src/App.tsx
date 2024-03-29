@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { Provider } from '@rollbar/react';
 import Dexie from 'dexie';
-import { UrlCsvReader } from './components/CsvReader';
+import UrlCsvReader, { LocalCsvReader } from './components/CsvReader';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
@@ -36,6 +36,7 @@ const Length: number = 1;
 const radius: number = 0.002;
 
 await Dexie.delete('CsvDataBase');
+const DAL = getDatabase() as DataAbstractor;
 
 export default function App() {
   // Demo createGraphingDataPoints
@@ -78,7 +79,8 @@ export default function App() {
       <div>
         {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
         {/* Sample URL box and button */}
-        <UrlCsvReader />
+        <UrlCsvReader DAL={DAL} />
+        <LocalCsvReader DAL={DAL} />
       </div>
       <VRButton />
       <Provider config={rollbarConfig}>

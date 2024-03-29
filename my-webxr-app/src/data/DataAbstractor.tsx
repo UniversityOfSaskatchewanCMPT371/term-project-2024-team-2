@@ -1,5 +1,6 @@
 import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
+// eslint-disable-next-line import/no-cycle
 import DataLayer from './DataLayer';
 
 /**

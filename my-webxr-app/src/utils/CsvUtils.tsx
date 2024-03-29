@@ -13,13 +13,12 @@ import DataAbstractor from '../data/DataAbstractor';
  * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to
  * set the message state in the parent component.
  */
-
 async function parseAndHandleUrlCsv(
   url: string,
   DAL: DataAbstractor,
   setMessage: React.Dispatch<React.SetStateAction<string | null>>,
 ) {
-  const dataWithoutNull = Array<Array<string | number>>();
+  const completeData = Array<Array<string | number>>();
 
   // Normalize headers by appending a number to duplicate headers, takes in an array of string
   // headers
@@ -37,19 +36,38 @@ async function parseAndHandleUrlCsv(
     step: async (results) => {
       const row = results.data as Array<string | number | null>;
       if (row.every((item) => item !== null && item !== undefined)) {
-        dataWithoutNull.push(row as (string | number)[]);
+        completeData.push(row as (string | number)[]);
       }
     },
     complete: async () => {
-      for (let i = 0; i < dataWithoutNull.length; i += 1000) {
-        const batch = dataWithoutNull.slice(i, i + 1000);
+      let knownLength = 0;
+      for (let i = 0; i < completeData.length; i += 1000) {
+        const batch = completeData.slice(i, i + 1000);
         if (i === 0) {
           // Normalize (fix duplicate) headers in the first batch
           const headers = batch[0] as string[];
           batch[0] = normalizeHeaders(headers);
+          knownLength = headers.length;
         }
+        const sanitizedBatch: Array<Array<string | number>> = [];
+
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        batch.forEach((row) => {
+          const testbatch = Array<string | number>();
+
+          row.forEach((item) => {
+            if (typeof item === 'string') {
+              testbatch.push(item);
+            } else if (typeof item === 'number') {
+              testbatch.push(item);
+            }
+          });
+          if (testbatch.length === knownLength) {
+            sanitizedBatch.push(testbatch);
+          }
+        });
         // eslint-disable-next-line no-await-in-loop
-        await DAL.storeCSV(batch);
+        await DAL.storeCSV(sanitizedBatch);
       }
       setMessage('Url CSV loaded successfully');
     },
