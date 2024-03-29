@@ -3,6 +3,7 @@ import Papa from 'papaparse';
 import DataAbstractor from '../data/DataAbstractor';
 import parseAndHandleUrlCsv from '../utils/CsvUtils';
 import assert from '../utils/Assert';
+
 interface CsvReaderProps {
   DAL: DataAbstractor;
 }

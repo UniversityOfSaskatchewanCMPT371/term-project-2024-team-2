@@ -23,7 +23,7 @@ async function parseAndHandleUrlCsv(
   const completeData = Array<Array<string | number>>();
   assert(url !== null || url !== undefined, 'No URL provided');
   assert(DAL !== null || DAL !== undefined, 'No Data Abstractor provided');
-  assert(setMessage !== null || setMessage !== undefined, 'No setMessage function provided')
+  assert(setMessage !== null || setMessage !== undefined, 'No setMessage function provided');
   // Normalize headers by appending a number to duplicate headers, takes in an array of string
   // headers
   const normalizeHeaders = (headers: string[]) => {
