@@ -450,7 +450,7 @@ export default class DataLayer implements DataAbstractor {
    *
    * This assumes the column relives are numeric from raw table is numeric
    *
-   * @pre-condition a data column of numeric data with the given names is stored in the procided
+   * @pre-condition a data column of numeric data with the given names is stored in the provided
    *    table
    * @post-condition an array of data associated with the column
    * @param {string} columnName - The name of the column to retrieve values for.

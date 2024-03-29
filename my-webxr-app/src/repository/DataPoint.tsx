@@ -8,10 +8,9 @@ export default class DataPoint {
   /**
    * Represents a 3-dimensional data point abstraction
    *
-   * @param hasMissingData Whether one of the data elements is undefined.
-   * @param xValue A value associated with the x axis to be displayed.
-   * @param yValue A value associated with the y axis to be displayed.
-   * @param zValue A value associated with the z axis to be displayed.
+   * @param {number} xValue A value associated with the x axis to be displayed.
+   * @param {number} yValue A value associated with the y axis to be displayed.
+   * @param {number} zValue A value associated with the z axis to be displayed.
    * @pre-condition hasMissingData correctly declares whether any of the values are undefined and
    *      xValue, yValue, zValue are all numbers, strings, or undefined
    * @post-condition The returned object defined element-wise operations on the data set
