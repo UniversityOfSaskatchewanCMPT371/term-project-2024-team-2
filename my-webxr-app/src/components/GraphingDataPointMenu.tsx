@@ -6,6 +6,16 @@ import { JSX } from 'react/jsx-runtime';
 import { Group } from 'three';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 
+/**
+ * Creates a billboard to display the related information of the data point
+ * @pre-condition None
+ * @post-condition a billboard to display the related information of the data point
+ * @param {JSX.IntrinsicAttributes & Omit<BillboardProps,
+ *      "ref"> & React.RefAttributes<Group>} billboardProps Props to provide to the Billboard
+ *      element
+ * @return {JSX.Element} a billboard to display the related information of the data point
+ * @constructor
+ */
 export default function GraphingDataPointMenu(
   billboardProps: JSX.IntrinsicAttributes &
   Omit<BillboardProps, 'ref'> &

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import GenerateTicks from './CreateTicks';
+import GenerateTick from './CreateTick.tsx';
 
 interface SingleAxisProps {
   startX: number;
@@ -16,7 +16,7 @@ interface SingleAxisProps {
   axis: string;
 }
 
-// this function will create an axis and call GenerateTicks to put ticks and labels on the axis
+// this function will create an axis and call GenerateTick to put ticks and labels on the axis
 export default function SingleAxis({
   startX,
   startY,
@@ -101,8 +101,8 @@ export default function SingleAxis({
     <group name="A Single Axis">
       {/* Create the axis and color it */}
       <mesh name="Axis Line" geometry={axisGeometry} material={material} position={position} rotation={rotation} />
-      {/* call GenerateTicks for each axis */}
-      {axisTicks.map((label) => GenerateTicks(
+      {/* call GenerateTick for each axis */}
+      {axisTicks.map((label) => GenerateTick(
         startX,
         startY,
         startZ,

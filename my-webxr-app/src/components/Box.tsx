@@ -11,6 +11,18 @@ type BoxProps = {
   children?: JSX.Element;
   rest?: JSX.IntrinsicElements['mesh'];
 };
+/**
+ * Returns a Box react element
+ * @pre-condition None
+ * @post-condition A box geometry for use in VR
+ * @param {Color | number} color
+ * @param {[width: number | undefined, height: number | undefined, depth: number | undefined, widthSegments: number | undefined, heightSegments: number | undefined, depthSegments: number | undefined] | undefined} size
+ * @param {[number, number, number]} scale
+ * @param {JSX.Element | undefined} children
+ * @param {Omit<BoxProps, "scale" | "color" | "size" | "children">} rest
+ * @return {JSX.Element}
+ * @constructor
+ */
 export default function Box({
   color, size, scale, children, ...rest
 }: BoxProps) {

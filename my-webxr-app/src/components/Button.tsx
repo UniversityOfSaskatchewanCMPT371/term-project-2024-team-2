@@ -3,9 +3,14 @@ import { Interactive } from '@react-three/xr';
 import { Text } from '@react-three/drei';
 import Box from './Box';
 
-// the useState hook is used to change the color of the box
-// the useState hook is used to change the scale of the box
-// taken from the Webxr example
+/**
+ * Returns an interactive button for VR space
+ * @pre-condition None
+ * @post-condition Returns an interactive button for VR space
+ * @param {JSX.IntrinsicElements["mesh"]} props
+ * @return {JSX.Element}
+ * @constructor
+ */
 export default function Button(props?: JSX.IntrinsicElements['mesh']) {
   const [hover, setHover] = useState(false);
   const [color, setColor] = useState(0x123456);
