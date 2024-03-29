@@ -61,7 +61,7 @@ export default function CreateGraphingDataPoints(): JSX.Element {
         selectedXAxis,
         selectedYAxis,
         selectedZAxis,
-        TableName.RAW,
+        TableName.PCA,
       ).then((value) => setDataPoints(value as never))
         .catch((error) => { rollbar.error(error); return []; });
     };
@@ -73,9 +73,9 @@ export default function CreateGraphingDataPoints(): JSX.Element {
       { (dataPoints as DataPoint[]).map((dataPoint, index) => {
         const position = createPosition({
           data: [dataPoint.xValue, dataPoint.yValue, dataPoint.zValue],
-          AxisStartPoints: [0, 0, 0],
+          AxisStartPoints: [0, 1.5, -1.5],
           length: 1,
-          scale: 1,
+          scale: 2,
           max: 10,
         });
 

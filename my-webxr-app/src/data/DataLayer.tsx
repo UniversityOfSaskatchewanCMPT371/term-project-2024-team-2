@@ -406,9 +406,9 @@ export default class DataLayer implements DataAbstractor {
    */
 
   public async createDataPointsFrom3Columns(
-    columnX: string | null,
-    columnY: string | null,
-    columnZ: string | null,
+    columnX: string,
+    columnY: string,
+    columnZ: string,
     tableName: TableName,
   ): Promise<DataPoint[]> {
     return this.repository.getPoints(columnX, columnY, columnZ, tableName);

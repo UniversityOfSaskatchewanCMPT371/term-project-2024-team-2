@@ -14,11 +14,12 @@ export default interface DataAbstractor {
   storePCA: (columnNames: string[]) => Promise<boolean>;
   calculateStatistics:() => Promise<boolean>;
   createDataPointsFrom3Columns:(
-    columnX: string | null,
-    ColumnY: string | null,
-    ColumnZ: string | null,
+    columnX: string,
+    ColumnY: string,
+    ColumnZ: string,
     columnType: TableName,
   ) => Promise<DataPoint[]>;
+  storeStandardizedData:() => Promise<boolean>;
 }
 
 export const getDatabase = () => new DataLayer('CsvDataBase') as DataAbstractor;
