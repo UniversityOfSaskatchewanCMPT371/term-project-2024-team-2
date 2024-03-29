@@ -35,7 +35,7 @@ const Length: number = 1;
 // adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
 
-await Dexie.delete('CsvDataBase');
+Dexie.delete('CsvDataBase');
 const DAL = getDatabase() as DataAbstractor;
 
 export default function App() {
