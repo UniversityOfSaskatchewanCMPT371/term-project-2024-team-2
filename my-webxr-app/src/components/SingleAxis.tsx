@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import GenerateTick from './CreateTick.tsx';
+import GenerateTick from './CreateTick';
 
 interface SingleAxisProps {
   startX: number;

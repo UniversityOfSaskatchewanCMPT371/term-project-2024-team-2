@@ -16,11 +16,13 @@ type BoxProps = {
  * @pre-condition None
  * @post-condition A box geometry for use in VR
  * @param {Color | number} color
- * @param {[width: number | undefined, height: number | undefined, depth: number | undefined, widthSegments: number | undefined, heightSegments: number | undefined, depthSegments: number | undefined] | undefined} size
- * @param {[number, number, number]} scale
- * @param {JSX.Element | undefined} children
- * @param {Omit<BoxProps, "scale" | "color" | "size" | "children">} rest
- * @return {JSX.Element}
+ * @param {[width: number | undefined, height: number | undefined, depth: number | undefined,
+ *    widthSegments: number | undefined, heightSegments: number | undefined,
+ *    depthSegments: number | undefined] | undefined} size the size props for the box
+ * @param {[number, number, number]} scale the world scale of the box
+ * @param {JSX.Element | undefined} children child elements of the box
+ * @param {Omit<BoxProps, "scale" | "color" | "size" | "children">} rest other parameters
+ * @return {JSX.Element} a box geometry with a material applied
  * @constructor
  */
 export default function Box({
