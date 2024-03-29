@@ -1,14 +1,17 @@
-import { Sky } from '@react-three/drei';
+import {
+  ScreenSizer, Sky,
+} from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
+import ScaleSlider from './components/ScaleSlider';
 import GenerateXYZ from './components/GenerateXYZ';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
@@ -40,6 +43,9 @@ export default function App() {
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
+
+  // the scale state of the graph
+  const [graphScale, setGraphScale] = useState(10);
 
   // Initialize the database and store for csv data
   useEffect(() => {
@@ -109,6 +115,7 @@ export default function App() {
           Print Data to Console
         </button>
       </div>
+      <ScaleSlider scale={graphScale} setScale={setGraphScale} />
       <VRButton />
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
@@ -120,20 +127,22 @@ export default function App() {
               <pointLight position={[10, 10, 10]} />
               <Controllers />
               {/** return from createGraphingDataPoints */}
-              {plottedDataPoints}
-              <GenerateXYZ
-                minValue={minNum}
-                maxValue={maxNum}
-                scaleFactor={scaleFactor}
-                startX={startPointX}
-                startY={startPointY}
-                startZ={startPointZ}
-                endPoint={Length}
-                radius={radius}
-                labelOffset={labelOffset}
-              />
+              <ScreenSizer scale={graphScale}>
+                {plottedDataPoints}
+                <GenerateXYZ
+                  minValue={minNum}
+                  maxValue={maxNum}
+                  scaleFactor={scaleFactor}
+                  startX={startPointX}
+                  startY={startPointY}
+                  startZ={startPointZ}
+                  endPoint={Length}
+                  radius={radius}
+                  labelOffset={labelOffset}
+                />
 
-              <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+                <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+              </ScreenSizer>
             </XR>
           </Canvas>
         </PointSelectionProvider>
