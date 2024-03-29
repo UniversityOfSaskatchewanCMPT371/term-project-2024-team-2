@@ -4,8 +4,8 @@ import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
 import createPosition from './Positions';
 import GraphingDataPoint from './GraphingDataPoint';
-import { useAxesSelectionContext } from '../contexts/AxesSelectionContext.tsx';
-import { getDatabase } from '../data/DataAbstractor.tsx';
+import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
+import { getDatabase } from '../data/DataAbstractor';
 
 /**
  * Asynchronously fetches data points from the provided data layer using the specified 3 column
@@ -35,12 +35,6 @@ export async function fetchDataPoints(
   return dataLayer.createDataPointsFrom3Columns(xColumnName, yColumnName, zColumnName, columnType);
 }
 
-type createGraphingDataPointsProps = {
-  AxisStartPoints: number[],
-  length: number,
-  scale: number,
-  max: number, };
-
 /**
  * TODO: we may want different scale for each axis and so will required max item of each columns
  * Creates an array of GraphingDataPoint components from the provided data points. This function
@@ -65,23 +59,25 @@ type createGraphingDataPointsProps = {
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
-export default function CreateGraphingDataPoints(
-  {
-    AxisStartPoints,
-    length,
-    scale,
-    max,
-  }: createGraphingDataPointsProps,
-): JSX.Element {
+export default function CreateGraphingDataPoints(): JSX.Element {
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   let dataPoints;
+  console.log('Start here!');
   useEffect(() => {
     const fetchData = async () => {
       const database = getDatabase();
-      dataPoints = await database.createDataPointsFrom3Columns(selectedXAxis, selectedYAxis, selectedZAxis, TableName.RAW)
+      dataPoints = await database.createDataPointsFrom3Columns(
+        selectedXAxis,
+        selectedYAxis,
+        selectedZAxis,
+        TableName.RAW,
+      )
         .catch((error) => { console.error(error); return []; });
+      console.log(dataPoints);
+      console.log(selectedXAxis);
     };
     fetchData();
+    console.log("I'm here!");
   }, [selectedXAxis, selectedYAxis, selectedZAxis]);
 
   return (
@@ -89,9 +85,9 @@ export default function CreateGraphingDataPoints(
       {dataPoints != null && (dataPoints as DataPoint[]).map((dataPoint, index) => {
         const position = createPosition({
           data: [dataPoint.xValue, dataPoint.yValue, dataPoint.zValue],
-          AxisStartPoints,
-          length,
-          scale,
+          AxisStartPoints: [0, 0, 0],
+          length: 1,
+          scale: 1,
           max: 10,
         });
 
@@ -102,9 +98,9 @@ export default function CreateGraphingDataPoints(
             id={index}
             marker="circle"
             color="yellow"
-            columnX={selectedXAxis}
-            columnY={selectedYAxis}
-            columnZ={selectedZAxis}
+            columnX={selectedXAxis as string}
+            columnY={selectedYAxis as string}
+            columnZ={selectedZAxis as string}
             actualData={[dataPoint.xValue, dataPoint.yValue, dataPoint.zValue]}
             size={[0.02, 32, 32]}
             meshProps={{ position }}

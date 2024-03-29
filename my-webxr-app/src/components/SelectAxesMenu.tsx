@@ -63,6 +63,7 @@ function DropDown({
 export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) {
   assert(database != null, 'Database name cannot be null');
   const [AxisOptions, setAxisOptions] = useState<{ value: string; label: string }[]>([]);
+  const { setSelectedXAxis, setSelectedYAxis, setSelectedZAxis } = useAxesSelectionContext();
   const [xAxis, setXAxis] = useState('');
   const [yAxis, setYAxis] = useState('');
   const [zAxis, setZAxis] = useState('');
@@ -88,14 +89,17 @@ export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) 
   @pre-condition:
   @post-condition:
  */
-  const handleCompleteSelection = async () => {
+  const handleCompleteSelection = async (
+    _setSelectedXAxis: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedYAxis: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedZAxis: React.Dispatch<React.SetStateAction<string | null>>,
+  ) => {
     try {
       // await setRepresentingColumns(database, xAxis, yAxis, zAxis);
       // TODO: plot the graph with the selected axes
-      const { setSelectedXAxis, setSelectedYAxis, setSelectedZAxis } = useAxesSelectionContext();
-      setSelectedXAxis(xAxis);
-      setSelectedYAxis(yAxis);
-      setSelectedZAxis(zAxis);
+      _setSelectedXAxis(xAxis);
+      _setSelectedYAxis(yAxis);
+      _setSelectedZAxis(zAxis);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error setting representing columns:', error);
@@ -107,7 +111,7 @@ export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) 
       <DropDown label="Select X Axis: " id="xAxis" options={AxisOptions} chosenValue={setXAxis} />
       <DropDown label="Select Y Axis: " id="yAxis" options={AxisOptions} chosenValue={setYAxis} />
       <DropDown label="Select Z Axis: " id="zAxis" options={AxisOptions} chosenValue={setZAxis} />
-      <button type="submit" onClick={handleCompleteSelection}>Complete Selection</button>
+      <button type="submit" onClick={() => { handleCompleteSelection(setSelectedXAxis, setSelectedYAxis, setSelectedZAxis); }}>Complete Selection</button>
     </div>
   );
 }

@@ -12,8 +12,7 @@ import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import { getDatabase } from './data/DataAbstractor';
-import { useAxesSelectionContext } from './contexts/AxesSelectionContext.tsx';
-import { TableName } from './repository/Column.tsx';
+import { AxesSelectionProvider } from './contexts/AxesSelectionContext.tsx';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -97,7 +96,9 @@ export default function App() {
         >
           Print Data to Console
         </button>
-        <SelectAxesColumns database={database} />
+        <AxesSelectionProvider>
+          <SelectAxesColumns database={database} />
+        </AxesSelectionProvider>
       </div>
       <VRButton />
       <PointSelectionProvider>
@@ -110,7 +111,9 @@ export default function App() {
             <Controllers />
             {/** return from createGraphingDataPoints */}
             {/* {plottedDataPoints} */}
-            <CreateGraphingDataPoints />
+            <AxesSelectionProvider>
+              <CreateGraphingDataPoints />
+            </AxesSelectionProvider>
             <GenerateXYZ
               minValue={minNum}
               maxValue={maxNum}
