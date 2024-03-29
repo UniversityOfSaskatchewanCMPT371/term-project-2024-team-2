@@ -206,7 +206,8 @@ export default class DbRepository extends Dexie implements Repository {
    * an array of DataPoint objects.
    *
    * @preconds
-   * - The table name must be either RAW or PCA.
+   * - The columns must exist in the database. Either in the 'RAW' table or the 'PCA' table.
+   * - No columns in Raw table should have the same name as columns in PCA table (PC1, PC2, PC3,...)
    * - The columns must contain numeric data.
    * - The lengths of the x, y, and z columns must be the same.
    * - The three column names must be distinct.
@@ -214,31 +215,36 @@ export default class DbRepository extends Dexie implements Repository {
    * @param {string | null} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string | null} columnYName - Column names to use for the y values of the DataPoint.
    * @param {string | null} columnZName - Column names to use for the z values of the DataPoint.
-   * @param {TableName} tableName - The name of the table to retrieve columns from. Must be either
-   * RAW or PCA.
    * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
    * @throws {Error} If violates preconditions.
    */
   async getPoints(
-    columnXName: string | null,
-    columnYName: string | null,
-    columnZName: string | null,
-    tableName: TableName,
+    columnXName: string,
+    columnYName: string,
+    columnZName: string,
   ): Promise<Array<DataPoint>> {
+    // verify the three columns are distinct
+    assert.equal(
+      (new Set([columnXName, columnYName, columnZName])).size,
+      3,
+      `The three columns must be distinct but got: ${columnXName},${
+        columnYName},${columnZName}!`,
+    );
     // do nothing if null column entries selected
     if (columnXName == null || columnYName == null || columnZName == null) {
       return [];
     }
 
-    assert.ok(
-      tableName === TableName.RAW || tableName === TableName.PCA,
-      'Invalid column type. Must be either RAW or PCA.',
-    );
+    // Check if the columns exist in the 'RAW' table, select it if it does, otherwise check the
+    // 'PCA' table
+    let columnX = await this.getColumn(columnXName, TableName.RAW).catch(() => null);
+    let columnY = await this.getColumn(columnYName, TableName.RAW).catch(() => null);
+    let columnZ = await this.getColumn(columnZName, TableName.RAW).catch(() => null);
 
-    // get the three columns
-    const columnX = (await this.getColumn(columnXName, tableName));
-    const columnY = (await this.getColumn(columnYName, tableName));
-    const columnZ = (await this.getColumn(columnZName, tableName));
+    // If any of the columns do not exist in the 'RAW' table (null), check the 'PCA' table
+    columnX = columnX || await this.getColumn(columnXName, TableName.PCA);
+    columnY = columnY || await this.getColumn(columnYName, TableName.PCA);
+    columnZ = columnZ || await this.getColumn(columnZName, TableName.PCA);
 
     assert.ok(typeof columnX.values[0] === 'number', 'ColumnX must be numeric!');
     assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');

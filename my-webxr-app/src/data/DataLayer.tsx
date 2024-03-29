@@ -164,7 +164,6 @@ export default class DataLayer implements DataAbstractor {
       const isEmpty = await this.repository.isTableEmpty(TableName.RAW);
       assert.ok(!isEmpty, 'Raw table is empty, can not calculate statistics.');
       const rawColumnNames = await this.repository.getCsvColumnNames();
-      console.log('rawColumnNames', rawColumnNames);
 
       // eslint-disable-next-line consistent-return -- return undefined if column is not numeric
       const statsColumnsPromises = rawColumnNames.map(async (columnName) => {
@@ -175,7 +174,6 @@ export default class DataLayer implements DataAbstractor {
         if (typeof rawDataColumn.values[0] === 'number') {
           const numericRawColumn = rawDataColumn as Column<NumericColumn>;
           const statsColumn = DataLayer.calculateColumnStatistics(numericRawColumn, columnName);
-          console.log('statsColumn', statsColumn);
           await this.repository.addColumn(statsColumn, TableName.STATS);
           return statsColumn;
         }
@@ -196,7 +194,7 @@ export default class DataLayer implements DataAbstractor {
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
-    const rawNames = await this.repository.getCsvColumnNames();
+    const rawNames = await this.repository.getStatsColumnNames();
     const pcaNames = await this.repository.getPcaColumnNames();
     return [...rawNames, ...pcaNames];
   }
@@ -393,25 +391,24 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * This function retrieves data points from the repository based on the provided column names
-   * and table name.
+   * This function retrieves data points from the repository based on the provided column names.
    *
+   * @pre-conditions
+   * - No fields/columns in CSV should be named as PC1, PC2, PC3, ..., PCn.
+   * - Column names are in the table, either RAW or PCA.
    * @param {string | null} columnX - The name of the column to be used for the x-axis values.
-   * @param {string | null} columnY - The name of the column to be used for the y-axis values.
-   * @param {string | null} columnZ - The name of the column to be used for the z-axis values.
-   * @param {TableName} tableName - The type of the table (RAW or PCA).
-   *
+   * @param {string | null} ColumnY - The name of the column to be used for the y-axis values.
+   * @param {string | null} ColumnZ - The name of the column to be used for the z-axis values.
    * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
    * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
    */
 
   public async createDataPointsFrom3Columns(
     columnX: string,
-    columnY: string,
-    columnZ: string,
-    tableName: TableName,
+    ColumnY: string,
+    ColumnZ: string,
   ): Promise<DataPoint[]> {
-    return this.repository.getPoints(columnX, columnY, columnZ, tableName);
+    return this.repository.getPoints(columnX, ColumnY, ColumnZ);
   }
 
   /**
