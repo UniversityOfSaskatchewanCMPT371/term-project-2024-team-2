@@ -1,3 +1,4 @@
+import WriteHook from '../smoketest/TestHookWrite';
 import SingleAxis from './SingleAxis';
 
 interface AxisProps {
@@ -41,6 +42,7 @@ export default function GenerateXYZ({
         maxValue={maxValue}
         axis="x"
       />
+      {WriteHook('Generated X-Axis')}
       {/* Y-axis */}
       <SingleAxis
         startX={startX}
@@ -56,6 +58,7 @@ export default function GenerateXYZ({
         maxValue={maxValue}
         axis="y"
       />
+      {WriteHook('Generated Y-Axis')}
       {/* Z-axis */}
       <SingleAxis
         startX={startX}
@@ -71,6 +74,8 @@ export default function GenerateXYZ({
         maxValue={maxValue}
         axis="z"
       />
+      {WriteHook('Generated Z-Axis')}
+
     </group>
   );
 }
