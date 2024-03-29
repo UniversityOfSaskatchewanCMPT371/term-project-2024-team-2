@@ -6,6 +6,8 @@ import assert from './Assert';
 /**
  * Validates the existence of a database and a store within that database.
  *
+ * @pre-condition a database of the given name must exist
+ * @post-condition stores data in the database of the given name
  * @param {string} dbName - The name of the database to validate.
  * @param {string} storeName - The name of the store to validate.
  * @throws {Error} Will throw an error if the database does not exist, or if the store does not
@@ -23,6 +25,8 @@ export const validateDbAndStore = async (dbName: string, storeName: string) => {
  * Handles the parsed CSV data by storing it in the specified IndexedDB database and store.
  * This clears the store before adding new data, i.e, overwriting existing data.
  *
+ * @pre-condition a database of the given name must exist
+ * @post-condition the provided data is stored in the database via a transaction
  * @param {Array<Array<string | number | null>>} items - The parsed CSV data to be stored.
  * @param {string} dbName - The name of the database where the data should be stored.
  * @param {string} storeName - The name of the store within the database where the data should be
@@ -46,9 +50,12 @@ export const handleParsedData = async (
 
   await tx.done;
 };
+
 /**
  * Parses a local CSV file and handles the parsed data in batches of 1000 rows.
  *
+ * @pre-condition a database of the given name must exist
+ * @post-condition the provided data is stored in the database via a transaction
  * @param {File} file - The local CSV file to parse.
  * @param {string} dbName - The name of the database where the data should be stored.
  * @param {string} storeName - The name of the store within the database where the data should be
@@ -87,6 +94,8 @@ export async function parseAndHandleLocalCsv(
 /**
  * Parses a CSV file from a URL and handles the parsed data in batches oif 1000 rows.
  *
+ * @pre-condition a database of the given name must exist
+ * @post-condition the provided data is stored in the database via a transaction
  * @param {string} url - The URL of the CSV file to parse.
  * @param {string} dbName - The name of the database where the data should be stored.
  * @param {string} storeName - The name of the store within the database where the data should be
