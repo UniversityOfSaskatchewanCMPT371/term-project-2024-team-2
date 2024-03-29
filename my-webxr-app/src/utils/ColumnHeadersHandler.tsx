@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 /**
  * This function ensures that all column names in a given array are unique.
  * @precondition columnHeaders can't be null/undefined
@@ -9,10 +10,12 @@
  * @returns {string[]} An array of unique column names.
  */
 export default function handleColumnHeaders(columnHeaders: string[]): string[] {
-  return columnHeaders.map((name, index) => {
+  return columnHeaders.map((columnHeader, index) => {
+    const name = columnHeader.trim();
+
     // If the name is empty, replace it with a default name
     if (name === '') {
-      return `column_${index + 1}`;
+      return `column_${index + 1}_${uuidv4()}`;
     }
 
     // Count the number of occurrences of the current name in the preceding part of the array
