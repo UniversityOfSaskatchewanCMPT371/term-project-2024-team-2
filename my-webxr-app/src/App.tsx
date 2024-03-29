@@ -2,17 +2,21 @@ import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
+import { Provider } from '@rollbar/react';
 import Dexie from 'dexie';
+import CreateGraphingDataPoints, {
+} from './components/CreateGraphingDataPoints';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
-import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import Floor from './components/Floor';
 import GenerateXYZ from './components/GenerateXYZ';
-import SelectAxesColumns from './components/SelectAxesMenu';
+import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
-import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
+import TestingOptions from './smoketest/TestingOptions';
+import { rollbarConfig } from './utils/LoggingUtils';
+import SelectAxesColumns from './components/SelectAxesMenu';
 import { getDatabase } from './data/DataAbstractor';
-import { AxesSelectionProvider } from './contexts/AxesSelectionContext.tsx';
+import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -82,6 +86,7 @@ export default function App() {
   return (
     <>
       <div>
+        {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
         {/* Sample URL box and button */}
         <UrlCsvReader dbName={dbName} storeName={storeName} />
         <LocalCsvReader dbName={dbName} storeName={storeName} />
@@ -101,35 +106,37 @@ export default function App() {
         </AxesSelectionProvider>
       </div>
       <VRButton />
-      <PointSelectionProvider>
-        <Canvas>
-          <XR>
-            <Sky sunPosition={[0.5, 0, 0.5]} />
-            <Floor />
-            <ambientLight />
-            <pointLight position={[10, 10, 10]} />
-            <Controllers />
-            {/** return from createGraphingDataPoints */}
-            {/* {plottedDataPoints} */}
-            <AxesSelectionProvider>
-              <CreateGraphingDataPoints />
-            </AxesSelectionProvider>
-            <GenerateXYZ
-              minValue={minNum}
-              maxValue={maxNum}
-              scaleFactor={scaleFactor}
-              startX={startPointX}
-              startY={startPointY}
-              startZ={startPointZ}
-              endPoint={Length}
-              radius={radius}
-              labelOffset={labelOffset}
-            />
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <Canvas>
+            <XR>
+              <Sky sunPosition={[0.5, 0, 0.5]} />
+              <Floor />
+              <ambientLight />
+              <pointLight position={[10, 10, 10]} />
+              <Controllers />
+              {/** return from createGraphingDataPoints */}
+              {/* {plottedDataPoints} */}
+              <AxesSelectionProvider>
+                <CreateGraphingDataPoints />
+              </AxesSelectionProvider>
+              <GenerateXYZ
+                minValue={minNum}
+                maxValue={maxNum}
+                scaleFactor={scaleFactor}
+                startX={startPointX}
+                startY={startPointY}
+                startZ={startPointZ}
+                endPoint={Length}
+                radius={radius}
+                labelOffset={labelOffset}
+              />
 
-            <GraphingDataPointMenu position={[0, 2.2, -1.5]} />
-          </XR>
-        </Canvas>
-      </PointSelectionProvider>
+              <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+            </XR>
+          </Canvas>
+        </PointSelectionProvider>
+      </Provider>
     </>
   );
 }
