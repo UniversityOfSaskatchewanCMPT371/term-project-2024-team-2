@@ -21,7 +21,8 @@ type BoxProps = {
  *    depthSegments: number | undefined] | undefined} size the size props for the box
  * @param {[number, number, number]} scale the world scale of the box
  * @param {JSX.Element | undefined} children child elements of the box
- * @param {Omit<BoxProps, "scale" | "color" | "size" | "children">} rest other parameters
+ * @param {Omit<BoxProps, "scale" | "color" | "size" | "children"> | undefined} rest
+ *    other parameters
  * @return {JSX.Element} a box geometry with a material applied
  * @constructor
  */

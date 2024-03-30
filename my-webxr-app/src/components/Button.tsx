@@ -7,7 +7,7 @@ import Box from './Box';
  * Returns an interactive button for VR space
  * @pre-condition None
  * @post-condition Returns an interactive button for VR space
- * @param {JSX.IntrinsicElements["mesh"]} props
+ * @param {JSX.IntrinsicElements["mesh"] | undefined} props
  * @return {JSX.Element}
  * @constructor
  */
