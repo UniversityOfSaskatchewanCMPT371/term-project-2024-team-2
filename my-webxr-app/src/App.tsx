@@ -1,6 +1,4 @@
-import {
-  ScreenSizer, Sky,
-} from '@react-three/drei';
+import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
@@ -127,22 +125,20 @@ export default function App() {
               <pointLight position={[10, 10, 10]} />
               <Controllers />
               {/** return from createGraphingDataPoints */}
-              <ScreenSizer scale={graphScale}>
-                {plottedDataPoints}
-                <GenerateXYZ
-                  minValue={minNum}
-                  maxValue={maxNum}
-                  scaleFactor={scaleFactor}
-                  startX={startPointX}
-                  startY={startPointY}
-                  startZ={startPointZ}
-                  endPoint={Length}
-                  radius={radius}
-                  labelOffset={labelOffset}
-                />
+              {plottedDataPoints}
+              <GenerateXYZ
+                minValue={minNum}
+                maxValue={maxNum}
+                scaleFactor={scaleFactor}
+                startX={startPointX}
+                startY={startPointY}
+                startZ={startPointZ}
+                endPoint={Length}
+                radius={radius}
+                labelOffset={labelOffset}
+              />
 
-                <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
-              </ScreenSizer>
+              <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
             </XR>
           </Canvas>
         </PointSelectionProvider>
