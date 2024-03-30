@@ -24,6 +24,7 @@ import { rollbar } from '../utils/LoggingUtils';
 export default function CreateGraphingDataPoints(): JSX.Element {
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [dataPoints, setDataPoints] = useState([]);
+  const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const database = getDatabase();
@@ -31,8 +32,10 @@ export default function CreateGraphingDataPoints(): JSX.Element {
         selectedXAxis as string,
         selectedYAxis as string,
         selectedZAxis as string,
-      ).then((value) => setDataPoints(value as never))
-        .catch((error) => { rollbar.error(error); return []; });
+      ).then(([dataPointsArray, maxValuesArray]) => {
+        setDataPoints(dataPointsArray as never);
+        setMaxValues(maxValuesArray as never);
+      }).catch((error) => { rollbar.error(error); return []; });
     };
     fetchData();
   }, [selectedXAxis, selectedYAxis, selectedZAxis]);
