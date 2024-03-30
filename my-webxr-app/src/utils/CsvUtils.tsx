@@ -7,6 +7,8 @@ import DataAbstractor from '../data/DataAbstractor';
  * Rows with null values are ignored. The parsed data is stored in the `sanitizedBatch` array.
  * Once the parsing is complete, the data is sent to `DAL.storeCSV` in batches of 1000 rows.
  *
+ * @pre-condition a database of the given name must exist
+ * @post-condition the provided data is stored in the database via a transaction
  * @param {string} url - The URL of the CSV file to parse.
  * @param {DataAbstractor} DAL - The Data Abstractor instance where the parsed
  *      CSV data will be stored.

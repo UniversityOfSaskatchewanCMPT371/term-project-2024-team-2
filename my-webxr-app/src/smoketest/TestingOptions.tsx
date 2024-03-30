@@ -1,3 +1,10 @@
+/**
+ * Creates a DOM element to access smoke testing functionalities
+ * @pre-condition None
+ * @post-condition returns a DOM element to access smoke testing functionalities
+ * @return {JSX.Element} a DOM element to access smoke testing functionalities
+ * @constructor
+ */
 export default function TestingOptions() {
   const handleButtonClick = () => {
     // Reset the localStorage value to an empty string

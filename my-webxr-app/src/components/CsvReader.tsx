@@ -9,12 +9,19 @@ interface CsvReaderProps {
 }
 
 /**
- * Component for reading and processing a local CSV file.
+
+ * A React component that reads data from a local CSV file and stores it in a specified database and
+ * store.
+ * @pre-condition None
+ * @post-condition Returns an element to expose local csv uploading
+ * @param {object} props - The properties passed to the component.
+ * @param {string} props.dbName - The name of the database where the data should be stored.
+ * @param {string} props.storeName - The name of the store within the database where the data should
+ * be stored.
  *
- * @param {DataAbstractor} DAL - The data access layer for storing the CSV data
- * @precondition - The DAL must be initialized and connected to the database.
- * @postcondition - The CSV data is stored in the database.
- * @returns {JSX.Element} - The JSX element representing the LocalCsvReader component.
+ * @returns {JSX.Element} A form with an input field for the local CSV and a button to load the CSV
+ * data. After successful loading, a success message is displayed. If an error occurs, an error
+ * message is displayed and let user retry.
  */
 
 export function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
@@ -90,18 +97,19 @@ export function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
 }
 
 /**
- * `UrlCsvReader` is a React component that provides a user interface for loading CSV data from a
- * URL.
- * It takes a `DataAbstractor` instance as a prop, which is used to store the parsed CSV data.
- * The component maintains two pieces of state: `message` and `url`.
- * `message` is used to display status messages to the user.
- * `url` is used to store the URL entered by the user.
- * The component renders an input field for the URL, a button to initiate the CSV loading, and a
- * message display.
+
+ * A React component that reads data from a CSV file at a given URL and stores it in a specified
+ * database and store.
+ * @pre-condition None
+ * @post-condition Returns an element to expose url csv uploading
+ * @param {object} props - The properties passed to the component.
+ * @param {string} props.dbName - The name of the database where the data should be stored.
+ * @param {string} props.storeName - The name of the store within the database where the data should
+ * be stored.
  *
- * @param {UrlCsvReaderProps} props - The props for the component.
- * @precondition The `DAL` prop must be initialized and connected to the database.
- * @returns {JSX.Element} The rendered component.
+ * @returns {JSX.Element} A form with an input field for the CSV URL and a button to load the CSV
+ * data. After successful loading, a success message is displayed. If an error occurs, an error
+ * message is displayed and let user retry.
  */
 function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
