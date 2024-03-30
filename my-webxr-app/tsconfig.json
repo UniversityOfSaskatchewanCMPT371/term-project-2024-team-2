@@ -6,6 +6,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "types": ["vitest/globals"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -22,6 +23,10 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
+  "include": [
+    ".eslintrc.cjs",
+    "src",
+    "tests"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
