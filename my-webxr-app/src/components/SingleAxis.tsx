@@ -17,6 +17,7 @@ interface SingleAxisProps {
 
 /**
  * Creates a Single axis object
+ * Helper function to for GenerateXYZ()
  *
  * @pre-conditions - maxValue is a non-negative integer
  *
