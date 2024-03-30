@@ -3,7 +3,6 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
-import Dexie from 'dexie';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
@@ -34,24 +33,7 @@ const startPointZ: number = -1.5;
 const Length: number = 1;
 // adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
-
-// delete lines 39 to 47
-await Dexie.delete('CsvDataBase');
 const database = getDatabase();
-const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
-  [1, 2, 3, 4, 5],
-  [4, 5, 6, 7, 8],
-  [9, 10, 1, 2, 3]];
-await database.storeCSV(batchItem);
-await database.calculateStatistics();
-await database.storeStandardizedData();
-await database.storePCA(await database.getAvailableFields());
-
-// Data Abstractor layer
-// application -> index dB
-
-// run pca
-// store pca
 
 export default function App() {
   // Database name and store name will be pass as prop to reader components,
@@ -90,7 +72,6 @@ export default function App() {
               <pointLight position={[10, 10, 10]} />
               <Controllers />
               {/** return from createGraphingDataPoints */}
-              {/* {plottedDataPoints} */}
               <CreateGraphingDataPoints />
               <GenerateXYZ
                 minValue={minNum}
@@ -103,8 +84,7 @@ export default function App() {
                 radius={radius}
                 labelOffset={labelOffset}
               />
-
-              <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+              <GraphingDataPointMenu position={[0, 2.2, -1.6]} />
             </XR>
           </Canvas>
         </PointSelectionProvider>

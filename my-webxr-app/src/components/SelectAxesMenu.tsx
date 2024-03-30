@@ -16,11 +16,10 @@ interface DropDownProps {
 
 /*
   this function creates the dropdowns that will be used to choose the axes for XYZ
-  @params:
-      - label: the label of the dropdown (the text beside it)
-      - id: the id of the dropdown (to classify x, y, or z)
-      - options: this will be the choices that can fill the dropdowns
-      - chosenValue: will be the value chosen for from each dropdown
+  @param label: the label of the dropdown (the text beside it)
+  @param id: the id of the dropdown (to classify x, y, or z)
+  @param options: this will be the choices that can fill the dropdowns
+  @param chosenValue: will be the value chosen for from each dropdown
   @pre-condition: the options should be loaded up with column names
   @post-condition: chosenValue is updated with the selection
   @return: the dropdown menu
@@ -54,12 +53,10 @@ function DropDown({
 
 /*
   this function will allow the user to choose their axis values
-  @params:
-      - dbName: the name of the database to get the data from
+  @param dbName: the name of the database to get the data from
   @pre-condition: dB name cannot be empty, relies on database
   @post-condition: setting the proper x,y,z coordinates for the data point
   @return: the dropdown menus
-  (think also needs to return the columns chosen and assign the values to x,y,z of data points)
  */
 export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) {
   assert(database != null, 'Database name cannot be null');
@@ -84,17 +81,20 @@ export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) 
 
   /*
   this function will plot the graph with the selected x,y,z axes
-  @pre-condition:
-  @post-condition:
- */
+  @param _setSelectedXAxis: setter function for selected x-axis
+  @param _setSelectedYAxis: setter function for selected y-axis
+  @param _setSelectedZAxis: setter function for selected z-axis
+  @pre-condition: provided setter functions must be
+                  React.Dispatch<React.SetStateAction<string | null>>
+  @post-condition x,y,z values updated with selected values
+  @return: a promise
+*/
   const handleCompleteSelection = async (
     _setSelectedXAxis: React.Dispatch<React.SetStateAction<string | null>>,
     _setSelectedYAxis: React.Dispatch<React.SetStateAction<string | null>>,
     _setSelectedZAxis: React.Dispatch<React.SetStateAction<string | null>>,
   ) => {
     try {
-      // await setRepresentingColumns(database, xAxis, yAxis, zAxis);
-      // TODO: plot the graph with the selected axes
       _setSelectedXAxis(xAxis);
       _setSelectedYAxis(yAxis);
       _setSelectedZAxis(zAxis);
