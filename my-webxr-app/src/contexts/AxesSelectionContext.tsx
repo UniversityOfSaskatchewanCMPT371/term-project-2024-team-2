@@ -3,8 +3,6 @@ import React, {
 } from 'react';
 import { useRollbar } from '@rollbar/react';
 
-const rollbar = useRollbar();
-
 /**
  * Create an interface for the return state values of the Context.
  *
@@ -54,6 +52,7 @@ export function AxesSelectionProvider({
   const [selectedXAxis, setSelectedXAxisInternal] = useState<AxesSelectionContextType['selectedXAxis']>(null);
   const [selectedYAxis, setSelectedYAxisInternal] = useState<AxesSelectionContextType['selectedYAxis']>(null);
   const [selectedZAxis, setSelectedZAxisInternal] = useState<AxesSelectionContextType['selectedZAxis']>(null);
+  const rollbar = useRollbar();
 
   const setSelectedXAxis = (
     newValue: React.SetStateAction<string | null>,
