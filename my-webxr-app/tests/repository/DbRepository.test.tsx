@@ -280,11 +280,13 @@ describe('DbRepository - Test getPoints()', () => {
 
     const result = await repository.getPoints('column1', 'column2', 'column3');
 
-    expect(result).toHaveLength(3);
+    expect(result[0]).toHaveLength(3);
+    expect(result[1]).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
+    expect(result[0]).toEqual(expect.arrayContaining(expected));
+    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
   });
 
   test('getPoints - Get points of 3 PCA DATA columns', async () => {
@@ -297,11 +299,13 @@ describe('DbRepository - Test getPoints()', () => {
 
     const result = await repository.getPoints('column1', 'column2', 'column3');
 
-    expect(result).toHaveLength(3);
+    expect(result[0]).toHaveLength(3);
+    expect(result[1]).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
+    expect(result[0]).toEqual(expect.arrayContaining(expected));
+    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
   });
 
   test('getPoints - Get points of 2 PCA columns and 1 Raw column', async () => {
@@ -314,11 +318,13 @@ describe('DbRepository - Test getPoints()', () => {
 
     const result = await repository.getPoints('PC1', 'PC2', 'column3');
 
-    expect(result).toHaveLength(3);
+    expect(result[0]).toHaveLength(3);
+    expect(result[1]).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
+    expect(result[0]).toEqual(expect.arrayContaining(expected));
+    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
   });
 
   test('getPoints - Get points of 1 PCA column and 2 Raw columns', async () => {
@@ -331,10 +337,12 @@ describe('DbRepository - Test getPoints()', () => {
 
     const result = await repository.getPoints('PC1', 'column2', 'column3');
 
-    expect(result).toHaveLength(3);
+    expect(result[0]).toHaveLength(3);
+    expect(result[1]).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
+    expect(result[0]).toEqual(expect.arrayContaining(expected));
+    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
   });
 });
