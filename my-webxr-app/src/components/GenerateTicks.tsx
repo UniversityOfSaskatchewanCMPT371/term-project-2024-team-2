@@ -15,6 +15,7 @@ import { Text } from '@react-three/drei';
  * @param {number} radius corner radius of the tick's shape
  * @param {number} label the number to display with the tick
  * @param {string} axis the label of the axis we are displaying one ('x', 'y', or 'z')
+ * @param {number} maxValue the maximum value plotted point of the axis
  * @return {JSX.Element} the tick element and its number label
  * @constructor
  */
@@ -38,13 +39,13 @@ export default function GenerateTicks(
   if (axis === 'x') {
     positionTicks = [
       // this calculation gives the correct space between each tick
-      startX + (labelOffset * label / maxValue * scaleFactor) / 2,
+      startX + (labelOffset * (label / maxValue) * scaleFactor) / 2,
       startY,
       startZ,
     ];
     positionLabels = [
       // this calculation gives the correct space between each label
-      startX + (labelOffset * label / maxValue * scaleFactor) / 2,
+      startX + (labelOffset * (label / maxValue) * scaleFactor) / 2,
       startY - 0.02,
       startZ,
     ];
@@ -52,12 +53,12 @@ export default function GenerateTicks(
   } else if (axis === 'y') {
     positionTicks = [
       startX,
-      startY + (labelOffset * label / maxValue * scaleFactor) / 2,
+      startY + (labelOffset * (label / maxValue) * scaleFactor) / 2,
       startZ,
     ];
     positionLabels = [
       startX + 0.03,
-      startY + (labelOffset * label / maxValue * scaleFactor) / 2,
+      startY + (labelOffset * (label / maxValue) * scaleFactor) / 2,
       startZ,
     ];
     ticksShape = [radius * 7, 0.002, radius * 2];
@@ -65,13 +66,13 @@ export default function GenerateTicks(
     positionTicks = [
       startX,
       startY,
-      startZ + (labelOffset * label / maxValue * scaleFactor) / 2,
+      startZ + (labelOffset * (label / maxValue) * scaleFactor) / 2,
     ];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     positionLabels = [
       startX,
       startY - 0.02,
-      startZ + (labelOffset * label / maxValue * scaleFactor) / 2,
+      startZ + (labelOffset * (label / maxValue) * scaleFactor) / 2,
     ];
     ticksShape = [0.002, radius * 7, radius * 2];
   }
