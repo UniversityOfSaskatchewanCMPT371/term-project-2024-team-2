@@ -18,6 +18,7 @@ import { rollbar } from '../utils/LoggingUtils';
  * objects.
  * - The AxisStartPoints array must contain exactly three numbers.
  * - The length, scale, and max parameters must be positive numbers.
+ * @post-condition An array of elements that will visually graph data.
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
