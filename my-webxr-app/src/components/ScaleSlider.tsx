@@ -16,9 +16,9 @@ function ScaleSlider({ scale, setScale } : ScaleSliderProps) {
     <div data-testid="ScaleSliderComponent">
       <input
         type="range"
-        min="10"
-        max="100"
-        step="1"
+        min="1"
+        max="10"
+        step="0.1"
         value={scale}
         onChange={handleScaleChange}
         data-testid="slider"
