@@ -14,7 +14,9 @@ defaults:
     working-directory: ./my-webxr-app
 
 permissions:
+  contents: read
   pull-requests: write
+  checks: write
 
 jobs:
   build_and_test:
