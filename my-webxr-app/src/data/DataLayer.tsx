@@ -399,7 +399,8 @@ export default class DataLayer implements DataAbstractor {
    * @param {string | null} columnX - The name of the column to be used for the x-axis values.
    * @param {string | null} ColumnY - The name of the column to be used for the y-axis values.
    * @param {string | null} ColumnZ - The name of the column to be used for the z-axis values.
-   * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
+   * @returns {Promise<[Array<DataPoint>, Array<number>]>} A promise that resolves to an array of
+   * DataPoint objects and an array of maximum values from each column.
    * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
    */
 
@@ -407,7 +408,7 @@ export default class DataLayer implements DataAbstractor {
     columnX: string,
     ColumnY: string,
     ColumnZ: string,
-  ): Promise<DataPoint[]> {
+  ): Promise<[Array<DataPoint>, Array<number>]> {
     return this.repository.getPoints(columnX, ColumnY, ColumnZ);
   }
 
