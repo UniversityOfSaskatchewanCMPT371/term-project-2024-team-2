@@ -12,7 +12,7 @@ describe('Axis Tests', () => {
 
   afterAll(() => MockServer.close());
 
-  test('Create 3D axis with random values', async () => {
+  test('Create 3D axes with random values', async () => {
     function Element() {
       return (
         <XR>

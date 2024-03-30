@@ -1,4 +1,5 @@
 import { Text } from '@react-three/drei';
+import * as assert from 'assert';
 
 // this function creates the ticks and labels for the axes
 export default function GenerateTicks(
@@ -12,6 +13,8 @@ export default function GenerateTicks(
   increment: number,
   axis: string,
 ) {
+  assert.ok(['x', 'y', 'z'].includes(axis), `Invalid axis provided: ${axis}`);
+
   let positionTicks: [number, number, number] | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let positionLabels: [number, number, number] | undefined;
