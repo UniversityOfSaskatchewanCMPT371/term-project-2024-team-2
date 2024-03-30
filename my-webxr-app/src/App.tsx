@@ -3,12 +3,13 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   createGraphingDataPoints,
 } from './components/CreateGraphingDataPoints';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
+import ScaleSlider from './components/ScaleSlider';
 import GenerateXYZ from './components/GenerateXYZ';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
@@ -20,8 +21,6 @@ import { rollbarConfig } from './utils/LoggingUtils';
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
 const maxNum: number = 10;
-// scaleFactor adjusts the size of the 3D axis
-const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
 // starting point of the axis
@@ -40,6 +39,9 @@ export default function App() {
   // this is to ensure the consistency of the database name and store name.
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
+
+  // scaleFactor adjusts the size of the 3D axis
+  const [scaleFactor, setScaleFactor] = useState(2);
 
   // Initialize the database and store for csv data
   useEffect(() => {
@@ -109,6 +111,7 @@ export default function App() {
           Print Data to Console
         </button>
       </div>
+      <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
       <VRButton />
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>

@@ -8,11 +8,11 @@ import GraphingDataPoint from './GraphingDataPoint';
  * Asynchronously fetches data points from the provided data layer using the specified 3 column
  * names and column type.
  *
- * @preconds
+ * @pre-condition
  * - The columnType must be either 'Raw' or 'PCA'.
  * - If the columnType is 'Raw', all columns must contain numeric data.
  * - All three columns are in the same table.
- *
+ * @post-condition An array of data points to display
  * @param {DataLayer} dataLayer - The data layer from which to fetch the data points.
  * @param {string} xColumnName - The name of the column to use for the x-values of the data points.
  * @param {string} yColumnName - The name of the column to use for the y-values of the data points.
@@ -38,12 +38,13 @@ export async function fetchDataPoints(
  * should be call in conjunction with createPosition, I split them into two function for the sake of
  * testing.
  *
- * @preconds
+ * @pre-condition
  * - The dataPoints array must not be empty.
  * - The xColumnName, yColumnName, and zColumnName must correspond to properties of the DataPoint
  * objects.
  * - The AxisStartPoints array must contain exactly three numbers.
  * - The length, scale, and max parameters must be positive numbers.
+ * @post-condition An array of elements that will visually graph data
  *
  * @param {DataPoint[]} dataPoints - The data points to plot.
  * @param {string} xColumnName - The name of the column to use for the x-values of the data points.
