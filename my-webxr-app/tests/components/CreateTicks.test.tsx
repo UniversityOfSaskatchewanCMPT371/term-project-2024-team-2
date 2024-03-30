@@ -1,6 +1,6 @@
 import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { Vector3 } from 'three';
-import GenerateTicks from '../../src/components/CreateTicks';
+import GenerateTick from '../../src/components/CreateTick';
 import MockServer from '../MockServer';
 
 describe('GenerateTicks Component Tests', () => {
@@ -15,7 +15,7 @@ describe('GenerateTicks Component Tests', () => {
     ['z', new Vector3(0, 0, 0.5), new Vector3(0, -0.02, 0.5)]])(
     'expect.soft Renders ticks and labels correctly for each axis',
     async (axisName : string, tickMarkPos: Vector3, tickTextPos: Vector3) => {
-      const element = GenerateTicks(0, 0, 0, 1, 1, 0.002, 1, 1, axisName);
+      const element = GenerateTick(0, 0, 0, 1, 1, 0.002, 1, 1, axisName);
 
       const renderer = await ReactThreeTestRenderer.create(element);
       await waitFor(() => expect(renderer.scene.children).toBeDefined());
@@ -37,7 +37,7 @@ describe('GenerateTicks Component Tests', () => {
     ['z', new Vector3(0, 0, 1.5), new Vector3(0, -0.02, 1.5)]])(
     'expect.soft Scale ticks and labels correctly for each axis with scale factor 3',
     async (axisName : string, tickMarkPos: Vector3, tickTextPos: Vector3) => {
-      const element = GenerateTicks(0, 0, 0, 1, 3, 0.002, 1, 1, axisName);
+      const element = GenerateTick(0, 0, 0, 1, 3, 0.002, 1, 1, axisName);
 
       const renderer = await ReactThreeTestRenderer.create(element);
       await waitFor(() => expect(renderer.scene.children).toBeDefined());
@@ -55,7 +55,7 @@ describe('GenerateTicks Component Tests', () => {
   );
 
   test('Should throw exception when provided with invalid axis', async () => {
-    expect(() => GenerateTicks(0, 0, 0, 1, 3, 0.002, 1, 1, 'INVALID AXIS'))
+    expect(() => GenerateTick(0, 0, 0, 1, 3, 0.002, 1, 1, 'INVALID AXIS'))
       .toThrowError('Invalid axis provided: INVALID AXIS');
   });
 });

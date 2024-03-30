@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import GenerateTicks from './CreateTicks';
+import GenerateTick from './CreateTick';
 
 interface SingleAxisProps {
   startX: number;
@@ -16,7 +16,23 @@ interface SingleAxisProps {
   axis: string;
 }
 
-// this function will create an axis and call GenerateTicks to put ticks and labels on the axis
+/**
+ * Creates a Single axis object
+ * @param {number} startX the minimum 3D geometry location on the x-axis
+ * @param {number} startY the minimum 3D geometry location on the y-axis
+ * @param {number} startZ the minimum 3D geometry location on the z-axis
+ * @param {number} endX the maximum 3D geometry location on the x-axis
+ * @param {number} endY the maximum 3D geometry location on the y-axis
+ * @param {number} endZ the maximum 3D geometry location on the z-axis
+ * @param {number} radius corner radius of the tick's shape
+ * @param {number} labelOffset how far away the tick label should be from the tick object
+ * @param {number} scaleFactor the axis scale. (ie. the distance between each tick)
+ * @param {number} minValue The minimum axis value
+ * @param {number} maxValue The maximum axis value
+ * @param {string} axis the 'x', 'y', or 'z' axis to display
+ * @return {JSX.Element} Returns the x, y, or z axis object for displaying in VR
+ * @constructor
+ */
 export default function SingleAxis({
   startX,
   startY,
@@ -101,8 +117,8 @@ export default function SingleAxis({
     <group name="A Single Axis">
       {/* Create the axis and color it */}
       <mesh name="Axis Line" geometry={axisGeometry} material={material} position={position} rotation={rotation} />
-      {/* call GenerateTicks for each axis */}
-      {axisTicks.map((label) => GenerateTicks(
+      {/* call GenerateTick for each axis */}
+      {axisTicks.map((label) => GenerateTick(
         startX,
         startY,
         startZ,

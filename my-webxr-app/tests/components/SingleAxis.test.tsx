@@ -3,7 +3,7 @@ import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import MockServer from '../MockServer';
 import SingleAxis from '../../src/components/SingleAxis';
-import * as CreateTicks from '../../src/components/CreateTicks';
+import * as CreateTick from '../../src/components/CreateTick';
 
 describe('Axis Tests', () => {
   beforeEach(() => MockServer.listen());
@@ -52,7 +52,7 @@ describe('Axis Tests', () => {
   }, 10000);
 
   test.each([0.5, 1, 10])('Create single axis, given scale factor of 1, should scale correctly', async (scaleFactor : number) => {
-    const createTicksSpy = vi.spyOn(CreateTicks, 'default');
+    const createTicksSpy = vi.spyOn(CreateTick, 'default');
     const renderer = await ReactThreeTestRenderer.create(
       <XR>
         <SingleAxis
