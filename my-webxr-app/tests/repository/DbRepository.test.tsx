@@ -270,7 +270,7 @@ describe('DbRepository - Test getPoints()', () => {
       .toThrow(new assert.AssertionError({ message: 'ColumnY must be numeric!' }));
   });
 
-  test('getPoints - Get points of 3 RAW DATA columns', async () => {
+  test('getPoints - Get points of 3 RAW DATA columns, round off absolute max values to next int', async () => {
     const column1 = new Column<RawColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column<RawColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<RawColumn>('column3', [-1.1, -2.2, -3.3]);
@@ -279,17 +279,18 @@ describe('DbRepository - Test getPoints()', () => {
     await repository.addColumn(column3, TableName.RAW);
 
     const result = await repository.getPoints('column1', 'column2', 'column3');
-
-    expect(result[0]).toHaveLength(3);
-    expect(result[1]).toHaveLength(3);
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result[0]).toEqual(expect.arrayContaining(expected));
-    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
   });
 
-  test('getPoints - Get points of 3 PCA DATA columns', async () => {
+  test('getPoints - Get points of 3 PCA DATA columns, round off absolute max values to next int', async () => {
     const column1 = new Column<NumericColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
@@ -299,16 +300,18 @@ describe('DbRepository - Test getPoints()', () => {
 
     const result = await repository.getPoints('column1', 'column2', 'column3');
 
-    expect(result[0]).toHaveLength(3);
-    expect(result[1]).toHaveLength(3);
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result[0]).toEqual(expect.arrayContaining(expected));
-    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
   });
 
-  test('getPoints - Get points of 2 PCA columns and 1 Raw column', async () => {
+  test('getPoints - Get points of 2 PCA columns and 1 Raw column, round off absolute max values to next int', async () => {
     const column1 = new Column<NumericColumn>('PC1', [1.1, 2.2, 3.3]);
     const column2 = new Column<NumericColumn>('PC2', [0.1, 0.2, 0.3]);
     const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
@@ -318,16 +321,18 @@ describe('DbRepository - Test getPoints()', () => {
 
     const result = await repository.getPoints('PC1', 'PC2', 'column3');
 
-    expect(result[0]).toHaveLength(3);
-    expect(result[1]).toHaveLength(3);
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result[0]).toEqual(expect.arrayContaining(expected));
-    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
   });
 
-  test('getPoints - Get points of 1 PCA column and 2 Raw columns', async () => {
+  test('getPoints - Get points of 1 PCA column and 2 Raw columns, round off absolute max values to next int', async () => {
     const column1 = new Column<NumericColumn>('PC1', [1.1, 2.2, 3.3]);
     const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
@@ -337,12 +342,14 @@ describe('DbRepository - Test getPoints()', () => {
 
     const result = await repository.getPoints('PC1', 'column2', 'column3');
 
-    expect(result[0]).toHaveLength(3);
-    expect(result[1]).toHaveLength(3);
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result[0]).toEqual(expect.arrayContaining(expected));
-    expect(result[1]).toEqual([3.3, 0.3, -1.1]);
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
   });
 });
