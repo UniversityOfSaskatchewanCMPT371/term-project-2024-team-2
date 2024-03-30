@@ -1,6 +1,6 @@
 import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { Vector3 } from 'three';
-import GenerateTick from '../../src/components/GenerateTick.tsx';
+import GenerateTick from '../../src/components/GenerateTick';
 import MockServer from '../MockServer';
 
 describe('GenerateTick Component Tests', () => {

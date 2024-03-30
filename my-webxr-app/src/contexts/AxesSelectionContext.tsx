@@ -1,7 +1,6 @@
 import React, {
   createContext, useContext, useMemo, useState,
 } from 'react';
-import Rollbar from 'rollbar';
 import { useRollbar } from '@rollbar/react';
 
 const rollbar = useRollbar();
