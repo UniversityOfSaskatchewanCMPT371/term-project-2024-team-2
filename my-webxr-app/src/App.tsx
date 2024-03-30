@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
+import { useState } from 'react';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
@@ -43,55 +44,6 @@ export default function App() {
   // scaleFactor adjusts the size of the 3D axis
   const [scaleFactor, setScaleFactor] = useState(2);
 
-  // Initialize the database and store for csv data
-  useEffect(() => {
-    const initializeDB = async () => {
-      await openDB(dbName, 1, {
-        upgrade(db) {
-          if (db.objectStoreNames.contains(storeName)) {
-            db.deleteObjectStore(storeName);
-          }
-          db.createObjectStore(storeName);
-        },
-      });
-    };
-    initializeDB();
-  }, [dbName, storeName]);
-
-  // Demo createGraphingDataPoints
-  const exampleDataPoints = [
-    [5, 5, 5],
-    [-5, 5, 5],
-    [5, -5, 5],
-    [-5, -5, 5],
-    [5, 5, -5],
-    [-5, 5, -5],
-    [5, -5, -5],
-    [-5, -5, -5],
-    [0, 5, 5],
-    [0, -5, 5],
-    [0, 5, -5],
-    [0, -5, -5],
-    [5, 0, 5],
-    [-5, 0, 5],
-    [5, 0, -5],
-    [-5, 0, -5],
-    [5, 5, 0],
-    [-5, 5, 0],
-    [5, -5, 0],
-    [-5, -5, 0],
-  ];
-  const dataPoints = exampleDataPoints.map((point) => new DataPoint(point[0], point[1], point[2]));
-  const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
-    dataPoints,
-    'columnX',
-    'columnY',
-    'columnZ',
-    [startPointX, startPointY, startPointZ],
-    Length,
-    scaleFactor,
-    maxNum,
-  ) : [];
   return (
     <AxesSelectionProvider>
       <div>
