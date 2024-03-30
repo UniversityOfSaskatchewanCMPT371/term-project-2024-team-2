@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import GenerateTick from './GenerateTicks';
+import GenerateTick from './GenerateTick.tsx';
 
 interface SingleAxisProps {
   startX: number;
@@ -20,6 +20,7 @@ interface SingleAxisProps {
  * Helper function to for GenerateXYZ()
  *
  * @pre-conditions - maxValue is a non-negative integer
+ * @post-condition - Returns the x, y, or z axis object for displaying in VR
  *
  * @param {number} startX the minimum 3D geometry location on the x-axis
  * @param {number} startY the minimum 3D geometry location on the y-axis

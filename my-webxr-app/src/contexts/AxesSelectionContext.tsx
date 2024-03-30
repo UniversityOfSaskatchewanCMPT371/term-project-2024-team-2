@@ -1,8 +1,10 @@
 import React, {
   createContext, useContext, useMemo, useState,
 } from 'react';
+import Rollbar from 'rollbar';
+import { useRollbar } from '@rollbar/react';
 
-// import * as log4js from "log4js";
+const rollbar = useRollbar();
 
 /**
  * Create an interface for the return state values of the Context.
@@ -57,36 +59,21 @@ export function AxesSelectionProvider({
   const setSelectedXAxis = (
     newValue: React.SetStateAction<string | null>,
   ) => {
-    // log4js
-    //   .getLogger()
-    //   .debug(
-    //     "AxesSelectionContext: updating selectedXAxis state to " +
-    //       newValue,
-    //   );
+    rollbar.debug(`AxesSelectionContext: updating selectedXAxis state to ${newValue}`);
     setSelectedXAxisInternal(newValue);
   };
 
   const setSelectedYAxis = (
     newValue: React.SetStateAction<string | null>,
   ) => {
-    // log4js
-    //   .getLogger()
-    //   .debug(
-    //     "AxesSelectionContext: updating selectedYAxis state to " +
-    //       newValue,
-    //   );
+    rollbar.debug(`AxesSelectionContext: updating selectedYAxis state to ${newValue}`);
     setSelectedYAxisInternal(newValue);
   };
 
   const setSelectedZAxis = (
     newValue: React.SetStateAction<string | null>,
   ) => {
-    // log4js
-    //   .getLogger()
-    //   .debug(
-    //     "AxesSelectionContext: updating selectedZAxis state to " +
-    //       newValue,
-    //   );
+    rollbar.debug(`AxesSelectionContext: updating selectedZAxis state to ${newValue}`);
     setSelectedZAxisInternal(newValue);
   };
 

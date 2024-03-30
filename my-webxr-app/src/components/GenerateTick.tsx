@@ -20,7 +20,7 @@ import * as assert from 'assert';
  * @return {JSX.Element} the tick element and its number label
  * @constructor
  */
-export default function GenerateTicks(
+export default function GenerateTick(
   startX: number,
   startY: number,
   startZ: number,

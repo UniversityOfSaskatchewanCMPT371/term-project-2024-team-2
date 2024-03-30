@@ -4,7 +4,8 @@ import assert from '../utils/Assert';
 /**
  * Creates a Vector for the points position relative to the size of the Axis and the Data given to
  * the point.
- * @preconds - The maxData must be an array of three non-negative integers.
+ * @pre-condition - The maxData must be an array of three non-negative integers.
+ * @post-condition - Returns a vector of where the point will sit in 3D VR space
  * @param {Array<number>} data - The actual data that determines the position of the point, must be
  * in the format [x,y,z]
  * @param {Array<number>} AxisStartPoints - The starting point of each Axis, there must be three

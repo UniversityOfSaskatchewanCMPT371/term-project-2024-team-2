@@ -1,9 +1,9 @@
 import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
 import { Vector3 } from 'three';
-import GenerateTick from '../../src/components/GenerateTicks';
+import GenerateTick from '../../src/components/GenerateTick.tsx';
 import MockServer from '../MockServer';
 
-describe('GenerateTicks Component Tests', () => {
+describe('GenerateTick Component Tests', () => {
   beforeEach(() => MockServer.listen());
 
   afterEach(() => MockServer.resetHandlers());
