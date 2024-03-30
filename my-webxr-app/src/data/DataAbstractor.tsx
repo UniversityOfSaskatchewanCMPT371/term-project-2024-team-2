@@ -19,7 +19,8 @@ export default interface DataAbstractor {
     ColumnY: string,
     ColumnZ: string,
     columnType: TableName,
-  ) => Promise<DataPoint[]>;
+  ) => Promise<DataPoint[]>,
+  resetFlag: () => Promise<boolean>;
 }
 
 export const getDatabase = () => new DataLayer('CsvDataBase') as DataAbstractor;

@@ -464,6 +464,17 @@ export default class DataLayer implements DataAbstractor {
   }
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed
+
+  /**
+ * Resets the flag to indicate if it is the first batch.
+ * @param {void} - No parameters.
+ * @postcondition - The flag is reset to true.
+ * @returns {Promise<boolean>} - A promise that resolves when the flag is reset.
+ */
+  public async resetFlag(): Promise<boolean> {
+    this.isFirstBatch = true;
+    return true;
+  }
 }
 
 /**

@@ -28,6 +28,7 @@ async function parseAndHandleUrlCsv(
   assert(setMessage !== null || setMessage !== undefined, 'No setMessage function provided');
   // Normalize headers by appending a number to duplicate headers, takes in an array of string
   // headers
+  await DAL.resetFlag();
   const normalizeHeaders = (headers: string[]) => {
     const count: Record<string, number> = {};
     return headers.map((header) => {

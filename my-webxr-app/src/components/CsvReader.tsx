@@ -32,7 +32,11 @@ export function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
     const selectedFile = event.target.files?.[0] as File;
 
     assert(selectedFile !== null || selectedFile !== undefined, 'No file selected');
-
+    if (!selectedFile.name.endsWith('.csv' || !selectedFile.name.endsWith('.txt'))) {
+      setMessage('File must be a CSV file');
+      return;
+    }
+    DAL.resetFlag();
     const completeData: Array<Array<string | number>> = [];
     const normalizeHeaders = (headers: string[]) => {
       const count: Record<string, number> = {};
@@ -126,6 +130,7 @@ function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
       return;
     }
     try {
+      DAL.resetFlag();
       await parseAndHandleUrlCsv(url, DAL, setMessage);
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
