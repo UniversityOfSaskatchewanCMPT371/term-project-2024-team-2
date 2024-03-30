@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
-import Dexie from 'dexie';
+// import Dexie from 'dexie';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
@@ -13,9 +13,9 @@ import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
 import TestingOptions from './smoketest/TestingOptions';
 import { rollbarConfig } from './utils/LoggingUtils';
-import SelectAxesColumns from './components/SelectAxesMenu';
+// import SelectAxesColumns from './components/SelectAxesMenu';
 import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
-import { getDatabase } from './data/DataAbstractor';
+// import { getDatabase } from './data/DataAbstractor';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -36,16 +36,16 @@ const Length: number = 1;
 const radius: number = 0.002;
 
 // delete lines 39 to 47
-await Dexie.delete('CsvDataBase');
-const database = getDatabase();
-const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
-  [1, 2, 3, 4, 5],
-  [4, 5, 6, 7, 8],
-  [9, 10, 1, 2, 3]];
-await database.storeCSV(batchItem);
-await database.calculateStatistics();
-await database.storeStandardizedData();
-await database.storePCA(await database.getAvailableFields());
+// await Dexie.delete('CsvDataBase');
+// const database = getDatabase();
+// const batchItem = [['col1', 'col2', 'col3', 'col4', 'col5'],
+//   [1, 2, 3, 4, 5],
+//   [4, 5, 6, 7, 8],
+//   [9, 10, 1, 2, 3]];
+// await database.storeCSV(batchItem);
+// await database.calculateStatistics();
+// await database.storeStandardizedData();
+// await database.storePCA(await database.getAvailableFields());
 
 // Data Abstractor layer
 // application -> index dB
@@ -77,7 +77,7 @@ export default function App() {
         >
           Print Data to Console
         </button>
-        <SelectAxesColumns database={database} />
+        {/** <SelectAxesColumns database={database} /> */}
       </div>
       <VRButton />
       <Provider config={rollbarConfig}>
