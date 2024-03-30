@@ -222,7 +222,7 @@ export default class DbRepository extends Dexie implements Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string,
-  ): Promise<Array<DataPoint>> {
+  ): Promise<[Array<DataPoint>, Array<number>]> {
     // verify the three columns are distinct
     assert.equal(
       (new Set([columnXName, columnYName, columnZName])).size,
@@ -232,7 +232,7 @@ export default class DbRepository extends Dexie implements Repository {
     );
     // do nothing if null column entries selected
     if (columnXName == null || columnYName == null || columnZName == null) {
-      return [];
+      return [[], []];
     }
 
     // Check if the columns exist in the 'RAW' table, select it if it does, otherwise check the
@@ -250,20 +250,26 @@ export default class DbRepository extends Dexie implements Repository {
     assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');
     assert.ok(typeof columnZ.values[0] === 'number', 'ColumnZ must be numeric!');
 
-    const sameLength = new Set([columnX.values.length,
+    const sameLength = new Set([
+      columnX.values.length,
       columnY.values.length,
-      columnZ.values.length]);
+      columnZ.values.length,
+    ]);
     assert.equal(sameLength.size, 1, 'The number of values in the given columns must be the same, but '
         + `column ${columnXName} has ${columnX.values.length} values, `
         + `column ${columnYName} has ${columnY.values.length} values, and `
         + `column ${columnZName} has ${columnZ.values.length} values!`);
 
+    const maxX = Math.max(...columnX.values as number[]);
+    const maxY = Math.max(...columnY.values as number[]);
+    const maxZ = Math.max(...columnZ.values as number[]);
+    const maxValues = [maxX, maxY, maxZ];
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
       columnX as Column<NumericColumn>,
       columnY as Column<NumericColumn>,
       columnZ as Column<NumericColumn>,
     );
-    return Promise.resolve(dataPoints);
+    return Promise.resolve([dataPoints, maxValues]);
   }
 
   /**
