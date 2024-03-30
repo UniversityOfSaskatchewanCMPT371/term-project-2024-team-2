@@ -263,9 +263,12 @@ export default class DbRepository extends Dexie implements Repository {
         + `column ${columnZName} has ${columnZ.values.length} values!`);
 
     // Get the absolute max values of each column, and round of to the next integer
-    const maxX = Math.ceil(Math.abs(Math.max(...columnX.values as number[])));
-    const maxY = Math.ceil(Math.abs(Math.max(...columnY.values as number[])));
-    const maxZ = Math.ceil(Math.abs(Math.max(...columnZ.values as number[])));
+    const absValues = [
+      columnX.values as number[],
+      columnY.values as number[],
+      columnZ.values as number[],
+    ].map((column) => column.map(Math.abs));
+    const [maxX, maxY, maxZ] = absValues.map((values) => Math.ceil(Math.max(...values)));
     const maxValues = [maxX, maxY, maxZ];
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
       columnX as Column<NumericColumn>,
