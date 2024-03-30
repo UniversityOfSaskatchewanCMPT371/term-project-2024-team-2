@@ -108,6 +108,7 @@ export default function SingleAxis({
         radius,
         label,
         axis,
+        maxValue,
       ))}
     </group>
   );

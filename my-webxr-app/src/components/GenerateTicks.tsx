@@ -2,8 +2,11 @@ import { Text } from '@react-three/drei';
 
 /**
  * Creates a single tick to be tied to an axis
- * @pre-condition None
- * @post-condition A labeled element that can be displayed in the VR Space
+ * @pre-condition - labelOffset of 1 seems to be the best value for the tick label to be displayed.
+ * @post-condition
+ * - A labeled element that can be displayed in the VR Space.
+ * - The tick is displayed at the correct position on the axis.
+ * - The space between each tick in 3 axes is the same.
  * @param {number} startX the minimum value on the x-axis
  * @param {number} startY the minimum value on the y-axis
  * @param {number} startZ the minimum value on the z-axis
@@ -24,22 +27,24 @@ export default function GenerateTicks(
   radius: number,
   label: number,
   axis: string,
+  maxValue: number,
 ): JSX.Element {
   let positionTicks: [number, number, number] | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let positionLabels: [number, number, number] | undefined;
   let ticksShape: [number, number, number] | undefined;
   // conditional to check which axis we want the ticks and labels to be on
+  // 'label / maxValue' will give the same space between each tick no matter the maxValue and axes
   if (axis === 'x') {
     positionTicks = [
       // this calculation gives the correct space between each tick
-      startX + (labelOffset * label * scaleFactor) / 2,
+      startX + (labelOffset * label / maxValue * scaleFactor) / 2,
       startY,
       startZ,
     ];
     positionLabels = [
       // this calculation gives the correct space between each label
-      startX + (labelOffset * label * scaleFactor) / 2,
+      startX + (labelOffset * label / maxValue * scaleFactor) / 2,
       startY - 0.02,
       startZ,
     ];
@@ -47,12 +52,12 @@ export default function GenerateTicks(
   } else if (axis === 'y') {
     positionTicks = [
       startX,
-      startY + (labelOffset * label * scaleFactor) / 2,
+      startY + (labelOffset * label / maxValue * scaleFactor) / 2,
       startZ,
     ];
     positionLabels = [
       startX + 0.03,
-      startY + (labelOffset * label * scaleFactor) / 2,
+      startY + (labelOffset * label / maxValue * scaleFactor) / 2,
       startZ,
     ];
     ticksShape = [radius * 7, 0.002, radius * 2];
@@ -60,20 +65,17 @@ export default function GenerateTicks(
     positionTicks = [
       startX,
       startY,
-      startZ + (labelOffset * label * scaleFactor) / 2,
+      startZ + (labelOffset * label / maxValue * scaleFactor) / 2,
     ];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     positionLabels = [
       startX,
       startY - 0.02,
-      startZ + (labelOffset * label * scaleFactor) / 2,
+      startZ + (labelOffset * label / maxValue * scaleFactor) / 2,
     ];
     ticksShape = [0.002, radius * 7, radius * 2];
   }
 
-  /* Text from drei breaks the jest testing, so need the disables */
-  // labelText is assigned the correct label by multiplying by the increment
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const labelText: string = `${label}`;
 
   return (
