@@ -6,6 +6,9 @@ import Column, {
   TableName, RawColumn, NumericColumn, StatsColumn,
 } from './Column';
 
+/**
+ * Concrete implementation of a data source in IndexedDB
+ */
 export default class DbRepository extends Dexie implements Repository {
   // Declare implicit table properties.
   // just to inform Typescript of the object type stored in the table.
@@ -17,6 +20,13 @@ export default class DbRepository extends Dexie implements Repository {
 
   private pcaColumns!: Dexie.Table<Column<NumericColumn>, string>;
 
+  /**
+   * Concrete implementation of a data source in IndexedDB
+   *
+   * @param dbName The name of the database to create
+   * @pre-condition The dbName is a string
+   * @post-condition A database with the provided dbName will be created in the browser's IndexedDB
+   */
   constructor(dbName: string) {
     // create a db instance
     super(dbName);
@@ -46,7 +56,10 @@ export default class DbRepository extends Dexie implements Repository {
   /**
    * Checks if the table is empty
    *
-   * @param {TableName}  tableName the name of table to be checked
+   * @pre-condition None
+   * @post-condition Returns whether a table type is empty
+   * @param {TableName} tableName the name of table to be checked
+   * @return {Promise<boolean>} whether or not hte table tupe is empty
    */
   async isTableEmpty(tableName: TableName): Promise<boolean> {
     let count = 0;
@@ -73,10 +86,14 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * Adds a column to a table
-   * @preconds: The column name must be unique
-   * @param column the column to be added to the database
-   * @param tableName the name of table to add column to
-   * @return Promise<string> the primary key of the column aka the name of the column
+   * @pre-condition The column name must be unique@post-condition The column will be added to the
+   *    database and can be referenced by the returned name
+   * @post-condition Creates a new column entry in the provided table
+   * @param {Column<RawColumn | StatsColumn | NumericColumn>} column the column to be added to
+   *    the database
+   * @param {TableName} tableName the name of table to add column to
+   * @return {PromiseExtended<string | void>} the primary key of the column aka the name of
+   *    the column
    */
   async addColumn(column: Column<RawColumn | StatsColumn | NumericColumn>, tableName: TableName) {
     switch (tableName) {
@@ -114,13 +131,14 @@ export default class DbRepository extends Dexie implements Repository {
    * This excludes stats column because stats column is a look-up table, and value should not be
    * updated manually.
    *
-   * @param {Column<NumericColumn | RawColumn | StatsColumn>} column - The column to be updated.
+   * @pre-condition tableName is not STATS
+   * @post-condition replaces the provided column in the database
+   * @param {Column<NumericColumn | RawColumn>} column - The column to be updated.
    * @param {TableName} tableName - The table name contains column to be updated.
    * @returns {Promise<boolean>} - Returns a promise that resolves to a boolean indicating whether
    * the update was successful.
    * @throws {Error} - Throws an error if an invalid column type is provided.
    */
-
   async updateColumn(
     column: Column<NumericColumn | RawColumn>,
     tableName: TableName,
@@ -151,6 +169,8 @@ export default class DbRepository extends Dexie implements Repository {
    * Retrieves a column object from the specified table in the database based on the provided column
    * name and type.
    *
+   * @pre-condition There exists only one column of the given name in the given table
+   * @post-condition Returns the column associated with the provided key
    * @param {string} columnName - The name of the column to be retrieved.
    * @param {TableName} tableName - The name of table to retrieve column from. This determines the
    * table to fetch the column from.
@@ -191,6 +211,8 @@ export default class DbRepository extends Dexie implements Repository {
   /**
     * Return a column object from the StatsData table (Look up table) based on given column name.
    *
+   * @pre-condition There exists a column in the raw data table with the key columnName
+   * @post-condition The stats associate with that column
    * @param columnName the name of the column to be retrieved
    * @return Promise<Column> the column object
    */
@@ -206,12 +228,14 @@ export default class DbRepository extends Dexie implements Repository {
    * selects columns in the database; and returns them as an array of DataPoint objects and an array
    * of three non-negative integer maximum values.
    *
-   * @preconds
+   * @pre-condition
    * - The columns must exist in the database. Either in the 'RAW' table or the 'PCA' table.
    * - No columns in Raw table should have the same name as columns in PCA table (PC1, PC2, PC3,...)
    * - The columns must contain numeric data.
    * - The lengths of the x, y, and z columns must be the same.
    * - The three column names must be distinct.
+   * @post-condition - A set of data points that can be plotted and each of column absolute max int
+   * value.
    *
    * @param {string | null} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string | null} columnYName - Column names to use for the y values of the DataPoint.
@@ -281,12 +305,13 @@ export default class DbRepository extends Dexie implements Repository {
   /**
    * Convert the columns into an array of DataPoints
    *
-   * @preconds
+   * @pre-condition
    * - All columns must have the same length.
    * - All columns must contain numeric data.
-   * @param columnX the column to be used as the x-axis
-   * @param columnY the column to be used as the y-axis
-   * @param columnZ the column to be used as the z-axis
+   * @post-condition A row-wise representation of the data
+   * @param {Column} columnX the column to be used as the x-axis
+   * @param {Column} columnY the column to be used as the y-axis
+   * @param {Column} columnZ the column to be used as the z-axis
    * @return Array<DataPoint>
    */
   static convertColumnsIntoDataPoints(
@@ -317,10 +342,6 @@ export default class DbRepository extends Dexie implements Repository {
     return dataPoints;
   }
 
-  /*
-        closeConnection closes the connection to the database
-         */
-
   /**
    * Retrieves all column names from the raw data table in the database.
    *
@@ -328,6 +349,8 @@ export default class DbRepository extends Dexie implements Repository {
    * The method uses Dexie's `toCollection` and `keys` methods to retrieve all keys which is column
    * names from the `rawColumns` table without loading the entire column into memory.
    *
+   * @pre-condition The raw data table exists
+   * @post-condition Returns the array of all data column primary keys
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
   async getCsvColumnNames(): Promise<string[]> {
@@ -338,6 +361,8 @@ export default class DbRepository extends Dexie implements Repository {
    * Retrieves all numeric column names from the stat data table in the database.
    *
    * Use the same logic as `getAllColumnNames` to save memory.
+   * @pre-condition The stats data table exists
+   * @post-condition Returns the array of all data column primary keys
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
   async getStatsColumnNames(): Promise<string[]> {
@@ -348,6 +373,8 @@ export default class DbRepository extends Dexie implements Repository {
    * Retrieves all PCA column names from the PCA data table in the database.
    *
    * Use the same logic as `getAllColumnNames` to save memory.
+   * @pre-condition The pca data table exists
+   * @post-condition Returns the array of all pca column primary keys
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
   async getPcaColumnNames(): Promise<string[]> {
@@ -358,6 +385,8 @@ export default class DbRepository extends Dexie implements Repository {
    * Retrieves all standardized column names from the standardized data table in the database.
    *
    * Use the same logic as `getAllColumnNames` to save memory.
+   * @pre-condition The standardized data table exists
+   * @post-condition Returns the array of all standardized column primary keys
    * @returns {Promise<string[]>} A promise resolves to an array of column names.
    */
   async getStandardizedColumnNames(): Promise<string[]> {
@@ -365,8 +394,10 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * closeConnection closes the connection to the database
-   */
+     * Closes the database connection
+     * @pre-condition The database connection is open
+     * @post-condition The database connection is closed
+     */
   closeConnection() {
     this.close();
   }

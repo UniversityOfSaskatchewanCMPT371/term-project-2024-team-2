@@ -5,6 +5,7 @@ import Column, {
 
 // The repository interface defines operations that can be
 // done to/on the db.
+// TODO swap over documentation
 export interface Repository {
   getPoints: (
     columnXName: string,

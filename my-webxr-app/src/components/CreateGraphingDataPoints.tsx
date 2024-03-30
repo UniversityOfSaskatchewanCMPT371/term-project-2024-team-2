@@ -16,12 +16,13 @@ import { rollbar } from '../utils/LoggingUtils';
  * the columns selected. The data points are then mapped to positions using the createPosition
  * function and rendered as GraphingDataPoint components.
  *
- * @preconds
+ * @pre-condition
  * - The selectedXAxis, selectedYAxis, and selectedZAxis must be valid column names in the database.
  * - The dataPoints array must not be empty.
  * - The AxisStartPoints array must contain exactly three numbers and be the same with the actual
  * hard-coded axis start points so that the points are plotted correctly.
  * - The length, scale, and max parameters must be positive numbers.
+ * @post-condition An array of elements that will visually graph data
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
