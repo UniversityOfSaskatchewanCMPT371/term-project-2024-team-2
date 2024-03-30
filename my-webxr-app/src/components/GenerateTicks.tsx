@@ -11,12 +11,11 @@ import { Text } from '@react-three/drei';
  * @param {number} scaleFactor the axis scale. (ie. the distance between each tick)
  * @param {number} radius corner radius of the tick's shape
  * @param {number} label the number to display with the tick
- * @param {number} increment the number of increments away from the start of the axis
  * @param {string} axis the label of the axis we are displaying one ('x', 'y', or 'z')
  * @return {JSX.Element} the tick element and its number label
  * @constructor
  */
-export default function GenerateTick(
+export default function GenerateTicks(
   startX: number,
   startY: number,
   startZ: number,
@@ -24,14 +23,12 @@ export default function GenerateTick(
   scaleFactor: number,
   radius: number,
   label: number,
-  increment: number,
   axis: string,
 ): JSX.Element {
   let positionTicks: [number, number, number] | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let positionLabels: [number, number, number] | undefined;
   let ticksShape: [number, number, number] | undefined;
-
   // conditional to check which axis we want the ticks and labels to be on
   if (axis === 'x') {
     positionTicks = [
@@ -77,7 +74,7 @@ export default function GenerateTick(
   /* Text from drei breaks the jest testing, so need the disables */
   // labelText is assigned the correct label by multiplying by the increment
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const labelText: string = `${label * increment}`;
+  const labelText: string = `${label}`;
 
   return (
     <group key={label} name="tick">
