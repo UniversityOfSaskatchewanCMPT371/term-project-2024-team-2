@@ -21,8 +21,6 @@ import { rollbarConfig } from './utils/LoggingUtils';
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
 const maxNum: number = 10;
-// scaleFactor adjusts the size of the 3D axis
-const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
 // starting point of the axis
@@ -42,8 +40,8 @@ export default function App() {
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
 
-  // the scale state of the graph
-  const [graphScale, setGraphScale] = useState(10);
+  // scaleFactor adjusts the size of the 3D axis
+  const [scaleFactor, setScaleFactor] = useState(2);
 
   // Initialize the database and store for csv data
   useEffect(() => {
@@ -113,7 +111,7 @@ export default function App() {
           Print Data to Console
         </button>
       </div>
-      <ScaleSlider scale={graphScale} setScale={setGraphScale} />
+      <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
       <VRButton />
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
