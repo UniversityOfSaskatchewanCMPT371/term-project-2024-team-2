@@ -8,6 +8,13 @@ export default class Column<Type> {
 
   values: Type;
 
+  /**
+   * Stores a CSV column
+   * @pre-condition Name is a string and values are strings or numbers
+   * @post-condition The column with the provided name will be represented by this object
+   * @param {string} name a string the is the name of the column
+   * @param {Type} values an array of data associated with the column
+   */
   constructor(name: string, values: Type) {
     this.name = name;
     this.values = values;

@@ -10,7 +10,8 @@ interface CsvReaderProps {
 /**
  * A React component that reads data from a local CSV file and stores it in a specified database and
  * store.
- *
+ * @pre-condition None
+ * @post-condition Returns an element to expose local csv uploading
  * @param {object} props - The properties passed to the component.
  * @param {string} props.dbName - The name of the database where the data should be stored.
  * @param {string} props.storeName - The name of the store within the database where the data should
@@ -65,7 +66,8 @@ export function LocalCsvReader({ dbName, storeName }: CsvReaderProps): JSX.Eleme
 /**
  * A React component that reads data from a CSV file at a given URL and stores it in a specified
  * database and store.
- *
+ * @pre-condition None
+ * @post-condition Returns an element to expose url csv uploading
  * @param {object} props - The properties passed to the component.
  * @param {string} props.dbName - The name of the database where the data should be stored.
  * @param {string} props.storeName - The name of the store within the database where the data should
