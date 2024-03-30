@@ -391,7 +391,8 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * This function retrieves data points from the repository based on the provided column names.
+   * This function retrieves an array of data points in forms of [x, y ,z] and an array of 3 maximum
+   * absolute values of each x, y, z components of the data points array.
    *
    * @pre-conditions
    * - No fields/columns in CSV should be named as PC1, PC2, PC3, ..., PCn.

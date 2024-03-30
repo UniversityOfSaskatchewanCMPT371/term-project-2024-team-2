@@ -202,8 +202,9 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * Retrieves the x, y, and z values from the specified columns in the database and returns them as
-   * an array of DataPoint objects.
+   * Retrieves the x, y, and z values from the specified columns and the absolute max values of each
+   * selects columns in the database; and returns them as an array of DataPoint objects and an array
+   * of three positive maximum values.
    *
    * @preconds
    * - The columns must exist in the database. Either in the 'RAW' table or the 'PCA' table.
@@ -261,9 +262,9 @@ export default class DbRepository extends Dexie implements Repository {
         + `column ${columnYName} has ${columnY.values.length} values, and `
         + `column ${columnZName} has ${columnZ.values.length} values!`);
 
-    const maxX = Math.max(...columnX.values as number[]);
-    const maxY = Math.max(...columnY.values as number[]);
-    const maxZ = Math.max(...columnZ.values as number[]);
+    const maxX = Math.abs(Math.max(...columnX.values as number[]));
+    const maxY = Math.abs(Math.max(...columnY.values as number[]));
+    const maxZ = Math.abs(Math.max(...columnZ.values as number[]));
     const maxValues = [maxX, maxY, maxZ];
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
       columnX as Column<NumericColumn>,
