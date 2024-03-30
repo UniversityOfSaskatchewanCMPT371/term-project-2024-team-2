@@ -18,6 +18,8 @@ import { rollbar } from './LoggingUtils';
  *
  * Formula: (X^T * X) * (1/(n-1))
  *
+ * @pre-condition There is more than one column in the standardizedDataset
+ * @post-condition returns the covariance matrix of the dataset
  * @param {Matrix} standardizedDataset - The dataset to calculate the covariance matrix for,
  * represented as a Matrix.
  * @returns {Matrix} The covariance matrix of the dataset. This matrix is symmetric.
@@ -37,6 +39,8 @@ export function calculateCovarianceMatrix(standardizedDataset: Matrix): Matrix {
  * sorted in descending order, so that the first eigenvalue corresponds to the direction of maximum
  * variance in the data, the second to the direction of second most variance, and so on.
  *
+ * @pre-condition the covarianceMatrix is symmetric
+ * @post-condition returns an array of eigen values in descending order.
  * @param {Matrix} covarianceMatrix - The covariance matrix from which to compute the eigenvalues.
  * @returns {number[]} An array of eigenvalues in descending order.
  * @throws {Error} If the input matrix is not symmetric.
@@ -57,6 +61,8 @@ export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix)
  * corresponds to the direction of maximum variance in the data, the second to the direction of
  * second most variance, and so on.
  *
+ * @pre-condition the covarianceMatrix is symmetric
+ * @post-condition returns a matrix of eigen vectors.
  * @param {Matrix} covarianceMatrix - The covariance matrix from which to compute the eigenvectors.
  * @returns {Matrix} A matrix of eigenvectors (U).
  * @throws {Error} If the input matrix is not symmetric.
@@ -72,6 +78,8 @@ export function computeEigenvectorsFromCovarianceMatrix(covarianceMatrix: Matrix
 /**
  * Calculates the variance explained by each principal component, in descending order.
  *
+ * @pre-condition the covarianceMatrix is symmetric
+ * @post-condition returns an array of variances explained by each principal component.
  * @param {Matrix} covarianceMatrix - The covariance matrix to compute the variance explained.
  * @returns {number[]} An array of variances explained by each principal component.
  * @throws {Error} If an error occurs during the PCA computation.
@@ -91,6 +99,9 @@ export function calculateVarianceExplained(covarianceMatrix: Matrix): number[] {
 /**
  * Performs Principal Component Analysis (PCA) on a dataset using the covariance method.
  *
+ * @pre-condition The provided data set is standardized and there is more than one column
+ * @post-condition returns a matrix pf principal components in order of most to least
+ *    explained variance
  * @param {Matrix} standardizedDataset - The standardized version of the original dataset.
  * @returns {Matrix} The transformed dataset in the principal component space. If an error occurs
  * during the PCA computation, an empty matrix is returned.

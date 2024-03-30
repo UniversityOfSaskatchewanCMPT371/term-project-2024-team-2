@@ -1,7 +1,23 @@
 import { Text } from '@react-three/drei';
+import * as assert from 'assert';
 
-// this function creates the ticks and labels for the axes
-export default function GenerateTicks(
+/**
+ * Creates a single tick to be tied to an axis
+ * @pre-condition None
+ * @post-condition A labeled element that can be displayed in the VR Space
+ * @param {number} startX the minimum value on the x-axis
+ * @param {number} startY the minimum value on the y-axis
+ * @param {number} startZ the minimum value on the z-axis
+ * @param {number} labelOffset how far away the tick label should be from the tick object
+ * @param {number} scaleFactor the axis scale. (ie. the distance between each tick)
+ * @param {number} radius corner radius of the tick's shape
+ * @param {number} label the number to display with the tick
+ * @param {number} increment the number of increments away from the start of the axis
+ * @param {string} axis the label of the axis we are displaying one ('x', 'y', or 'z')
+ * @return {JSX.Element} the tick element and its number label
+ * @constructor
+ */
+export default function GenerateTick(
   startX: number,
   startY: number,
   startZ: number,
@@ -11,7 +27,9 @@ export default function GenerateTicks(
   label: number,
   increment: number,
   axis: string,
-) {
+): JSX.Element {
+  assert.ok(['x', 'y', 'z'].includes(axis), `Invalid axis provided: ${axis}`);
+
   let positionTicks: [number, number, number] | undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let positionLabels: [number, number, number] | undefined;

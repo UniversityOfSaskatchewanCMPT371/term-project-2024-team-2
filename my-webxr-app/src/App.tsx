@@ -6,6 +6,7 @@ import { Provider } from '@rollbar/react';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
+import ScaleSlider from './components/ScaleSlider';
 import GenerateXYZ from './components/GenerateXYZ';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
@@ -19,8 +20,6 @@ import { getDatabase } from './data/DataAbstractor';
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
 const maxNum: number = 10;
-// scaleFactor adjusts the size of the 3D axis
-const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
 // starting point of the axis
@@ -41,6 +40,58 @@ export default function App() {
   const dbName = 'CsvDataBase';
   const storeName = 'CsvData';
 
+  // scaleFactor adjusts the size of the 3D axis
+  const [scaleFactor, setScaleFactor] = useState(2);
+
+  // Initialize the database and store for csv data
+  useEffect(() => {
+    const initializeDB = async () => {
+      await openDB(dbName, 1, {
+        upgrade(db) {
+          if (db.objectStoreNames.contains(storeName)) {
+            db.deleteObjectStore(storeName);
+          }
+          db.createObjectStore(storeName);
+        },
+      });
+    };
+    initializeDB();
+  }, [dbName, storeName]);
+
+  // Demo createGraphingDataPoints
+  const exampleDataPoints = [
+    [5, 5, 5],
+    [-5, 5, 5],
+    [5, -5, 5],
+    [-5, -5, 5],
+    [5, 5, -5],
+    [-5, 5, -5],
+    [5, -5, -5],
+    [-5, -5, -5],
+    [0, 5, 5],
+    [0, -5, 5],
+    [0, 5, -5],
+    [0, -5, -5],
+    [5, 0, 5],
+    [-5, 0, 5],
+    [5, 0, -5],
+    [-5, 0, -5],
+    [5, 5, 0],
+    [-5, 5, 0],
+    [5, -5, 0],
+    [-5, -5, 0],
+  ];
+  const dataPoints = exampleDataPoints.map((point) => new DataPoint(point[0], point[1], point[2]));
+  const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
+    dataPoints,
+    'columnX',
+    'columnY',
+    'columnZ',
+    [startPointX, startPointY, startPointZ],
+    Length,
+    scaleFactor,
+    maxNum,
+  ) : [];
   return (
     <AxesSelectionProvider>
       <div>
@@ -61,6 +112,7 @@ export default function App() {
         </button>
         <SelectAxesColumns database={database} />
       </div>
+      <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
       <VRButton />
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>

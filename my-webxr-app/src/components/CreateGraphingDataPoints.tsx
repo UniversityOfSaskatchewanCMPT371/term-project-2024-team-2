@@ -12,7 +12,7 @@ import { rollbar } from '../utils/LoggingUtils';
  * should be call in conjunction with createPosition, I split them into two function for the sake of
  * testing.
  *
- * @preconds
+ * @pre-condition
  * - The dataPoints array must not be empty.
  * - The xColumnName, yColumnName, and zColumnName must correspond to properties of the DataPoint
  * objects.

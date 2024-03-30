@@ -1,19 +1,24 @@
 import { Vector3 } from 'three';
 // import assert from "../utils/Assert";
 import assert from '../utils/Assert';
+
 /**
-  Creates a Vector for the points position relative to the size of the Axis and the Data
-    given to the point ( would eventually want to create
-  an axis Type to pass in instead of all these variables )
-  @param {Array<number>} data - The actual data that determines the position of the point,
-   must be in the format [x,y,z]
-  @param {Array<number>} AxisStartPoints - The starting point of each Axis, there must be
-   three entries in the format [x,y,z]
-  @param {number} length - THis is the length of each axis
-  @param {number} scale - This is the scale that is applied to the length, allows for easy
-   adjustment of data point location as graph gets bigger/smaller
-  @param {number} max - this is the maximum value of the data read in by the program
-  @return {Vector3} - this is the final position of the point.
+ * Creates a Vector for the points position relative to the size of the Axis and the Data
+ *    given to the point ( would eventually want to create an axis Type to pass in instead of all
+ *    these variables )
+ * @pre-condition
+ *    - data: [x, y, z] data
+ *    - AxisStartPoints: [x, y, z] smallest value in the 3D space
+ * @post-condition a 3D vector of the object position
+ * @param {Array<number>} data The actual data that determines the position of the point,
+ *    must be in the format [x,y,z]
+ * @param {Array<number>} AxisStartPoints The starting point of each Axis, there must be
+ *    three entries in the format [x,y,z]
+ * @param {number} length This is the length of each axis
+ * @param {number} scale This is the scale that is applied to the length, allows for easy
+ *    adjustment of data point location as graph gets bigger/smaller
+ * @param {number} max this is the maximum value of the data read in by the program
+ * @return {Vector3} this is the final position of the point.
  */
 const createPosition = ({
   data, AxisStartPoints, length, scale, max,
