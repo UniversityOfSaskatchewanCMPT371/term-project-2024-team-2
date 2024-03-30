@@ -384,4 +384,18 @@ export default class DbRepository extends Dexie implements Repository {
   closeConnection() {
     this.close();
   }
+
+  /**
+   * Clears all tables in the database
+   * @pre-condition None
+   * @post-condition All tables in the database are cleared
+   * @return {Promise<void>} A promise that resolves when all tables have been cleared.
+   */
+  clearTables(): Promise<void> {
+    this.rawColumns.clear();
+    this.statsColumns.clear();
+    this.standardizedColumns.clear();
+    this.pcaColumns.clear();
+    return Promise.resolve();
+  }
 }

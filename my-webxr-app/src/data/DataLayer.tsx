@@ -472,6 +472,7 @@ export default class DataLayer implements DataAbstractor {
  * @returns {Promise<boolean>} - A promise that resolves when the flag is reset.
  */
   public async resetFlag(): Promise<boolean> {
+    this.repository.clearTables();
     this.isFirstBatch = true;
     return true;
   }
