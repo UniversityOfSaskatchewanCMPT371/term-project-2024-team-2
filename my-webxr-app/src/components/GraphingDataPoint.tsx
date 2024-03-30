@@ -6,9 +6,34 @@ import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
 import WriteHook from '../smoketest/TestHookWrite';
 
+/**
+ * Creates a VR element of an intractable datapoint
+ * @pre-condition None
+ * @post-condition a VR element of an intractable datapoint
+ * @param {number} id the id of the object
+ * @param {string} marker the marker to display in the data point summary
+ * @param {string} color the colour of the object
+ * @param {string} columnX the name of the x-axis data column
+ * @param {string} columnY the name of the y-axis data column
+ * @param {string} columnZ the name of the z-axis data column
+ * @param {number | undefined} outlineScale the amount of outline to put around a hovered
+ *    data element
+ * @param {number[] | undefined} actualData the data to assign to the datapoint
+ * @param {[radius: number | undefined, widthSegments: number | undefined,
+ *    heightSegments: number | undefined, phiStart: number | undefined,
+ *    phiLength: number | undefined, thetaStart: number | undefined,
+ *    thetaLength: number | undefined] | undefined} size the radius of the datapoint
+ * @param {(Omit<Node<Mesh<BufferGeometry, Material | Material[], Object3DEventMap>, Mesh>,
+ *    "position" | "up" | "scale" | "rotation" | "matrix" | "quaternion" | "layers" | "dispose"> &
+ *    {position?: Vector3, up?: Vector3, scale?: Vector3, rotation?: Euler, matrix?: Matrix4,
+ *    quaternion?: Quaternion, layers?: Layers, dispose?: (() => void) | null} &
+ *    EventHandlers) | undefined} meshProps Props to provide to the sphereMesh
+ * @return {JSX.Element} a VR element of an intractable datapoint
+ * @constructor
+ */
 export default function GraphingDataPoint({
   id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
-}: DataPointProps) {
+}: DataPointProps): JSX.Element {
   /* State for the count of controllers hovering over the GraphingDataPoint */
   const [hoverCount, setHoverCount] = useState(0);
   /* Access the selected GraphingDataPoint State from the shared PointSelectionContext */

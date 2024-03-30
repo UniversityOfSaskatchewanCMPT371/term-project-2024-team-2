@@ -23,6 +23,8 @@ export default class DataLayer implements DataAbstractor {
 
   /**
    * Create a new Data Layer instance.
+   * @pre-condition None
+   * @post-condition A new data layer to interact with is created
    * @param dbName (optional) the name of the Data Repository.
    */
   constructor(dbName?: string) {
@@ -36,6 +38,10 @@ export default class DataLayer implements DataAbstractor {
    * This method takes a 2D array (batchItems) where the inner arrays represent rows of data,
    * and transposes it so that the inner arrays represent columns of data instead. This is useful
    * when you want to perform operations on columns of data rather than rows.
+   * @pre-condition
+   *    - batchItems: a row-wise declaration of input data, (ie. batchedItems[0] is the first row)
+   * @post-condition A column-wise declaration of the input data
+   * `    (ie. transposeData(batchedItems)[0] is the first column)
    *
    * @param {BatchedDataStream} batchItems - A 2D array of data where each inner array represents
    * a row.
@@ -68,13 +74,15 @@ export default class DataLayer implements DataAbstractor {
    *
    * If any error occurs during the operation, the method catches the error and returns `false`.
    *
+   * @pre-condition
+   *    - batchItems: a row-wise declaration of input data, (ie. batchedItems[0] is the first row)
+   * @post-condition the data is stored column-wise
    * @param {BatchedDataStream} batchItems - A 2D array of CSV data that is referenced by row.
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
    *
    * TODO reset the flag every when user load a different csv file
    */
-
   async storeCSV(batchItems: BatchedDataStream): Promise<boolean> {
     try {
       const transposedData = DataLayer.transposeData(batchItems);
@@ -112,7 +120,9 @@ export default class DataLayer implements DataAbstractor {
    * Helper function for calculateStatistics()
    *
    * Calculate the statistical values for a given column.
-   * @preconds Column values are array of numbers.
+   * @pre-condition Column values are array of numbers.
+   * @post-condition A Column of the same name but storing the
+   *    [count, sum, sumOfSquares, mean, standard deviation] of the original data
    * @param {Column<NumericColumn>} column The column of data to calculate statistics for.
    * @param {string} columnName The name of the column.
    * @returns {Column<StatsColumn>} containing the statistical values.
@@ -152,7 +162,9 @@ export default class DataLayer implements DataAbstractor {
    * the data, check if the data are all numeric, calculates statistics, and adds a new statistic
    * column to the Look-up table (stats table) in the repository.
    *
-   * @preconds Column is not empty.
+   * @pre-condition The raw data table is not empty.
+   * @post-condition The statistics for each column are calculated and stored in their own
+   *    data table
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
    * @throws {Error} If the raw data table in the repository is empty or if an error occurs during
@@ -190,6 +202,8 @@ export default class DataLayer implements DataAbstractor {
    * Retrieve the available fields (column headers) from stats data table and pca data table.
    * Intended to be used for user to select which fields to plot
    *
+   * @pre-condition None
+   * @post-condition Returns the column with data that can be plotted
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
@@ -202,6 +216,8 @@ export default class DataLayer implements DataAbstractor {
    * Retrieve the all column names from PCA table
    * Intend use for user to select which 3 PCA columns to be plotted.
    *
+   * @pre-condition None
+   * @post-condition Gets the names of the columns in the PCA stats table
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAllPcaColumnNames(): Promise<string[]> {
@@ -212,7 +228,8 @@ export default class DataLayer implements DataAbstractor {
    * Retrieve all the numeric column names in Raw/CSV data.
    * Intended to be used for user to select which 3 Raw columns to be plotted.
    *
-   * @preconds - Stat table contains only and the names of all numeric Raw/CSV columns.
+   * @pre-condition - Stat table contains only and the names of all numeric Raw/CSV columns.
+   * @post-condition Returns the names of the raw data columns
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAllNumericRawColumnNames(): Promise<string[]> {
@@ -227,9 +244,11 @@ export default class DataLayer implements DataAbstractor {
    * and stats column. For each entry in the raw data column, it standardizes the data using the
    * mean and standard deviation from the stats column.
    *
-   * @preconds
+   * @pre-condition
    * - Column name is in look up table (stats table).
    * - Corresponding column name in raw data table is numeric, which must be true.
+   * @post-condition calculates a standardized (zero-centered with standatd deviation of 1)
+   *    transformation of the raw data
    * @param {string} columnName - The name of the numeric column to be standardized.
    * @return {Promise<Column<NumericColumn>>} A promise that resolves to a Column object containing
    * the standardized data.
@@ -253,6 +272,9 @@ export default class DataLayer implements DataAbstractor {
    * This function retrieves all numeric columns from the Look-Up Table (Stats table), standardizes
    * them, and writes the standardized data as column back to the standardizedDataTable.
    *
+   * @pre-condition None
+   * @post-condition All numeric raw data columns are standardized and stored in the standardized
+   *    data table
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
    * @throws {Error} If the stats table is empty or if an error occurs during the operation.
@@ -284,11 +306,16 @@ export default class DataLayer implements DataAbstractor {
    * each column based on the specified table name, and returns a new Matrix instance with the
    * retrieved data.
    *
+   * We can retrieve from either the raw or standardized table as some PCA methods require
+   * standardized data and some do not.
+   *
    * The Matrix size could be too large and exceed the memory limit. TODO handle this case.
    *
    * If an error occurs during the operation (e.g., a column does not exist, table empty), the
    * function will catch the error and return an empty Matrix.
-   * @preconds - Columns are in the table, either RAW or STANDARDIZED.
+   * @pre-codition - Columns are in the table, either RAW or STANDARDIZED.
+   * @post-condition returns a promise that resolves to a Matrix instance containing the
+   * retrieved data.
    * @param {string[]} columnNames - The names of the columns to retrieve data for.
    * @param {TableName} tableName - The name of the table to pull columns (RAW or STANDARDIZED).
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
@@ -332,7 +359,9 @@ export default class DataLayer implements DataAbstractor {
    * If an error occurs during the operation (e.g., the raw or standardized data is empty), the
    * function will catch the error and return an empty Matrix.
    *
-   * @preconds Column names are in the table, both raw and standardized.
+   * @pre-condition Column names are in the table, both raw and standardized.
+   * @post-condition Returns a matrix of PCA transformed data, or an empty matrix if there was an
+   *    error
    * @param {string[]} columnNames - The names of the columns to perform PCA on.
    * @returns {Promise<Matrix>} A promise that resolves to a Matrix instance containing the
    * PCA-transformed data.
@@ -361,6 +390,9 @@ export default class DataLayer implements DataAbstractor {
    *
    * Each column is then written back to the repository.
    *
+   * @pre-condition the columnNames are in the data store
+   * @post-condition the results from running PCA on the column subset are stored in their data
+   *    table
    * @param {string[]} columnNames - The names of the columns to perform PCA on.
    * @returns {Promise<boolean>} A promise that resolves to `true` if the operation was successful,
    * and `false` otherwise.
@@ -393,6 +425,9 @@ export default class DataLayer implements DataAbstractor {
    * This function retrieves data points from the repository based on the provided column names
    * and table name.
    *
+   * @pre-condition There exists a data column with a key matching hte provided names in the
+   *    data-store
+   * @post-condition Returns an array of data points associated with the provided column names
    * @param {string} columnX - The name of the column to be used for the x-axis values.
    * @param {string} columnY - The name of the column to be used for the y-axis values.
    * @param {string} columnZ - The name of the column to be used for the z-axis values.
@@ -401,7 +436,6 @@ export default class DataLayer implements DataAbstractor {
    * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
    * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
    */
-
   public async createDataPointsFrom3Columns(
     columnX: string,
     columnY: string,
@@ -416,6 +450,9 @@ export default class DataLayer implements DataAbstractor {
    *
    * This assumes the column relives are numeric from raw table is numeric
    *
+   * @pre-condition a data column of numeric data with the given names is stored in the provided
+   *    table
+   * @post-condition an array of data associated with the column
    * @param {string} columnName - The name of the column to retrieve values for.
    * @param {TableName} tableName - The name of table (RAW or PCA).
    * @returns {Promise<NumericColumn>} A promise that resolves to a NumericColumn object.
