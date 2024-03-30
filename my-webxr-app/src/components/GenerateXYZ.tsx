@@ -20,9 +20,9 @@ interface AxisProps {
  * @param {number} maxValue The maximum axis value
  * @param {number} labelOffset how far away the tick label should be from the tick object
  * @param {number} scaleFactor the axis scale. (ie. the distance between each tick)
- * @param {number} startX the minimum value on the x-axis
- * @param {number} startY the minimum value on the y-axis
- * @param {number} startZ the minimum value on the z-axis
+ * @param {number} startX the minimum 3D geometry location on the x-axis
+ * @param {number} startY the minimum 3D geometry location on the y-axis
+ * @param {number} startZ the minimum 3D geometry location on the z-axis
  * @param {number} endPoint the max value of the axes
  * @param {number} radius corner radius of the tick's shape
  * @return {JSX.Element} Returns the x, y, z axis object for displaying in VR
