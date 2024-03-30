@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import DataPoint from '../repository/DataPoint';
-import createPosition from './Positions';
+import createPosition from './CreatePointPositions';
 import GraphingDataPoint from './GraphingDataPoint';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { getDatabase } from '../data/DataAbstractor';

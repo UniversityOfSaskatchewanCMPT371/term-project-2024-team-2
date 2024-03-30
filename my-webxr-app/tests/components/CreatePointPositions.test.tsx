@@ -4,7 +4,7 @@ import { Vector3 } from 'three';
 import { Provider } from '@rollbar/react';
 import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
 import GraphingDataPoint from '../../src/components/GraphingDataPoint';
-import createPosition from '../../src/components/Positions';
+import createPosition from '../../src/components/CreatePointPositions';
 import MockServer from '../MockServer';
 import { rollbarConfig } from '../../src/utils/LoggingUtils';
 

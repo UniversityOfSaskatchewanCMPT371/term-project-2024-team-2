@@ -15,22 +15,22 @@ import assert from '../utils/Assert';
  * @param {Array<number>} maxData - this is the maximum values of the three axes x, y, z.
  * @return {Vector3} - this is the final position of the point.
  */
-const createPosition = ({
+const createPointPositions = ({
   data, AxisStartPoints, length, scale, maxData,
 }: {
-  data: Array<number>,
-  AxisStartPoints: Array<number>,
-  length: number,
-  scale: number,
-  maxData: Array<number>,
+  data: Array<number>;
+  AxisStartPoints: Array<number>;
+  length: number;
+  scale: number;
+  maxData: Array<number>
 }): Vector3 => {
   assert(
     data.length === 3,
-    'Error in Positions.tsx, should be 3 entries of data to be mapped, [x,y,z]',
+    'Error in CreatePointPositions.tsx, should be 3 entries of data to be mapped, [x,y,z]',
   );
   assert(
     AxisStartPoints.length === 3,
-    'Error in Positions.tsx, should be 3 start points, [x,y,z]',
+    'Error in CreatePointPositions.tsx, should be 3 start points, [x,y,z]',
   );
   assert(
     length !== undefined && length > 0,
@@ -42,11 +42,11 @@ const createPosition = ({
   );
   assert(
     maxData[0] >= 0 && maxData[1] >= 0 && maxData[2] >= 0,
-    'Error in Positions.tsx, maxData should be non-negative numbers',
+    'Error in CreatePointPositions.tsx, maxData should be non-negative numbers',
   );
   assert(
     data[0] <= maxData[0] || data[1] <= maxData[1] || data[2] <= maxData[2],
-    'Error in Positions.tsx: Trying to map Data that does not exist within the domain '
+    'Error in CreatePointPositions.tsx: Trying to map Data that does not exist within the domain '
            + 'of the graph, please check',
   );
 
@@ -56,4 +56,4 @@ const createPosition = ({
 
   return new Vector3(xPosition, yPosition, zPosition);
 };
-export default createPosition;
+export default createPointPositions;
