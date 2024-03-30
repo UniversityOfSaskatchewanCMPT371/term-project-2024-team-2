@@ -215,7 +215,8 @@ export default class DbRepository extends Dexie implements Repository {
    * @param {string | null} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string | null} columnYName - Column names to use for the y values of the DataPoint.
    * @param {string | null} columnZName - Column names to use for the z values of the DataPoint.
-   * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
+   * @returns {Promise<[Array<DataPoint>, Array<number>]>} A promise that resolves to an array of
+   * DataPoint objects and an array of maximum values from each column.
    * @throws {Error} If violates preconditions.
    */
   async getPoints(
