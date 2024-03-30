@@ -8,12 +8,12 @@ import createPosition from '../../src/components/Positions';
 import MockServer from '../MockServer';
 import { rollbarConfig } from '../../src/utils/LoggingUtils';
 
-const maxNum: number = 10;
 const scaleFactor: number = 1;
 const startPointX: number = -0.2;
 const startPointY: number = 1.6;
 const startPointZ: number = -0.5;
 const endPoint: number = 1;
+const maxValues = [10, 10, 10];
 
 const exampleData = [[1, 1, 1], [2, 3, 0], [0, 0, 0], [10, 10, 10], [-1, -1, -1]];
 
@@ -22,35 +22,35 @@ const datapoint1 = createPosition({
   AxisStartPoints: [startPointX, startPointY, startPointZ],
   length: endPoint,
   scale: scaleFactor,
-  max: maxNum,
+  maxData: maxValues,
 });
 const datapoint2 = createPosition({
   data: exampleData[1],
   AxisStartPoints: [startPointX, startPointY, startPointZ],
   length: endPoint,
   scale: scaleFactor,
-  max: maxNum,
+  maxData: maxValues,
 });
 const datapoint3 = createPosition({
   data: exampleData[2],
   AxisStartPoints: [startPointX, startPointY, startPointZ],
   length: endPoint,
   scale: scaleFactor,
-  max: maxNum,
+  maxData: maxValues,
 });
 const datapoint4 = createPosition({
   data: exampleData[3],
   AxisStartPoints: [startPointX, startPointY, startPointZ],
   length: endPoint,
   scale: scaleFactor,
-  max: maxNum,
+  maxData: maxValues,
 });
 const datapoint5 = createPosition({
   data: exampleData[4],
   AxisStartPoints: [startPointX, startPointY, startPointZ],
   length: endPoint,
   scale: scaleFactor,
-  max: maxNum,
+  maxData: maxValues,
 });
 
 describe("Datapoint's Location is based off of values given ", () => {
