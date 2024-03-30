@@ -392,6 +392,11 @@ export default class DbRepository extends Dexie implements Repository {
    * @return {Promise<void>} A promise that resolves when all tables have been cleared.
    */
   clearTables(): Promise<void> {
+    
+    assert.ok(this.rawColumns, 'Raw columns table does not exist');
+    assert.ok(this.statsColumns, 'Stats columns table does not exist');
+    assert.ok(this.standardizedColumns, 'Standardized columns table does not exist');
+    assert.ok(this.pcaColumns, 'PCA columns table does not exist');
     this.rawColumns.clear();
     this.statsColumns.clear();
     this.standardizedColumns.clear();
