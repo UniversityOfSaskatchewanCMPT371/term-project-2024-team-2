@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import * as assert from 'assert';
+import assert from 'node:assert';
 import { Repository } from './Repository';
 import DataPoint from './DataPoint';
 import Column, {
@@ -59,7 +59,7 @@ export default class DbRepository extends Dexie implements Repository {
    * @pre-condition None
    * @post-condition Returns whether a table type is empty
    * @param {TableName} tableName the name of table to be checked
-   * @return {Promise<boolean>} whether or not hte table tupe is empty
+   * @return {Promise<boolean>} whether or not the table tuple is empty
    */
   async isTableEmpty(tableName: TableName): Promise<boolean> {
     let count = 0;
@@ -228,7 +228,8 @@ export default class DbRepository extends Dexie implements Repository {
    * an array of DataPoint objects.
    *
    * @pre-condition
-   * - The table name must be either RAW or PCA.
+   * - The columns must exist in the database. Either in the 'RAW' table or the 'PCA' table.
+   * - No columns in Raw table should have the same name as columns in PCA table (PC1, PC2, PC3,...)
    * - The columns must contain numeric data.
    * - The lengths of the x, y, and z columns must be the same.
    * - The three column names must be distinct.
@@ -236,8 +237,6 @@ export default class DbRepository extends Dexie implements Repository {
    * @param {string} columnXName - Column names to use for the x values of the DataPoint.
    * @param {string} columnYName - Column names to use for the y values of the DataPoint.
    * @param {string} columnZName - Column names to use for the z values of the DataPoint.
-   * @param {TableName} tableName - The name of the table to retrieve columns from. Must be either
-   * RAW or PCA.
    * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
    * @throws {Error} If violates preconditions.
    */
@@ -245,7 +244,6 @@ export default class DbRepository extends Dexie implements Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string,
-    tableName: TableName,
   ): Promise<Array<DataPoint>> {
     // verify the three columns are distinct
     assert.equal(
@@ -254,16 +252,21 @@ export default class DbRepository extends Dexie implements Repository {
       `The three columns must be distinct but got: ${columnXName},${
         columnYName},${columnZName}!`,
     );
+    // do nothing if null column entries selected
+    if (columnXName == null || columnYName == null || columnZName == null) {
+      return [];
+    }
 
-    assert.ok(
-      tableName === TableName.RAW || tableName === TableName.PCA,
-      'Invalid column type. Must be either RAW or PCA.',
-    );
+    // Check if the columns exist in the 'RAW' table, select it if it does, otherwise check the
+    // 'PCA' table
+    let columnX = await this.getColumn(columnXName, TableName.RAW).catch(() => null);
+    let columnY = await this.getColumn(columnYName, TableName.RAW).catch(() => null);
+    let columnZ = await this.getColumn(columnZName, TableName.RAW).catch(() => null);
 
-    // get the three columns
-    const columnX = (await this.getColumn(columnXName, tableName));
-    const columnY = (await this.getColumn(columnYName, tableName));
-    const columnZ = (await this.getColumn(columnZName, tableName));
+    // If any of the columns do not exist in the 'RAW' table (null), check the 'PCA' table
+    columnX = columnX || await this.getColumn(columnXName, TableName.PCA);
+    columnY = columnY || await this.getColumn(columnYName, TableName.PCA);
+    columnZ = columnZ || await this.getColumn(columnZName, TableName.PCA);
 
     assert.ok(typeof columnX.values[0] === 'number', 'ColumnX must be numeric!');
     assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');
@@ -306,12 +309,14 @@ export default class DbRepository extends Dexie implements Repository {
     assert.equal(
       columnX.values.length,
       columnY.values.length,
-      `The number of values in the given columns must be the same but column X has ${columnX.values.length} values and column Y has ${columnY.values.length} values!`,
+      `The number of values in the given columns must be the same but column X has ${columnX.values.length} values 
+      and column Y has ${columnY.values.length} values!`,
     );
     assert.equal(
       columnY.values.length,
       columnZ.values.length,
-      `The number of values in the given columns must be the same but column Y has ${columnY.values.length} values and column Z has ${columnZ.values.length} values!`,
+      `The number of values in the given columns must be the same but column Y has ${columnY.values.length} values 
+      and column Z has ${columnZ.values.length} values!`,
     );
 
     const dataPoints: Array<DataPoint> = [];

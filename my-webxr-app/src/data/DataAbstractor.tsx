@@ -1,4 +1,3 @@
-import { TableName } from '../repository/Column';
 import DataPoint from '../repository/DataPoint';
 // eslint-disable-next-line import/no-cycle
 import DataLayer from './DataLayer';
@@ -14,13 +13,13 @@ export default interface DataAbstractor {
   storeCSV: (batchItems: Array<Array<string | number>>) => Promise<boolean>;
   storePCA: (columnNames: string[]) => Promise<boolean>;
   calculateStatistics:() => Promise<boolean>;
-  createDataPointsFrom3Columns:(
+  createDataPointsFrom3Columns: (
     columnX: string,
     ColumnY: string,
     ColumnZ: string,
-    columnType: TableName,
   ) => Promise<DataPoint[]>,
   resetFlag: () => Promise<boolean>;
+  storeStandardizedData:() => Promise<boolean>;
 }
 
 export const getDatabase = () => new DataLayer('CsvDataBase') as DataAbstractor;

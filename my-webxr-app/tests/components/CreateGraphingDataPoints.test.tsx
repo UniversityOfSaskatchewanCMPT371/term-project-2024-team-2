@@ -1,62 +1,78 @@
-import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
+import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { expect } from 'vitest';
 import { Provider } from '@rollbar/react';
+import Dexie from 'dexie';
 import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
 import MockServer from '../MockServer';
-import DataPoint from '../../src/repository/DataPoint';
-import { createGraphingDataPoints } from '../../src/components/CreateGraphingDataPoints';
+import CreateGraphingDataPoints from '../../src/components/CreateGraphingDataPoints';
 import { rollbarConfig } from '../../src/utils/LoggingUtils';
+import DataAbstractor, { getDatabase } from '../../src/data/DataAbstractor';
+import { useAxesSelectionContext } from '../../src/contexts/AxesSelectionContext';
 
-const exampleData = [[1, 1, 1], [2, 3, 0], [0, 0, 0], [10, 10, 10], [-1, -1, -1]];
-const dataPoints = exampleData.map((point) => new DataPoint(point[0], point[1], point[2]));
-const columnX = 'X';
-const columnY = 'Y';
-const columnZ = 'Z';
-const AxisStartPoints = [-0.2, 1.6, -0.5];
-const length = 1;
-const scale = 1;
-const max = 10;
-
+// TODO: These values are based on the hard-coded values in CreateGraphingDataPoints and will
+//  have to be updated when the hardcoded values are removed.
 const positions = [
-  new Vector3(-0.15000000000000002, 1.6500000000000001, -0.45),
-  new Vector3(-0.1, 1.75, -0.5),
-  new Vector3(-0.2, 1.6, -0.5),
-  new Vector3(0.3, 2.1, 0),
-  new Vector3(-0.25, 1.55, -0.55),
+  new Vector3(0.1, 1.6, -1.4),
+  new Vector3(0.2, 1.8, -1.5),
+  new Vector3(0, 1.5, -1.5),
+  new Vector3(1, 2.5, -0.5),
+  new Vector3(-0.1, 1.4, -1.6),
 ];
 
+vi.mock('../../src/contexts/AxesSelectionContext');
+
 describe('createGraphingDataPoints', () => {
-  beforeEach(() => MockServer.listen());
+  let database: DataAbstractor;
+
+  beforeEach(async () => {
+    MockServer.listen();
+
+    await Dexie.delete('CsvDataBase');
+    database = getDatabase();
+  });
 
   afterEach(() => MockServer.resetHandlers());
 
   afterAll(() => MockServer.close());
 
   test('Check locations of points against hard coded values', async () => {
-    const dataGraphingPoints = createGraphingDataPoints(
-      dataPoints,
-      columnX,
-      columnY,
-      columnZ,
-      AxisStartPoints,
-      length,
-      scale,
-      max,
-    );
+    const batchItems = [
+      ['colX', 'colY', 'colZ'],
+      [1, 1, 1],
+      [2, 3, 0],
+      [0, 0, 0],
+      [10, 10, 10],
+      [-1, -1, -1],
+    ];
+    await database.storeCSV(batchItems);
+    await database.calculateStatistics();
+    await database.storeStandardizedData();
+
+    vi.mocked(useAxesSelectionContext).mockReturnValue({
+      selectedXAxis: 'colX',
+      setSelectedXAxis: vi.fn(),
+      selectedYAxis: 'colY',
+      setSelectedYAxis: vi.fn(),
+      selectedZAxis: 'colZ',
+      setSelectedZAxis: vi.fn(),
+    });
+
     const render = await ReactThreeTestRenderer.create(
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
-            {dataGraphingPoints}
+            <CreateGraphingDataPoints />
           </XR>
         </PointSelectionProvider>
       </Provider>,
     );
-    await waitFor(() => expect(render.scene.children).toBeDefined());
+
+    await vi.waitFor(() => expect(render.scene.children).toBeDefined());
     // The camera is also a child of the scene, with 5 points we have 6 children
-    expect(render.scene.children.length).toEqual(6);
+    await vi.waitUntil(() => (render.scene.children.length === 6));
+    // render.scene.children.forEach((val) => console.log(val.children));
 
     // Children 0 is the camera
     // Children 1-5 are the points, check position and name

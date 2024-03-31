@@ -7,10 +7,11 @@ import Column, {
 // done to/on the db.
 // TODO swap over documentation
 export interface Repository {
-  getPoints: (columnXName: string,
+  getPoints: (
+    columnXName: string,
     columnYName: string,
     columnZName: string,
-    columnType: TableName) => Promise<Array<DataPoint>>;
+  ) => Promise<Array<DataPoint>>;
   addColumn: (column: Column<RawColumn | StatsColumn | NumericColumn>,
     columnType: TableName) => Promise<string>;
   getCsvColumnNames: () => Promise<string[]>;

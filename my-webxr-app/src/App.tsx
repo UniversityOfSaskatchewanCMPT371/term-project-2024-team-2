@@ -3,25 +3,26 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { Provider } from '@rollbar/react';
 import Dexie from 'dexie';
-import UrlCsvReader, { LocalCsvReader } from './components/CsvReader';
-import {
-  createGraphingDataPoints,
-} from './components/CreateGraphingDataPoints';
+import { useState } from 'react';
+import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
+import LocalCsvReader from './components/CsvReader';
 import Floor from './components/Floor';
+import ScaleSlider from './components/ScaleSlider';
 import GenerateXYZ from './components/GenerateXYZ';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
 import TestingOptions from './smoketest/TestingOptions';
-import DataPoint from './repository/DataPoint';
 import { rollbarConfig } from './utils/LoggingUtils';
-import DataAbstractor, { getDatabase } from './data/DataAbstractor';
+import DataAbstractor from './data/DataAbstractor';
+import SelectAxesColumns from './components/SelectAxesMenu';
+import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
+import { getDatabase } from './data/DataAbstractor';
+import UrlCsvReader from './components/CsvReader';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
 const maxNum: number = 10;
-// scaleFactor adjusts the size of the 3D axis
-const scaleFactor: number = 2;
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 0.1;
 // starting point of the axis
@@ -39,49 +40,26 @@ Dexie.delete('CsvDataBase');
 const DAL = getDatabase() as DataAbstractor;
 
 export default function App() {
-  // Demo createGraphingDataPoints
-  const exampleDataPoints = [
-    [5, 5, 5],
-    [-5, 5, 5],
-    [5, -5, 5],
-    [-5, -5, 5],
-    [5, 5, -5],
-    [-5, 5, -5],
-    [5, -5, -5],
-    [-5, -5, -5],
-    [0, 5, 5],
-    [0, -5, 5],
-    [0, 5, -5],
-    [0, -5, -5],
-    [5, 0, 5],
-    [-5, 0, 5],
-    [5, 0, -5],
-    [-5, 0, -5],
-    [5, 5, 0],
-    [-5, 5, 0],
-    [5, -5, 0],
-    [-5, -5, 0],
-  ];
-  const dataPoints = exampleDataPoints.map((point) => new DataPoint(point[0], point[1], point[2]));
-  const plottedDataPoints = dataPoints.length > 0 ? createGraphingDataPoints(
-    dataPoints,
-    'columnX',
-    'columnY',
-    'columnZ',
-    [startPointX, startPointY, startPointZ],
-    Length,
-    scaleFactor,
-    maxNum,
-  ) : [];
+  // Database name and store name will be pass as prop to reader components,
+  // this is to ensure the consistency of the database name and store name.
+  const dbName = 'CsvDataBase';
+  const storeName = 'CsvData';
 
+  // scaleFactor adjusts the size of the 3D axis
+  const [scaleFactor, setScaleFactor] = useState(2);
+
+ 
+ 
   return (
-    <>
+    <AxesSelectionProvider>
       <div>
         {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
         {/* Sample URL box and button */}
         <UrlCsvReader DAL={DAL} />
         <LocalCsvReader DAL={DAL} />
+        <SelectAxesColumns database={DAL} />
       </div>
+      <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
       <VRButton />
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
@@ -93,7 +71,7 @@ export default function App() {
               <pointLight position={[10, 10, 10]} />
               <Controllers />
               {/** return from createGraphingDataPoints */}
-              {plottedDataPoints}
+              <CreateGraphingDataPoints />
               <GenerateXYZ
                 minValue={minNum}
                 maxValue={maxNum}
@@ -105,12 +83,11 @@ export default function App() {
                 radius={radius}
                 labelOffset={labelOffset}
               />
-
-              <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+              <GraphingDataPointMenu position={[0, 2.2, -1.6]} />
             </XR>
           </Canvas>
         </PointSelectionProvider>
       </Provider>
-    </>
+    </AxesSelectionProvider>
   );
 }
