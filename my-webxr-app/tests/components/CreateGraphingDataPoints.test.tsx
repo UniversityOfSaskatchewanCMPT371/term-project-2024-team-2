@@ -47,8 +47,6 @@ describe('createGraphingDataPoints', () => {
       [-1, -1, -1],
     ];
     await database.storeCSV(batchItems);
-    await database.calculateStatistics();
-    await database.storeStandardizedData();
 
     vi.mocked(useAxesSelectionContext).mockReturnValue({
       selectedXAxis: 'colX',

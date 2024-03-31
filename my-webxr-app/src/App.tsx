@@ -32,7 +32,6 @@ import GenerateXYZ from './components/GenerateXYZ';
 //   [9, 9, 9],
 //   [10, 10, 10],
 // ];
-const maxValues: Array<number> = [10, 10, 10];
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 1;
 // starting point of the axes
@@ -73,7 +72,6 @@ export default function App() {
               <pointLight position={[10, 10, 10]} />
               <Controllers />
               <GenerateXYZ
-                maxValues={maxValues}
                 scaleFactor={scaleFactor}
                 labelOffset={labelOffset}
                 startX={startPointX}

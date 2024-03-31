@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import WriteHook from '../smoketest/TestHookWrite';
 import SingleAxis from './SingleAxis';
+import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
+import { getDatabase } from '../data/DataAbstractor';
 
 interface AxisProps {
-  maxValues: Array<number>;
   scaleFactor: number
   labelOffset: number;
   startX: number,
@@ -13,9 +15,12 @@ interface AxisProps {
 
 /**
  * Creates the x, y, z axis object for displaying in VR
+ *
+ * It uses the selected axes from the AxesSelectionContext to fetch the data points and their
+ * maximum values. The range of the axis is determined by those maximum values.
+ *
  * @pre-condition None
  * @post-condition Returns the x, y, z axis object for displaying in VR
- * @param {Array<number>} maxValues The 3 maximum values piloted on the three axes x, y, z.
  * @param {number} labelOffset how far away the tick label should be from the tick object
  * @param {number} scaleFactor the axis scale. (ie. the distance between each tick in VR space)
  * @param {number} startX the minimum 3D geometry location on the x-axis
@@ -26,7 +31,6 @@ interface AxisProps {
  * @constructor
  */
 export default function GenerateXYZ({
-  maxValues,
   labelOffset,
   scaleFactor,
   startX,
@@ -34,6 +38,22 @@ export default function GenerateXYZ({
   startZ,
   radius,
 }: AxisProps) {
+  const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
+  const [maxValues, setMaxValues] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const database = getDatabase();
+      await database.createDataPointsFrom3Columns(
+        selectedXAxis as string,
+        selectedYAxis as string,
+        selectedZAxis as string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ).then(([_, maxValuesArray]) => {
+        setMaxValues(maxValuesArray as never);
+      }).catch(() => []);
+    };
+    fetchData();
+  }, [selectedXAxis, selectedYAxis, selectedZAxis]);
   return (
     <group name="Axes">
       {/* X-axis */}
