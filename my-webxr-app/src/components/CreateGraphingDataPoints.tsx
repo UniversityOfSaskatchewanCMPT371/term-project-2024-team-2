@@ -29,7 +29,11 @@ interface CreateGraphingDataPointsProps {
  * - The AxisStartPoints array must contain exactly three numbers and be the same with the actual
  * hard-coded axis start points so that the points are plotted correctly.
  * - The length, scale, and max parameters must be positive numbers.
- * @param {number} scale - The scale value used by the graph, pass it in here to ensure
+ * @param {number} scaleFactor - The scale value used by the graph, pass it in here to ensure
+ * data points will stay the same relative position to the axes when the 3 axes got scaled.
+ * @param {number} startX - The starting point of the x-axis
+ * @param {number} startY - The starting point of the y-axis
+ * @param {number} startZ - The starting point of the z-axis
  * data points will stay the same relative position to teh axes when the 3 axes got scaled.
  * @post-condition An array of elements that will visually graph data
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
