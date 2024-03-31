@@ -59,7 +59,7 @@ export default class DbRepository extends Dexie implements Repository {
    * @pre-condition None
    * @post-condition Returns whether a table type is empty
    * @param {TableName} tableName the name of table to be checked
-   * @return {Promise<boolean>} whether or not hte table tupe is empty
+   * @return {Promise<boolean>} whether or not the table is empty
    */
   async isTableEmpty(tableName: TableName): Promise<boolean> {
     let count = 0;
@@ -323,12 +323,14 @@ export default class DbRepository extends Dexie implements Repository {
     assert.equal(
       columnX.values.length,
       columnY.values.length,
-      `The number of values in the given columns must be the same but column X has ${columnX.values.length} values and column Y has ${columnY.values.length} values!`,
+      `The number of values in the given columns must be the same but column X has ${columnX.values.length} values 
+      and column Y has ${columnY.values.length} values!`,
     );
     assert.equal(
       columnY.values.length,
       columnZ.values.length,
-      `The number of values in the given columns must be the same but column Y has ${columnY.values.length} values and column Z has ${columnZ.values.length} values!`,
+      `The number of values in the given columns must be the same but column Y has ${columnY.values.length} values 
+      and column Z has ${columnZ.values.length} values!`,
     );
 
     const dataPoints: Array<DataPoint> = [];

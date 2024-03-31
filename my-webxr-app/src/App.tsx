@@ -81,7 +81,6 @@ export default function App() {
               <ambientLight />
               <pointLight position={[10, 10, 10]} />
               <Controllers />
-              {/** return from createGraphingDataPoints */}
               <GenerateXYZ
                 maxValues={maxNum}
                 scaleFactor={scaleFactor}
@@ -91,8 +90,7 @@ export default function App() {
                 radius={radius}
                 labelOffset={labelOffset}
               />
-
-              <GraphingDataPointMenu position={[0, 2.2, -0.75]} />
+              <GraphingDataPointMenu position={[0, 2.2, -1.6]} />
             </XR>
           </Canvas>
         </PointSelectionProvider>

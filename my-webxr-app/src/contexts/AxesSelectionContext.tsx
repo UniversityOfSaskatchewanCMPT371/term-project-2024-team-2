@@ -44,6 +44,10 @@ export const AxesSelectionContext = createContext<AxesSelectionContextType | nul
  * Create the Context Provider element for the React tree.
  *
  * @param children: pass-through for the child elements.
+ * @pre-condition: none
+ * @post-condition: x,y,z axes states initialized to null and updated to their
+ *                  selected states using setter functions from component tree
+ * @return: React component that wraps its children within AxesSelectionContext.Provider
  */
 export function AxesSelectionProvider({
   children,
@@ -98,6 +102,10 @@ export function AxesSelectionProvider({
 /**
  * Provide a type-guaranteed context (not null) for use within components.
  * Call this function instead of useContext(AxesSelectionContext).
+ * @pre-condition: component needs to be wrapped inside AxesSelectionProvider component
+ * @post-condition: get value from AxesSelectionContext if it exists,
+ *                  else error is thrown if not used within AxesSelectionProvider
+ * @return: AxesSelectionContext value if it exists
  */
 export const useAxesSelectionContext = () => {
   // This context will only be null if called from outside a AxesSelectionProvider.
