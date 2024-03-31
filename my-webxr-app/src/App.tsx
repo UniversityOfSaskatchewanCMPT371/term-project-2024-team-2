@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
 import { Provider } from '@rollbar/react';
 import Dexie from 'dexie';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import LocalCsvReader, { UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
 import ScaleSlider from './components/ScaleSlider';
@@ -38,19 +38,18 @@ export default function App() {
   // scaleFactor adjusts the size of the 3D axis
   const [scaleFactor, setScaleFactor] = useState(2);
 
-
   return (
-    <>
-      <div>
-        {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
-        {/* Sample URL box and button */}
-        <UrlCsvReader DAL={DAL} />
-        <LocalCsvReader DAL={DAL} />
-        <SelectAxesColumns database={DAL} />
-      </div>
-      <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
-      <VRButton />
-      <Provider config={rollbarConfig}>
+    <Provider config={rollbarConfig}>
+      <AxesSelectionProvider>
+        <div>
+          {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
+          {/* Sample URL box and button */}
+          <UrlCsvReader DAL={DAL} />
+          <LocalCsvReader DAL={DAL} />
+          <SelectAxesColumns database={DAL} />
+        </div>
+        <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
+        <VRButton />
         <PointSelectionProvider>
           <Canvas>
             <XR>
@@ -72,7 +71,7 @@ export default function App() {
             </XR>
           </Canvas>
         </PointSelectionProvider>
-      </Provider>
-    </>
+      </AxesSelectionProvider>
+    </Provider>
   );
 }

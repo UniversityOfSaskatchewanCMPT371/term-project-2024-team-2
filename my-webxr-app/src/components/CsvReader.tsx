@@ -85,6 +85,9 @@ export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
             await DAL.storeCSV(sanitizedBatch);
           }
           setMessage('Local CSV loaded successfully');
+          await DAL.calculateStatistics();
+          await DAL.storeStandardizedData();
+          await DAL.storePCA(await DAL.getAvailableFields());
         },
       });
     };

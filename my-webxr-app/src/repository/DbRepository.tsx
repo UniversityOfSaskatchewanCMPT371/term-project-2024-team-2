@@ -251,7 +251,7 @@ export default class DbRepository extends Dexie implements Repository {
   ): Promise<[Array<DataPoint>, Array<number>]> {
     // do nothing if null column entries selected
     if (columnXName == null || columnYName == null || columnZName == null) {
-      return [];
+      return [[], []];
     }
 
     // verify the three columns are distinct
