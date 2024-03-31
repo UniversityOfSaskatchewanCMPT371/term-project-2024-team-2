@@ -7,7 +7,10 @@ import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { getDatabase } from '../data/DataAbstractor';
 
 interface CreateGraphingDataPointsProps {
-  scale: number;
+  scaleFactor: number;
+  startX: number;
+  startY: number;
+  startZ: number;
 }
 
 /**
@@ -32,9 +35,12 @@ interface CreateGraphingDataPointsProps {
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
-export default function CreateGraphingDataPoints(
-  { scale }: CreateGraphingDataPointsProps,
-): JSX.Element {
+export default function CreateGraphingDataPoints({
+  scaleFactor,
+  startX,
+  startY,
+  startZ,
+}: CreateGraphingDataPointsProps): JSX.Element {
   const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [dataPoints, setDataPoints] = useState([]);
@@ -59,9 +65,9 @@ export default function CreateGraphingDataPoints(
       { (dataPoints as DataPoint[]).map((dataPoint, index) => {
         const position = createPosition({
           data: [dataPoint.xValue, dataPoint.yValue, dataPoint.zValue],
-          AxisStartPoints: [0, 1.5, -1.5],
+          AxisStartPoints: [startX, startY, startZ],
           length: 1,
-          scale,
+          scale: scaleFactor,
           maxData: [maxValues[0], maxValues[1], maxValues[2]],
         });
 

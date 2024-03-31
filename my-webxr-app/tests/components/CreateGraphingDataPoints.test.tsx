@@ -38,7 +38,6 @@ describe('createGraphingDataPoints', () => {
   afterAll(() => MockServer.close());
 
   test('Check locations of points against hard coded values and scale value of 2', async () => {
-    const scaleValue = 2;
     const batchItems = [
       ['colX', 'colY', 'colZ'],
       [1, 1, 1],
@@ -64,7 +63,12 @@ describe('createGraphingDataPoints', () => {
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
-            <CreateGraphingDataPoints scale={scaleValue} />
+            <CreateGraphingDataPoints
+              scaleFactor={2}
+              startX={0}
+              startY={1.5}
+              startZ={-1.5}
+            />
           </XR>
         </PointSelectionProvider>
       </Provider>,

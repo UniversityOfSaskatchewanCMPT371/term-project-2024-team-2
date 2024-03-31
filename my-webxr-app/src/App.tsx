@@ -7,7 +7,6 @@ import { useState } from 'react';
 import LocalCsvReader, { UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
 import ScaleSlider from './components/ScaleSlider';
-import GenerateXYZ from './components/GenerateXYZ';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
@@ -16,23 +15,38 @@ import { rollbarConfig } from './utils/LoggingUtils';
 import DataAbstractor, { getDatabase } from './data/DataAbstractor';
 import SelectAxesColumns from './components/SelectAxesMenu';
 import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
+import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
+import GenerateXYZ from './components/GenerateXYZ';
 
-// minNum and maxNum will be from the csv file, just hardcoded for now
-const maxNum: Array<number> = [10, 100, 1000];
+// const batch: Array<Array<number | string>> = [
+//   ['x', 'y', 'z'],
+//   [0, 0, 0],
+//   [1, 1, 1],
+//   [2, 2, 2],
+//   [3, 3, 3],
+//   [4, 4, 4],
+//   [5, 5, 5],
+//   [6, 6, 6],
+//   [7, 7, 7],
+//   [8, 8, 8],
+//   [9, 9, 9],
+//   [10, 10, 10],
+// ];
+const maxValues: Array<number> = [10, 10, 10];
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 1;
-// starting point of the axis
+// starting point of the axes
 const startPointX: number = 0;
 const startPointY: number = 1.5;
 const startPointZ: number = -1.5;
-// const startPointY: number = 0;
-// const startPointZ: number = 0;
-// endPoint is used to determine what axis is being calculated, should not need to change
-// adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
 
 Dexie.delete('CsvDataBase');
 const DAL = getDatabase() as DataAbstractor;
+// await DAL.storeCSV(batch);
+// await DAL.calculateStatistics();
+// await DAL.storeStandardizedData();
+// await DAL.storePCA(await DAL.getAvailableFields());
 
 export default function App() {
   // scaleFactor adjusts the size of the 3D axis
@@ -59,13 +73,19 @@ export default function App() {
               <pointLight position={[10, 10, 10]} />
               <Controllers />
               <GenerateXYZ
-                maxValues={maxNum}
+                maxValues={maxValues}
                 scaleFactor={scaleFactor}
+                labelOffset={labelOffset}
                 startX={startPointX}
                 startY={startPointY}
                 startZ={startPointZ}
                 radius={radius}
-                labelOffset={labelOffset}
+              />
+              <CreateGraphingDataPoints
+                scaleFactor={scaleFactor}
+                startX={startPointX}
+                startY={startPointY}
+                startZ={startPointZ}
               />
               <GraphingDataPointMenu position={[0, 2.2, -1.6]} />
             </XR>
