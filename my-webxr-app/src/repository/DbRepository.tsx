@@ -312,6 +312,7 @@ export default class DbRepository extends Dexie implements Repository {
       `The number of values in the given columns must be the same but column X has ${columnX.values.length} values 
       and column Y has ${columnY.values.length} values!`,
     );
+
     assert.equal(
       columnY.values.length,
       columnZ.values.length,
