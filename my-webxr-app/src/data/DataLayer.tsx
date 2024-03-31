@@ -1,5 +1,6 @@
-import * as assert from 'assert';
+import assert from 'node:assert';
 import { Matrix } from 'ml-matrix';
+// eslint-disable-next-line import/no-cycle
 import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
@@ -199,7 +200,7 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Retrieve the available fields (column headers) from stats data table and pca data table.
+   * Retrieve the available fields (column headers) from raw data table and pca data table.
    * Intended to be used for user to select which fields to plot
    *
    * @pre-condition None
@@ -207,9 +208,9 @@ export default class DataLayer implements DataAbstractor {
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
-    const statsNames = await this.repository.getStatsColumnNames();
+    const rawNames = await this.repository.getStatsColumnNames();
     const pcaNames = await this.repository.getPcaColumnNames();
-    return [...statsNames, ...pcaNames];
+    return [...rawNames, ...pcaNames];
   }
 
   /**
@@ -429,20 +430,18 @@ export default class DataLayer implements DataAbstractor {
    *    data-store
    * @post-condition Returns an array of data points associated with the provided column names
    * @param {string} columnX - The name of the column to be used for the x-axis values.
-   * @param {string} columnY - The name of the column to be used for the y-axis values.
-   * @param {string} columnZ - The name of the column to be used for the z-axis values.
-   * @param {TableName} tableName - The type of the table (RAW or PCA).
-   *
+   * @param {string} ColumnY - The name of the column to be used for the y-axis values.
+   * @param {string} ColumnZ - The name of the column to be used for the z-axis values.
    * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
    * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
    */
+
   public async createDataPointsFrom3Columns(
     columnX: string,
-    columnY: string,
-    columnZ: string,
-    tableName: TableName,
+    ColumnY: string,
+    ColumnZ: string,
   ): Promise<DataPoint[]> {
-    return this.repository.getPoints(columnX, columnY, columnZ, tableName);
+    return this.repository.getPoints(columnX, ColumnY, ColumnZ);
   }
 
   /**
