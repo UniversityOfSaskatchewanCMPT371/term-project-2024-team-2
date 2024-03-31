@@ -18,13 +18,15 @@ interface CsvReaderProps {
  * @param {string} props.dbName - The name of the database where the data should be stored.
  * @param {string} props.storeName - The name of the store within the database where the data should
  * be stored.
+ * @precondition must be a csv or a txt file
+ * @postcondition File will be read into the DAL
  *
  * @returns {JSX.Element} A form with an input field for the local CSV and a button to load the CSV
  * data. After successful loading, a success message is displayed. If an error occurs, an error
  * message is displayed and let user retry.
  */
 
-export function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
+export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
 
   assert(DAL !== null || DAL !== undefined, 'Data Abstractor is not initialized');
@@ -116,7 +118,7 @@ export function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
  * data. After successful loading, a success message is displayed. If an error occurs, an error
  * message is displayed and let user retry.
  */
-function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
+export function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
   const [url, setUrl] = useState('');
 
@@ -146,4 +148,3 @@ function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
     </div>
   );
 }
-export default UrlCsvReader;

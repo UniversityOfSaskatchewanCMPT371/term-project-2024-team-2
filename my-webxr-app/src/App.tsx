@@ -14,11 +14,10 @@ import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
 import TestingOptions from './smoketest/TestingOptions';
 import { rollbarConfig } from './utils/LoggingUtils';
-import DataAbstractor from './data/DataAbstractor';
+import DataAbstractor, { getDatabase } from './data/DataAbstractor';
 import SelectAxesColumns from './components/SelectAxesMenu';
 import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
-import { getDatabase } from './data/DataAbstractor';
-import UrlCsvReader from './components/CsvReader';
+import { UrlCsvReader }from './components/CsvReader';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;
@@ -40,16 +39,9 @@ Dexie.delete('CsvDataBase');
 const DAL = getDatabase() as DataAbstractor;
 
 export default function App() {
-  // Database name and store name will be pass as prop to reader components,
-  // this is to ensure the consistency of the database name and store name.
-  const dbName = 'CsvDataBase';
-  const storeName = 'CsvData';
-
   // scaleFactor adjusts the size of the 3D axis
   const [scaleFactor, setScaleFactor] = useState(2);
 
- 
- 
   return (
     <AxesSelectionProvider>
       <div>
