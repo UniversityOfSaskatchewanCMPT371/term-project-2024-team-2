@@ -245,6 +245,11 @@ export default class DbRepository extends Dexie implements Repository {
     columnYName: string,
     columnZName: string,
   ): Promise<Array<DataPoint>> {
+    // do nothing if null column entries selected
+    if (columnXName == null || columnYName == null || columnZName == null) {
+      return [];
+    }
+
     // verify the three columns are distinct
     assert.equal(
       (new Set([columnXName, columnYName, columnZName])).size,
@@ -252,10 +257,6 @@ export default class DbRepository extends Dexie implements Repository {
       `The three columns must be distinct but got: ${columnXName},${
         columnYName},${columnZName}!`,
     );
-    // do nothing if null column entries selected
-    if (columnXName == null || columnYName == null || columnZName == null) {
-      return [];
-    }
 
     // Check if the columns exist in the 'RAW' table, select it if it does, otherwise check the
     // 'PCA' table
