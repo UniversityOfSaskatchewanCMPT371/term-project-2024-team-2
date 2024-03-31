@@ -1,24 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useRollbar } from '@rollbar/react';
 import DataPoint from '../repository/DataPoint';
-import createPosition from './Positions';
+import createPosition from './CreatePointPositions';
 import GraphingDataPoint from './GraphingDataPoint';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { getDatabase } from '../data/DataAbstractor';
 
 /**
- * TODO: we may want different scale for each axis and so will required max item of each columns
- * Creates an array of GraphingDataPoint components from the provided data points. This function
- * should be call in conjunction with createPosition, I split them into two function for the sake of
- * testing.
+ * This function creates an array of GraphingDataPoint components from the data points fetched from
+ * the database.
+ *
+ * It uses the selected axes from the AxesSelectionContext to fetch the data points and their
+ * maximum values. Where each data point consist of three values at the same index in the three
+ * columns selected as the x, y, and z axes. The maximum values are the larges values in each of
+ * the columns selected. The data points are then mapped to positions using the createPosition
+ * function and rendered as GraphingDataPoint components.
  *
  * @pre-condition
+ * - The selectedXAxis, selectedYAxis, and selectedZAxis must be valid column names in the database.
  * - The dataPoints array must not be empty.
- * - The xColumnName, yColumnName, and zColumnName must correspond to properties of the DataPoint
- * objects.
- * - The AxisStartPoints array must contain exactly three numbers.
+ * - The AxisStartPoints array must contain exactly three numbers and be the same with the actual
+ * hard-coded axis start points so that the points are plotted correctly.
  * - The length, scale, and max parameters must be positive numbers.
- * @post-condition An array of elements that will visually graph data.
+ * @post-condition An array of elements that will visually graph data
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
@@ -26,6 +30,7 @@ export default function CreateGraphingDataPoints(): JSX.Element {
   const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [dataPoints, setDataPoints] = useState([]);
+  const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const database = getDatabase();
@@ -33,8 +38,10 @@ export default function CreateGraphingDataPoints(): JSX.Element {
         selectedXAxis as string,
         selectedYAxis as string,
         selectedZAxis as string,
-      ).then((value) => setDataPoints(value as never))
-        .catch((error) => { rollbar.error(error); return []; });
+      ).then(([dataPointsArray, maxValuesArray]) => {
+        setDataPoints(dataPointsArray as never);
+        setMaxValues(maxValuesArray as never);
+      }).catch((error) => { rollbar.error(error); return []; });
     };
     fetchData();
   }, [selectedXAxis, selectedYAxis, selectedZAxis]);
@@ -47,7 +54,7 @@ export default function CreateGraphingDataPoints(): JSX.Element {
           AxisStartPoints: [0, 1.5, -1.5],
           length: 1,
           scale: 2,
-          max: 10,
+          maxData: [maxValues[0], maxValues[1], maxValues[2]],
         });
 
         return (

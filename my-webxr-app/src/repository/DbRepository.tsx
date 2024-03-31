@@ -59,7 +59,7 @@ export default class DbRepository extends Dexie implements Repository {
    * @pre-condition None
    * @post-condition Returns whether a table type is empty
    * @param {TableName} tableName the name of table to be checked
-   * @return {Promise<boolean>} whether or not the table tuple is empty
+   * @return {Promise<boolean>} whether or not the table is empty
    */
   async isTableEmpty(tableName: TableName): Promise<boolean> {
     let count = 0;
@@ -224,8 +224,9 @@ export default class DbRepository extends Dexie implements Repository {
   }
 
   /**
-   * Retrieves the x, y, and z values from the specified columns in the database and returns them as
-   * an array of DataPoint objects.
+   * Retrieves the x, y, and z values from the specified columns and the absolute max values of each
+   * selects columns in the database; and returns them as an array of DataPoint objects and an array
+   * of three non-negative integer maximum values.
    *
    * @pre-condition
    * - The columns must exist in the database. Either in the 'RAW' table or the 'PCA' table.
@@ -233,18 +234,21 @@ export default class DbRepository extends Dexie implements Repository {
    * - The columns must contain numeric data.
    * - The lengths of the x, y, and z columns must be the same.
    * - The three column names must be distinct.
-   * @post-condition A set of data points that can be plotted
-   * @param {string} columnXName - Column names to use for the x values of the DataPoint.
-   * @param {string} columnYName - Column names to use for the y values of the DataPoint.
-   * @param {string} columnZName - Column names to use for the z values of the DataPoint.
-   * @returns {Promise<Array<DataPoint>>} A promise that resolves to an array of DataPoint objects.
+   * @post-condition - A set of data points that can be plotted and each of column absolute max int
+   * value.
+   *
+   * @param {string | null} columnXName - Column names to use for the x values of the DataPoint.
+   * @param {string | null} columnYName - Column names to use for the y values of the DataPoint.
+   * @param {string | null} columnZName - Column names to use for the z values of the DataPoint.
+   * @returns {Promise<[Array<DataPoint>, Array<number>]>} A promise that resolves to an array of
+   * DataPoint objects and an array of maximum values from each column.
    * @throws {Error} If violates preconditions.
    */
   async getPoints(
     columnXName: string,
     columnYName: string,
     columnZName: string,
-  ): Promise<Array<DataPoint>> {
+  ): Promise<[Array<DataPoint>, Array<number>]> {
     // do nothing if null column entries selected
     if (columnXName == null || columnYName == null || columnZName == null) {
       return [];
@@ -257,6 +261,10 @@ export default class DbRepository extends Dexie implements Repository {
       `The three columns must be distinct but got: ${columnXName},${
         columnYName},${columnZName}!`,
     );
+    // do nothing if null column entries selected
+    if (columnXName == null || columnYName == null || columnZName == null) {
+      return [[], []];
+    }
 
     // Check if the columns exist in the 'RAW' table, select it if it does, otherwise check the
     // 'PCA' table
@@ -273,20 +281,30 @@ export default class DbRepository extends Dexie implements Repository {
     assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');
     assert.ok(typeof columnZ.values[0] === 'number', 'ColumnZ must be numeric!');
 
-    const sameLength = new Set([columnX.values.length,
+    const sameLength = new Set([
+      columnX.values.length,
       columnY.values.length,
-      columnZ.values.length]);
+      columnZ.values.length,
+    ]);
     assert.equal(sameLength.size, 1, 'The number of values in the given columns must be the same, but '
         + `column ${columnXName} has ${columnX.values.length} values, `
         + `column ${columnYName} has ${columnY.values.length} values, and `
         + `column ${columnZName} has ${columnZ.values.length} values!`);
 
+    // Get the absolute max values of each column, and round of to the next integer
+    const absValues = [
+      columnX.values as number[],
+      columnY.values as number[],
+      columnZ.values as number[],
+    ].map((column) => column.map(Math.abs));
+    const [maxX, maxY, maxZ] = absValues.map((values) => Math.ceil(Math.max(...values)));
+    const maxValues = [maxX, maxY, maxZ];
     const dataPoints = DbRepository.convertColumnsIntoDataPoints(
       columnX as Column<NumericColumn>,
       columnY as Column<NumericColumn>,
       columnZ as Column<NumericColumn>,
     );
-    return Promise.resolve(dataPoints);
+    return Promise.resolve([dataPoints, maxValues]);
   }
 
   /**

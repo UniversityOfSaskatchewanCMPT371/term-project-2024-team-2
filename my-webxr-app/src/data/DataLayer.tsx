@@ -423,24 +423,25 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * This function retrieves data points from the repository based on the provided column names
-   * and table name.
+   * This function retrieves an array of data points in forms of [x, y ,z] and an array of 3 maximum
+   * absolute values of each x, y, z components of the data points array.
    *
-   * @pre-condition There exists a data column with a key matching hte provided names in the
-   *    data-store
+   * @pre-conditions
+   * - No fields/columns in CSV should be named as PC1, PC2, PC3, ..., PCn.
+   * - Column names are in the table, either RAW or PCA.
    * @post-condition Returns an array of data points associated with the provided column names
-   * @param {string} columnX - The name of the column to be used for the x-axis values.
-   * @param {string} ColumnY - The name of the column to be used for the y-axis values.
-   * @param {string} ColumnZ - The name of the column to be used for the z-axis values.
-   * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
+   * @param {string | null} columnX - The name of the column to be used for the x-axis values.
+   * @param {string | null} ColumnY - The name of the column to be used for the y-axis values.
+   * @param {string | null} ColumnZ - The name of the column to be used for the z-axis values.
+   * @returns {Promise<[Array<DataPoint>, Array<number>]>} A promise that resolves to an array of
+   * DataPoint objects and an array of maximum values from each column.
    * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
    */
-
   public async createDataPointsFrom3Columns(
     columnX: string,
     ColumnY: string,
     ColumnZ: string,
-  ): Promise<DataPoint[]> {
+  ): Promise<[Array<DataPoint>, Array<number>]> {
     return this.repository.getPoints(columnX, ColumnY, ColumnZ);
   }
 
