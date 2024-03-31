@@ -11,7 +11,7 @@ export interface Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string,
-  ) => Promise<Array<DataPoint>>;
+  ) => Promise<[Array<DataPoint>, Array<number>]>;
   addColumn: (column: Column<RawColumn | StatsColumn | NumericColumn>,
     columnType: TableName) => Promise<string>;
   getCsvColumnNames: () => Promise<string[]>;

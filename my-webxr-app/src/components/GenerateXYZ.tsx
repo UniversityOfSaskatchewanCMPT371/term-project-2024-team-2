@@ -1,14 +1,12 @@
 import SingleAxis from './SingleAxis';
 
 interface AxisProps {
-  minValue: number;
-  maxValue: number;
+  maxValues: Array<number>;
   scaleFactor: number
   labelOffset: number;
   startX: number,
   startY: number,
   startZ: number,
-  endPoint: number,
   radius: number
 }
 
@@ -16,27 +14,23 @@ interface AxisProps {
  * Creates the x, y, z axis object for displaying in VR
  * @pre-condition None
  * @post-condition Returns the x, y, z axis object for displaying in VR
- * @param {number} minValue The minimum axis value
- * @param {number} maxValue The maximum axis value
+ * @param {Array<number>} maxValues The 3 maximum values piloted on the three axes x, y, z.
  * @param {number} labelOffset how far away the tick label should be from the tick object
- * @param {number} scaleFactor the axis scale. (ie. the distance between each tick)
+ * @param {number} scaleFactor the axis scale. (ie. the distance between each tick in VR space)
  * @param {number} startX the minimum 3D geometry location on the x-axis
  * @param {number} startY the minimum 3D geometry location on the y-axis
  * @param {number} startZ the minimum 3D geometry location on the z-axis
- * @param {number} endPoint the max value of the axes
  * @param {number} radius corner radius of the tick's shape
  * @return {JSX.Element} Returns the x, y, z axis object for displaying in VR
  * @constructor
  */
 export default function GenerateXYZ({
-  minValue,
-  maxValue,
+  maxValues,
   labelOffset,
   scaleFactor,
   startX,
   startY,
   startZ,
-  endPoint,
   radius,
 }: AxisProps) {
   return (
@@ -46,14 +40,13 @@ export default function GenerateXYZ({
         startX={startX}
         startY={startY}
         startZ={startZ}
-        endX={startX + endPoint} // need this calculation to find full length of axis
+        endX={startX + maxValues[0]}
         endY={startY}
         endZ={startZ}
         radius={radius}
         labelOffset={labelOffset}
         scaleFactor={scaleFactor}
-        minValue={minValue}
-        maxValue={maxValue}
+        maxValue={maxValues[0]}
         axis="x"
       />
       {/* Y-axis */}
@@ -62,13 +55,12 @@ export default function GenerateXYZ({
         startY={startY}
         startZ={startZ}
         endX={startX}
-        endY={startY + endPoint}
+        endY={startY + maxValues[1]}
         endZ={startZ}
         radius={radius}
         labelOffset={labelOffset}
         scaleFactor={scaleFactor}
-        minValue={minValue}
-        maxValue={maxValue}
+        maxValue={maxValues[1]}
         axis="y"
       />
       {/* Z-axis */}
@@ -78,12 +70,11 @@ export default function GenerateXYZ({
         startZ={startZ}
         endX={startX}
         endY={startY}
-        endZ={startZ + endPoint}
+        endZ={startZ + maxValues[2]}
         radius={radius}
         labelOffset={labelOffset}
         scaleFactor={scaleFactor}
-        minValue={minValue}
-        maxValue={maxValue}
+        maxValue={maxValues[2]}
         axis="z"
       />
     </group>
