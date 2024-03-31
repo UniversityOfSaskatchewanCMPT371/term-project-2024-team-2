@@ -5,7 +5,7 @@ import { Provider } from '@rollbar/react';
 import Dexie from 'dexie';
 import { useState } from 'react';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
-import LocalCsvReader from './components/CsvReader';
+import LocalCsvReader, { UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
 import ScaleSlider from './components/ScaleSlider';
 import GenerateXYZ from './components/GenerateXYZ';
@@ -17,7 +17,6 @@ import { rollbarConfig } from './utils/LoggingUtils';
 import DataAbstractor, { getDatabase } from './data/DataAbstractor';
 import SelectAxesColumns from './components/SelectAxesMenu';
 import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
-import { UrlCsvReader }from './components/CsvReader';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const minNum: number = -10;

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useRollbar } from '@rollbar/react';
 import DataPoint from '../repository/DataPoint';
 import createPosition from './Positions';
 import GraphingDataPoint from './GraphingDataPoint';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { getDatabase } from '../data/DataAbstractor';
-import { rollbar } from '../utils/LoggingUtils';
 
 /**
  * TODO: we may want different scale for each axis and so will required max item of each columns
@@ -23,6 +23,7 @@ import { rollbar } from '../utils/LoggingUtils';
  * points.
  */
 export default function CreateGraphingDataPoints(): JSX.Element {
+  const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [dataPoints, setDataPoints] = useState([]);
   useEffect(() => {

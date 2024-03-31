@@ -41,13 +41,13 @@ export const rollbarConfig: Rollbar.Configuration = {
         case 'debug':
         case 'info':
           // eslint-disable-next-line no-console
-          console.log(`Rollbar@${payload.level}: ${payload.body.message.body}`);
+          console.log(`Rollbar@${payload.level}: ${payload?.body?.message?.body}`);
           break;
         case 'warning':
         case 'error':
         case 'critical':
           // eslint-disable-next-line no-console
-          console.error(`Rollbar@${payload.level}: ${payload.body.message.body}`);
+          console.error(`Rollbar@${payload.level}: ${payload?.body?.message?.body}`);
           break;
         default:
           break;
