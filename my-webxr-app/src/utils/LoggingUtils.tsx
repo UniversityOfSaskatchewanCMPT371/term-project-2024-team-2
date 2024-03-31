@@ -1,6 +1,29 @@
 import Rollbar from 'rollbar';
 
 /**
+ * Generate an appropriate message, given a Rollbar log payload.
+ * @param {Rollbar.Payload} payload the payload of the Rollbar log object.
+ * @returns {string} a properly formatted message from the given payload.
+ */
+const generateLogMsg = ((payload: Rollbar.Payload): string => {
+  // First case: a regular message
+  if (payload?.body?.message?.body) {
+    return payload.body.message.body;
+  }
+
+  // Second case: an exception
+  if (payload?.body?.trace?.exception) {
+    return `captured an error of type ${payload?.body?.trace?.exception?.class} with message: `
+        + `${payload?.body?.trace?.exception?.message}`
+        + `\nfrom: ${JSON.stringify(payload?.body?.trace?.frames, null, 2)}`;
+  }
+
+  // Otherwise, we don't know what kind of log this is; just sent it in JSON format.
+  return JSON.stringify(payload.body);
+}
+);
+
+/**
  * Define the configuration for Rollbar.
  */
 export const rollbarConfig: Rollbar.Configuration = {
@@ -41,13 +64,13 @@ export const rollbarConfig: Rollbar.Configuration = {
         case 'debug':
         case 'info':
           // eslint-disable-next-line no-console
-          console.log(`Rollbar@${payload.level}: ${payload.body.message.body}`);
+          console.log(`Rollbar@${payload.level}: ${generateLogMsg(payload)}`);
           break;
         case 'warning':
         case 'error':
         case 'critical':
           // eslint-disable-next-line no-console
-          console.error(`Rollbar@${payload.level}: ${payload.body.message.body}`);
+          console.error(`Rollbar@${payload.level}: ${generateLogMsg(payload)}`);
           break;
         default:
           break;

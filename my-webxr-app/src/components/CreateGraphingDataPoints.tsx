@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useRollbar } from '@rollbar/react';
 import DataPoint from '../repository/DataPoint';
 import createPosition from './CreatePointPositions';
 import GraphingDataPoint from './GraphingDataPoint';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { getDatabase } from '../data/DataAbstractor';
-import { rollbar } from '../utils/LoggingUtils';
 
 /**
  * This function creates an array of GraphingDataPoint components from the data points fetched from
@@ -27,6 +27,7 @@ import { rollbar } from '../utils/LoggingUtils';
  * points.
  */
 export default function CreateGraphingDataPoints(): JSX.Element {
+  const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [dataPoints, setDataPoints] = useState([]);
   const [maxValues, setMaxValues] = useState([]);

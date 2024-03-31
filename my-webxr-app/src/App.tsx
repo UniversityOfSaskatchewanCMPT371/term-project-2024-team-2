@@ -1,10 +1,10 @@
 import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Controllers, VRButton, XR } from '@react-three/xr';
-import { openDB } from 'idb';
 import { Provider } from '@rollbar/react';
-import { useEffect, useState } from 'react';
-import { LocalCsvReader, UrlCsvReader } from './components/CsvReader';
+import Dexie from 'dexie';
+import { useState } from 'react';
+import LocalCsvReader, { UrlCsvReader } from './components/CsvReader';
 import Floor from './components/Floor';
 import ScaleSlider from './components/ScaleSlider';
 import GenerateXYZ from './components/GenerateXYZ';
@@ -13,6 +13,9 @@ import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
 import TestingOptions from './smoketest/TestingOptions';
 import { rollbarConfig } from './utils/LoggingUtils';
+import DataAbstractor, { getDatabase } from './data/DataAbstractor';
+import SelectAxesColumns from './components/SelectAxesMenu';
+import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
 
 // minNum and maxNum will be from the csv file, just hardcoded for now
 const maxNum: Array<number> = [10, 100, 1000];
@@ -28,51 +31,25 @@ const startPointZ: number = -1.5;
 // adjust the size of the tube, shouldn't need to change unless
 const radius: number = 0.002;
 
-export default function App() {
-  // Database name and store name will be pass as prop to reader components,
-  // this is to ensure the consistency of the database name and store name.
-  const dbName = 'CsvDataBase';
-  const storeName = 'CsvData';
+Dexie.delete('CsvDataBase');
+const DAL = getDatabase() as DataAbstractor;
 
+export default function App() {
   // scaleFactor adjusts the size of the 3D axis
   const [scaleFactor, setScaleFactor] = useState(2);
 
-  // Initialize the database and store for csv data
-  useEffect(() => {
-    const initializeDB = async () => {
-      await openDB(dbName, 1, {
-        upgrade(db) {
-          if (db.objectStoreNames.contains(storeName)) {
-            db.deleteObjectStore(storeName);
-          }
-          db.createObjectStore(storeName);
-        },
-      });
-    };
-    initializeDB();
-  }, [dbName, storeName]);
   return (
-    <>
-      <div>
-        {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
-        {/* Sample URL box and button */}
-        <UrlCsvReader dbName={dbName} storeName={storeName} />
-        <LocalCsvReader dbName={dbName} storeName={storeName} />
-        <button
-          type="button"
-          onClick={async () => {
-            const db = await openDB(dbName, 1);
-            const data = await db.getAll(storeName);
-            /* eslint-disable-next-line no-console */
-            console.table(data);
-          }}
-        >
-          Print Data to Console
-        </button>
-      </div>
-      <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
-      <VRButton />
-      <Provider config={rollbarConfig}>
+    <Provider config={rollbarConfig}>
+      <AxesSelectionProvider>
+        <div>
+          {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
+          {/* Sample URL box and button */}
+          <UrlCsvReader DAL={DAL} />
+          <LocalCsvReader DAL={DAL} />
+          <SelectAxesColumns database={DAL} />
+        </div>
+        <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
+        <VRButton />
         <PointSelectionProvider>
           <Canvas>
             <XR>
@@ -94,7 +71,7 @@ export default function App() {
             </XR>
           </Canvas>
         </PointSelectionProvider>
-      </Provider>
-    </>
+      </AxesSelectionProvider>
+    </Provider>
   );
 }

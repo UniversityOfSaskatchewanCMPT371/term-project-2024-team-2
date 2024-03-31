@@ -6,7 +6,6 @@ import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
   TableName,
-  DataRow,
   NumericColumn,
   RawColumn,
   StatsColumn,
@@ -94,13 +93,14 @@ export default class DataLayer implements DataAbstractor {
 
         if (this.isFirstBatch) {
           columnName = String(column[0]); // Type cast numeric field header to string
-          newValues = column.slice(1);
+          // Once we get the header out, the rest of the column should be numeric ot string
+          newValues = column.slice(1) as RawColumn;
           const aColumn = new Column<RawColumn>(columnName, newValues);
           await this.repository.addColumn(aColumn, TableName.RAW);
         } else {
           const columnNames = await this.repository.getCsvColumnNames();
           columnName = columnNames[index];
-          newValues = column;
+          newValues = column as RawColumn;
           const existingColumn = await this.repository.getColumn(columnName, TableName.RAW);
           (existingColumn.values as (string | number)[]).push(...newValues);
           await this.repository.updateColumn(existingColumn, TableName.RAW);
@@ -463,9 +463,21 @@ export default class DataLayer implements DataAbstractor {
   }
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed
+
+  /**
+ * Resets the flag to indicate if it is the first batch.
+ * @param {void} - No parameters.
+ * @postcondition - The flag is reset to true.
+ * @returns {Promise<boolean>} - A promise that resolves when the flag is reset.
+ */
+  public async resetFlag(): Promise<boolean> {
+    this.repository.clearTables();
+    this.isFirstBatch = true;
+    return true;
+  }
 }
 
 /**
  * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
  */
-export type BatchedDataStream = Array<DataRow>;
+export type BatchedDataStream = Array<Array<string | number>>;

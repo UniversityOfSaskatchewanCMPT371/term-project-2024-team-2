@@ -23,4 +23,5 @@ export interface Repository {
     columnType: TableName) => Promise<boolean>;
   getStatsColumn: (columnName: string) => Promise<Column<StatsColumn>>;
   isTableEmpty(columnType: TableName): Promise<boolean>;
+  clearTables: () => Promise<void>;
 }
