@@ -79,6 +79,9 @@ async function parseAndHandleUrlCsv(
           await DAL.storeCSV(sanitizedBatch);
         }
         setMessage('Url CSV loaded successfully');
+        await DAL.calculateStatistics();
+        await DAL.storeStandardizedData();
+        await DAL.storePCA(await DAL.getAvailableFields());
         resolve('success');
       },
       error: (error) => {
