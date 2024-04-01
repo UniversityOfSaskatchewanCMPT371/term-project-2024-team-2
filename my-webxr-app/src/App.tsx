@@ -50,8 +50,8 @@ export default function App() {
           <UrlCsvReader DAL={DAL} reload={reload} triggerReload={setReload} />
           <LocalCsvReader DAL={DAL} reload={reload} triggerReload={setReload} />
           <SelectAxesColumns reload={reload} database={DAL} />
+          <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
         </div>
-        <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
         <VRButton />
         <PointSelectionProvider>
           <Canvas>
