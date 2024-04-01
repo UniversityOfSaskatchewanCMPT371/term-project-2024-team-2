@@ -4,13 +4,14 @@ import DataPoint from '../repository/DataPoint';
 import createPosition from './CreatePointPositions';
 import GraphingDataPoint from './GraphingDataPoint';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
-import { getDatabase } from '../data/DataAbstractor';
+import DataAbstractor from '../data/DataAbstractor';
 
 interface CreateGraphingDataPointsProps {
   scaleFactor: number;
   startX: number;
   startY: number;
   startZ: number;
+  database: DataAbstractor;
 }
 
 /**
@@ -35,6 +36,7 @@ interface CreateGraphingDataPointsProps {
  * @param {number} startY - The starting point of the y-axis
  * @param {number} startZ - The starting point of the z-axis
  * data points will stay the same relative position to teh axes when the 3 axes got scaled.
+ * @param {DataAbstractor} database - The database that will fetch the data points & max values.
  * @post-condition An array of elements that will visually graph data
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
@@ -44,6 +46,7 @@ export default function CreateGraphingDataPoints({
   startX,
   startY,
   startZ,
+  database,
 }: CreateGraphingDataPointsProps): JSX.Element {
   const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
@@ -51,7 +54,6 @@ export default function CreateGraphingDataPoints({
   const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const database = getDatabase();
       // console.log(
       //   `selectedXAxis: ${selectedXAxis},
       //   selectedYAxis: ${selectedYAxis},

@@ -18,6 +18,8 @@ import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import GenerateXYZ from './components/GenerateXYZ';
 
+// Hard-coded data meant to be used as a guide for how the app works.
+// These will be overwritten by the user's input and has no side effect.
 const batch: Array<Array<number | string>> = [
   ['x', 'y', 'z'],
   [0, 0, 0],
@@ -78,12 +80,14 @@ export default function App() {
                 startY={startPointY}
                 startZ={startPointZ}
                 radius={radius}
+                database={DAL}
               />
               <CreateGraphingDataPoints
                 scaleFactor={scaleFactor}
                 startX={startPointX}
                 startY={startPointY}
                 startZ={startPointZ}
+                database={DAL}
               />
               <GraphingDataPointMenu position={[0, 2.2, -1.6]} />
             </XR>

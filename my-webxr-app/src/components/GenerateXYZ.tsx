@@ -3,7 +3,7 @@ import { useRollbar } from '@rollbar/react';
 import WriteHook from '../smoketest/TestHookWrite';
 import SingleAxis from './SingleAxis';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
-import { getDatabase } from '../data/DataAbstractor';
+import DataAbstractor from '../data/DataAbstractor';
 
 interface AxisProps {
   scaleFactor: number
@@ -12,6 +12,7 @@ interface AxisProps {
   startY: number,
   startZ: number,
   radius: number,
+  database: DataAbstractor,
 }
 
 /**
@@ -28,6 +29,7 @@ interface AxisProps {
  * @param {number} startY the minimum 3D geometry location on the y-axis
  * @param {number} startZ the minimum 3D geometry location on the z-axis
  * @param {number} radius corner radius of the tick's shape
+ * @param {DataAbstractor } database - The database object that will fetch the max x, y, z values.
  * @return {JSX.Element} Returns the x, y, z axis object for displaying in VR
  * @constructor
  */
@@ -38,25 +40,19 @@ export default function GenerateXYZ({
   startY,
   startZ,
   radius,
-}: AxisProps): JSX.Element {
+  database,
+}: AxisProps): JSX.Element | null {
   const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const database = getDatabase();
-      // console.log(
-      //   `selectedXAxis: ${selectedXAxis},
-      //   selectedYAxis: ${selectedYAxis},
-      //   selectedZAxis: ${selectedZAxis}`,
-      // );
       await database.createDataPointsFrom3Columns(
         selectedXAxis as string,
         selectedYAxis as string,
         selectedZAxis as string,
       ).then((result) => {
-        console.log(`Result from createDataPointsFrom3Columns: ${JSON.stringify(result)}`);
-        const [_, maxValuesArray] = result;
+        const maxValuesArray = result[1];
         setMaxValues(maxValuesArray as never);
       }).catch((error) => {
         rollbar.error(error);

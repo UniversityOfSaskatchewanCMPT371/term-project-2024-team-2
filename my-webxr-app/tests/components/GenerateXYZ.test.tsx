@@ -1,4 +1,4 @@
-import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
+import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { ReactThreeTestInstance } from '@react-three/test-renderer/dist/declarations/src/createTestInstance';
 import { expect } from 'vitest';
@@ -45,7 +45,7 @@ describe('Generate XYZ axes', () => {
     ];
     await database.storeCSV(batchItems);
 
-    const element = (
+    const render = await ReactThreeTestRenderer.create(
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
@@ -56,24 +56,22 @@ describe('Generate XYZ axes', () => {
               startY={0}
               startZ={0}
               radius={0.002}
+              database={database}
             />
           </XR>
         </PointSelectionProvider>
-      </Provider>
+      </Provider>,
     );
-    const renderer = await ReactThreeTestRenderer.create(
-      element,
-    );
+
     // wait for scene children to be rendered
-    await waitFor(() => expect(renderer.scene.children).toBeDefined(), 10000);
+    await vi.waitFor(() => expect(render.scene.children).toBeDefined());
 
     // wait for the axes to be rendered, should have three axes
-    await waitFor(() => expect(renderer.scene.children[1].children[1]).toBeDefined());
-    const axes = renderer.scene.children[1].children;
+    const axes = render.scene.children[1].children;
     expect(axes.length).toEqual(3);
 
-    await renderer.update(element);
-    await waitFor(() => expect(axes[0].children.length).toEqual(22));
+    // wait until the useEffect to finish update then render the return element, 21 ticks & 1 axis
+    await vi.waitUntil(() => (axes[0].children.length === 22));
 
     // For each axis, check the number of children
     axes.forEach((axis: ReactThreeTestInstance) => {

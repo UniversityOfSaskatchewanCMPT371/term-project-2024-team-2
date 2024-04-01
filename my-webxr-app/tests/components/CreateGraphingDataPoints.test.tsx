@@ -66,6 +66,7 @@ describe('createGraphingDataPoints', () => {
               startX={0}
               startY={1.5}
               startZ={-1.5}
+              database={database}
             />
           </XR>
         </PointSelectionProvider>
