@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import React from 'react';
+import * as assert from 'assert';
 import DataAbstractor from '../data/DataAbstractor';
 
 /**
@@ -23,9 +24,9 @@ async function parseAndHandleUrlCsv(
   setMessage: React.Dispatch<React.SetStateAction<string | null>>,
 ) {
   const completeData = Array<Array<string | number>>();
-  assert(url !== null || url !== undefined, 'No URL provided');
-  assert(DAL !== null || DAL !== undefined, 'No Data Abstractor provided');
-  assert(setMessage !== null || setMessage !== undefined, 'No setMessage function provided');
+  assert.ok(url !== null || url !== undefined, 'No URL provided');
+  assert.ok(DAL !== null || DAL !== undefined, 'No Data Abstractor provided');
+  assert.ok(setMessage !== null || setMessage !== undefined, 'No setMessage function provided');
   // Normalize headers by appending a number to duplicate headers, takes in an array of string
   // headers
   await DAL.resetFlag();
