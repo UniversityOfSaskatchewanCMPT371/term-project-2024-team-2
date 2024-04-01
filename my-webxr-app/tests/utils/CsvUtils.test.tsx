@@ -9,7 +9,7 @@ vi.mock('idb', () => ({
 
 vi.mock('papaparse', () => ({
   default: {
-    parse: vi.fn().mockImplementation((url, options) => {
+    parse: vi.fn().mockImplementation((_url, options) => {
       options.complete();
     }),
   },
