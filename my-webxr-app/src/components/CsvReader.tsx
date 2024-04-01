@@ -3,9 +3,12 @@ import Papa from 'papaparse';
 import DataAbstractor from '../data/DataAbstractor';
 import parseAndHandleUrlCsv from '../utils/CsvUtils';
 import assert from '../utils/Assert';
+import { rollbar } from '../utils/LoggingUtils';
 
 interface CsvReaderProps {
   DAL: DataAbstractor;
+  reload: boolean;
+  triggerReload: (reload: boolean) => void;
 }
 
 /**
@@ -26,7 +29,11 @@ interface CsvReaderProps {
  * message is displayed and let user retry.
  */
 
-export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
+export default function LocalCsvReader({
+  DAL,
+  reload,
+  triggerReload,
+}: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
 
   assert(DAL !== null || DAL !== undefined, 'Data Abstractor is not initialized');
@@ -88,11 +95,14 @@ export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
           await DAL.calculateStatistics();
           await DAL.storeStandardizedData();
           await DAL.storePCA(await DAL.getAvailableFields());
+          rollbar.info('Statistics and PCA calculated successfully');
         },
       });
     };
     (async () => {
       await readStream();
+      triggerReload(!reload);
+      rollbar.info('Local File loaded successfully');
     })();
     setMessage('File loaded successfully');
   };
@@ -121,7 +131,7 @@ export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
  * data. After successful loading, a success message is displayed. If an error occurs, an error
  * message is displayed and let user retry.
  */
-export function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
+export function UrlCsvReader({ DAL, reload, triggerReload }: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
   const [url, setUrl] = useState('');
 
@@ -138,8 +148,11 @@ export function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
     try {
       DAL.resetFlag();
       await parseAndHandleUrlCsv(url, DAL, setMessage);
+      rollbar.info('URL CSV loaded successfully');
+      triggerReload(!reload);
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
+      rollbar.error(`An error occurred while loading CSV from URL: ${e}`);
     }
   };
 

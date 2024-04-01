@@ -5,6 +5,7 @@ import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { rollbar } from '../utils/LoggingUtils';
 
 interface SelectAxesColumnsProps {
+  reload: boolean;
   database: DataAbstractor;
 }
 interface DropDownProps {
@@ -58,7 +59,7 @@ function DropDown({
   @post-condition: setting the proper x,y,z coordinates for the data point
   @return: the dropdown menus
  */
-export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) {
+export default function SelectAxesColumns({ reload, database }: SelectAxesColumnsProps) {
   assert(database != null, 'Database name cannot be null');
   const [AxisOptions, setAxisOptions] = useState<{ value: string; label: string }[]>([]);
   const { setSelectedXAxis, setSelectedYAxis, setSelectedZAxis } = useAxesSelectionContext();
@@ -71,13 +72,14 @@ export default function SelectAxesColumns({ database }: SelectAxesColumnsProps) 
       try {
         const Axes = await database.getAvailableFields();
         setAxisOptions(Axes.map((title: string) => ({ value: title, label: title })));
+        rollbar.info('Column titles fetched successfully!');
       } catch (error) {
         // eslint-disable-next-line no-console
         rollbar.error(`Error fetching column titles:${error}`);
       }
     }
     fetchColumnTitles();
-  }, [database]);
+  }, [reload, database]);
 
   /*
   this function will plot the graph with the selected x,y,z axes

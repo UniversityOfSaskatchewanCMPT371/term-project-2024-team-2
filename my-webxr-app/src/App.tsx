@@ -38,15 +38,18 @@ export default function App() {
   // scaleFactor adjusts the size of the 3D axis
   const [scaleFactor, setScaleFactor] = useState(2);
 
+  // a trigger when new file is uploaded
+  const [reload, setReload] = useState(false);
+
   return (
     <Provider config={rollbarConfig}>
       <AxesSelectionProvider>
         <div>
           {import.meta.env.VITE_IS_TESTING === 'true' && <TestingOptions />}
           {/* Sample URL box and button */}
-          <UrlCsvReader DAL={DAL} />
-          <LocalCsvReader DAL={DAL} />
-          <SelectAxesColumns database={DAL} />
+          <UrlCsvReader DAL={DAL} reload={reload} triggerReload={setReload} />
+          <LocalCsvReader DAL={DAL} reload={reload} triggerReload={setReload} />
+          <SelectAxesColumns reload={reload} database={DAL} />
         </div>
         <ScaleSlider scale={scaleFactor} setScale={setScaleFactor} />
         <VRButton />
