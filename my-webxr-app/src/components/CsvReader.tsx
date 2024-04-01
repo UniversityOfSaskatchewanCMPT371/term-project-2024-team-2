@@ -3,9 +3,12 @@ import Papa from 'papaparse';
 import DataAbstractor from '../data/DataAbstractor';
 import parseAndHandleUrlCsv from '../utils/CsvUtils';
 import assert from '../utils/Assert';
+import { rollbar } from '../utils/LoggingUtils';
 
 interface CsvReaderProps {
   DAL: DataAbstractor;
+  reload: boolean;
+  triggerReload: (reload: boolean) => void;
 }
 
 /**
@@ -26,7 +29,11 @@ interface CsvReaderProps {
  * message is displayed and let user retry.
  */
 
-export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
+export default function LocalCsvReader({
+  DAL,
+  reload,
+  triggerReload,
+}: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
 
   assert(DAL !== null || DAL !== undefined, 'Data Abstractor is not initialized');
@@ -48,7 +55,8 @@ export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
         return count[header] > 1 ? `${header}${count[header]}` : header;
       });
     };
-    const readStream = async () => {
+
+    const readStream = new Promise((resolve, reject) => {
       Papa.parse(selectedFile, {
         dynamicTyping: true, // Convert data to number type if applicable
         step: async (results) => {
@@ -84,17 +92,26 @@ export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
             // eslint-disable-next-line no-await-in-loop
             await DAL.storeCSV(sanitizedBatch);
           }
-          setMessage('Local CSV loaded successfully');
           await DAL.calculateStatistics();
           await DAL.storeStandardizedData();
           await DAL.storePCA(await DAL.getAvailableFields());
+          resolve('success');
+        },
+        error: (error) => {
+          reject(error);
         },
       });
-    };
-    (async () => {
-      await readStream();
-    })();
-    setMessage('File loaded successfully');
+    });
+
+    readStream.then(() => {
+      triggerReload(!reload);
+      setMessage('Local CSV loaded successfully!');
+      rollbar.info('Local CSV loaded successfully!');
+    })
+      .catch((e) => {
+        setMessage(`An error occurred: ${e}`);
+        rollbar.error(`An error occurred while loading CSV from URL: ${e}`);
+      });
   };
 
   return (
@@ -121,7 +138,7 @@ export default function LocalCsvReader({ DAL }: CsvReaderProps): JSX.Element {
  * data. After successful loading, a success message is displayed. If an error occurs, an error
  * message is displayed and let user retry.
  */
-export function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
+export function UrlCsvReader({ DAL, reload, triggerReload }: CsvReaderProps): JSX.Element {
   const [message, setMessage] = useState<string | null>(null);
   const [url, setUrl] = useState('');
 
@@ -136,10 +153,16 @@ export function UrlCsvReader({ DAL }: CsvReaderProps): JSX.Element {
       return;
     }
     try {
-      DAL.resetFlag();
-      await parseAndHandleUrlCsv(url, DAL, setMessage);
+      await DAL.resetFlag();
+      await parseAndHandleUrlCsv(url, DAL, setMessage)
+        .then(() => {
+          triggerReload(!reload);
+          setMessage('URL CSV loaded successfully!');
+          rollbar.info('URL CSV loaded successfully!');
+        });
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
+      rollbar.error(`An error occurred while loading CSV from URL: ${e}`);
     }
   };
 
