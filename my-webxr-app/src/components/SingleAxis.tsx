@@ -49,6 +49,7 @@ export default function SingleAxis({
   maxValue,
   axis,
 }: SingleAxisProps): JSX.Element {
+  console.log('maxValue: ', maxValue);
   // There are 10 ticks and labels for every ticks on each side of the axis, with one stay at the
   // origin. Total of 21 ticks and labels.
   const numLabels: number = 10;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRollbar } from '@rollbar/react';
 import WriteHook from '../smoketest/TestHookWrite';
 import SingleAxis from './SingleAxis';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
@@ -10,7 +11,7 @@ interface AxisProps {
   startX: number,
   startY: number,
   startZ: number,
-  radius: number
+  radius: number,
 }
 
 /**
@@ -37,20 +38,30 @@ export default function GenerateXYZ({
   startY,
   startZ,
   radius,
-}: AxisProps) {
+}: AxisProps): JSX.Element {
+  const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const database = getDatabase();
+      // console.log(
+      //   `selectedXAxis: ${selectedXAxis},
+      //   selectedYAxis: ${selectedYAxis},
+      //   selectedZAxis: ${selectedZAxis}`,
+      // );
       await database.createDataPointsFrom3Columns(
         selectedXAxis as string,
         selectedYAxis as string,
         selectedZAxis as string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ).then(([_, maxValuesArray]) => {
+      ).then((result) => {
+        console.log(`Result from createDataPointsFrom3Columns: ${JSON.stringify(result)}`);
+        const [_, maxValuesArray] = result;
         setMaxValues(maxValuesArray as never);
-      }).catch(() => []);
+      }).catch((error) => {
+        rollbar.error(error);
+        return [];
+      });
     };
     fetchData();
   }, [selectedXAxis, selectedYAxis, selectedZAxis]);

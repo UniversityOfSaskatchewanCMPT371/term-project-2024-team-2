@@ -18,20 +18,20 @@ import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import GenerateXYZ from './components/GenerateXYZ';
 
-// const batch: Array<Array<number | string>> = [
-//   ['x', 'y', 'z'],
-//   [0, 0, 0],
-//   [1, 1, 1],
-//   [2, 2, 2],
-//   [3, 3, 3],
-//   [4, 4, 4],
-//   [5, 5, 5],
-//   [6, 6, 6],
-//   [7, 7, 7],
-//   [8, 8, 8],
-//   [9, 9, 9],
-//   [10, 10, 10],
-// ];
+const batch: Array<Array<number | string>> = [
+  ['x', 'y', 'z'],
+  [0, 0, 0],
+  [1, 1, 1],
+  [2, 2, 2],
+  [3, 3, 3],
+  [4, 4, 4],
+  [5, 5, 5],
+  [6, 6, 6],
+  [7, 7, 7],
+  [8, 8, 8],
+  [9, 9, 9],
+  [10, 10, 10],
+];
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 1;
 // starting point of the axes
@@ -42,10 +42,10 @@ const radius: number = 0.002;
 
 Dexie.delete('CsvDataBase');
 const DAL = getDatabase() as DataAbstractor;
-// await DAL.storeCSV(batch);
-// await DAL.calculateStatistics();
-// await DAL.storeStandardizedData();
-// await DAL.storePCA(await DAL.getAvailableFields());
+await DAL.storeCSV(batch);
+await DAL.calculateStatistics();
+await DAL.storeStandardizedData();
+await DAL.storePCA(await DAL.getAvailableFields());
 
 export default function App() {
   // scaleFactor adjusts the size of the 3D axis
