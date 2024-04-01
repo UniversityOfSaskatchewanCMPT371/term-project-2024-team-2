@@ -54,17 +54,11 @@ export default function CreateGraphingDataPoints({
   const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      // console.log(
-      //   `selectedXAxis: ${selectedXAxis},
-      //   selectedYAxis: ${selectedYAxis},
-      //   selectedZAxis: ${selectedZAxis}`,
-      // );
       await database.createDataPointsFrom3Columns(
         selectedXAxis as string,
         selectedYAxis as string,
         selectedZAxis as string,
       ).then((result) => {
-        // console.log(`Result from createDataPointsFrom3Columns: ${JSON.stringify(result)}`);
         const [dataPointsArray, maxValuesArray] = result;
         setDataPoints(dataPointsArray as never);
         setMaxValues(maxValuesArray as never);
