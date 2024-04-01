@@ -46,6 +46,7 @@ export function calculateCovarianceMatrix(standardizedDataset: Matrix): Matrix {
  * @throws {Error} If the input matrix is not symmetric.
  */
 export function computeEigenvaluesFromCovarianceMatrix(covarianceMatrix: Matrix): number[] {
+  // TODO bug bug bug?
   assert(covarianceMatrix.isSymmetric(), 'Compute eigenvalues from non symmetric covariance matrix.');
   const evd = new EVD(covarianceMatrix, { assumeSymmetric: true });
   const S = evd.realEigenvalues;
