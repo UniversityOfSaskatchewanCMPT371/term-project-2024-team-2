@@ -1,5 +1,8 @@
 [![Linting](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/actions/workflows/lint.yml/badge.svg)](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/actions/workflows/lint.yml)
 
+[![Build and Test](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/actions/workflows/deployment_prod.yml/badge.svg)](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/actions/workflows/deployment_prod.yml)
+
+
 # High Dimensional Data Visualization
 
 An Oculus-Based Tool for 3D Visualization & Manipulation of Tabular Data. This project involves developing a system that enables users to actively generate, observe, and modify three-dimensional representations of tabular data through the virtual reality platform, Oculus Quest 2. Used for scientific investigations that involve analyzing very large data sets. 
