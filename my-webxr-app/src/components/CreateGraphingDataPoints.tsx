@@ -4,7 +4,15 @@ import DataPoint from '../repository/DataPoint';
 import createPosition from './CreatePointPositions';
 import GraphingDataPoint from './GraphingDataPoint';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
-import { getDatabase } from '../data/DataAbstractor';
+import DataAbstractor from '../data/DataAbstractor';
+
+interface CreateGraphingDataPointsProps {
+  scaleFactor: number;
+  startX: number;
+  startY: number;
+  startZ: number;
+  database: DataAbstractor;
+}
 
 /**
  * This function creates an array of GraphingDataPoint components from the data points fetched from
@@ -22,38 +30,53 @@ import { getDatabase } from '../data/DataAbstractor';
  * - The AxisStartPoints array must contain exactly three numbers and be the same with the actual
  * hard-coded axis start points so that the points are plotted correctly.
  * - The length, scale, and max parameters must be positive numbers.
+ * @param {number} scaleFactor - The scale value used by the graph, pass it in here to ensure
+ * data points will stay the same relative position to the axes when the 3 axes got scaled.
+ * @param {number} startX - The starting point of the x-axis
+ * @param {number} startY - The starting point of the y-axis
+ * @param {number} startZ - The starting point of the z-axis
+ * data points will stay the same relative position to teh axes when the 3 axes got scaled.
+ * @param {DataAbstractor} database - The database that will fetch the data points & max values.
  * @post-condition An array of elements that will visually graph data
  * @returns {JSX.Element} An array of GraphingDataPoint components representing the plotted data
  * points.
  */
-export default function CreateGraphingDataPoints(): JSX.Element {
+export default function CreateGraphingDataPoints({
+  scaleFactor,
+  startX,
+  startY,
+  startZ,
+  database,
+}: CreateGraphingDataPointsProps): JSX.Element {
   const rollbar = useRollbar();
   const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
   const [dataPoints, setDataPoints] = useState([]);
   const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const database = getDatabase();
       await database.createDataPointsFrom3Columns(
         selectedXAxis as string,
         selectedYAxis as string,
         selectedZAxis as string,
-      ).then(([dataPointsArray, maxValuesArray]) => {
+      ).then((result) => {
+        const [dataPointsArray, maxValuesArray] = result;
         setDataPoints(dataPointsArray as never);
         setMaxValues(maxValuesArray as never);
-      }).catch((error) => { rollbar.error(error); return []; });
+      }).catch((error) => {
+        rollbar.error(error);
+        return [];
+      });
     };
     fetchData();
   }, [selectedXAxis, selectedYAxis, selectedZAxis]);
-
   return (
     <>
       { (dataPoints as DataPoint[]).map((dataPoint, index) => {
         const position = createPosition({
           data: [dataPoint.xValue, dataPoint.yValue, dataPoint.zValue],
-          AxisStartPoints: [0, 1.5, -1.5],
+          AxisStartPoints: [startX, startY, startZ],
           length: 1,
-          scale: 2,
+          scale: scaleFactor,
           maxData: [maxValues[0], maxValues[1], maxValues[2]],
         });
 

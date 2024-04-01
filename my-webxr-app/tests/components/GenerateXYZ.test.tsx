@@ -1,13 +1,37 @@
-import ReactThreeTestRenderer, { waitFor } from '@react-three/test-renderer';
-import { Vector3 } from 'three';
+import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { ReactThreeTestInstance } from '@react-three/test-renderer/dist/declarations/src/createTestInstance';
 import { expect } from 'vitest';
+import Dexie from 'dexie';
+import { Provider } from '@rollbar/react';
+import { Vector3 } from 'three';
 import MockServer from '../MockServer';
 import GenerateXYZ from '../../src/components/GenerateXYZ';
+import DataAbstractor, { getDatabase } from '../../src/data/DataAbstractor';
+import { useAxesSelectionContext } from '../../src/contexts/AxesSelectionContext';
+import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
+import { rollbarConfig } from '../../src/utils/LoggingUtils';
 
-describe('Axis Tests', () => {
-  beforeEach(() => MockServer.listen());
+vi.mock('../../src/contexts/AxesSelectionContext');
+
+describe('Generate XYZ axes', () => {
+  let database: DataAbstractor;
+
+  beforeEach(async () => {
+    MockServer.listen();
+
+    await Dexie.delete('CsvDataBase');
+    database = getDatabase();
+
+    vi.mocked(useAxesSelectionContext).mockReturnValue({
+      selectedXAxis: 'colX',
+      setSelectedXAxis: vi.fn(),
+      selectedYAxis: 'colY',
+      setSelectedYAxis: vi.fn(),
+      selectedZAxis: 'colZ',
+      setSelectedZAxis: vi.fn(),
+    });
+  });
 
   afterEach(() => MockServer.resetHandlers());
 
@@ -15,31 +39,39 @@ describe('Axis Tests', () => {
 
   test('Create 3D axis, and check for ticks label of each axis of diff max values magnitude:'
     + '1, 10 & 100', async () => {
-    const maxiumValues = [1, 10, 100];
-    function Element() {
-      return (
-        <XR>
-          <GenerateXYZ
-            maxValues={maxiumValues}
-            scaleFactor={1}
-            labelOffset={1}
-            startX={0}
-            startY={0}
-            startZ={0}
-            radius={0.002}
-          />
-        </XR>
-      );
-    }
+    const batchItems = [
+      ['colX', 'colY', 'colZ'],
+      [1, 10, 100], // max values
+    ];
+    await database.storeCSV(batchItems);
 
-    const renderer = await ReactThreeTestRenderer.create(<Element />);
+    const render = await ReactThreeTestRenderer.create(
+      <Provider config={rollbarConfig}>
+        <PointSelectionProvider>
+          <XR>
+            <GenerateXYZ
+              scaleFactor={1}
+              labelOffset={1}
+              startX={0}
+              startY={0}
+              startZ={0}
+              radius={0.002}
+              database={database}
+            />
+          </XR>
+        </PointSelectionProvider>
+      </Provider>,
+    );
+
     // wait for scene children to be rendered
-    await waitFor(() => expect(renderer.scene.children).toBeDefined());
+    await vi.waitFor(() => expect(render.scene.children).toBeDefined());
 
     // wait for the axes to be rendered, should have three axes
-    await waitFor(() => expect(renderer.scene.children[1].children).toBeDefined());
-    const axes = renderer.scene.children[1].children;
+    const axes = render.scene.children[1].children;
     expect(axes.length).toEqual(3);
+
+    // wait until the useEffect to finish update then render the return element, 21 ticks & 1 axis
+    await vi.waitUntil(() => (axes[0].children.length === 22));
 
     // For each axis, check the number of children
     axes.forEach((axis: ReactThreeTestInstance) => {
@@ -73,5 +105,5 @@ describe('Axis Tests', () => {
     expect(zAxisTicks.map((e) => e.children[1].props.text))
       .toEqual([-100, -90, -80, -70, -60, -50, -40, -30, -20, -10,
         0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(String));
-  }, 10000);
+  });
 });
