@@ -38,47 +38,54 @@ async function parseAndHandleUrlCsv(
     });
   };
 
-  Papa.parse(url, {
-    download: true,
-    dynamicTyping: true, // Convert data to number type if applicable
-    step: async (results) => {
-      const row = results.data as Array<string | number | null>;
-      if (row.every((item) => item !== null && item !== undefined)) {
-        completeData.push(row as (string | number)[]);
-      }
-    },
-    complete: async () => {
-      let knownLength = 0;
-      for (let i = 0; i < completeData.length; i += 1000) {
-        const batch = completeData.slice(i, i + 1000);
-        if (i === 0) {
-          // Normalize (fix duplicate) headers in the first batch
-          const headers = batch[0] as string[];
-          batch[0] = normalizeHeaders(headers);
-          knownLength = headers.length;
+  return new Promise((resolve, reject) => {
+    Papa.parse(url, {
+      download: true,
+      dynamicTyping: true, // Convert data to number type if applicable
+      step: async (results) => {
+        const row = results.data as Array<string | number | null>;
+        if (row.every((item) => item !== null && item !== undefined)) {
+          completeData.push(row as (string | number)[]);
         }
-        const sanitizedBatch: Array<Array<string | number>> = [];
+      },
+      complete: async () => {
+        let knownLength = 0;
+        for (let i = 0; i < completeData.length; i += 1000) {
+          const batch = completeData.slice(i, i + 1000);
+          if (i === 0) {
+            // Normalize (fix duplicate) headers in the first batch
+            const headers = batch[0] as string[];
+            batch[0] = normalizeHeaders(headers);
+            knownLength = headers.length;
+          }
+          const sanitizedBatch: Array<Array<string | number>> = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
-        batch.forEach((row) => {
-          const testbatch = Array<string | number>();
+          // eslint-disable-next-line @typescript-eslint/no-loop-func
+          batch.forEach((row) => {
+            const testbatch = Array<string | number>();
 
-          row.forEach((item) => {
-            if (typeof item === 'string') {
-              testbatch.push(item);
-            } else if (typeof item === 'number') {
-              testbatch.push(item);
+            row.forEach((item) => {
+              if (typeof item === 'string') {
+                testbatch.push(item);
+              } else if (typeof item === 'number') {
+                testbatch.push(item);
+              }
+            });
+            if (testbatch.length === knownLength) {
+              sanitizedBatch.push(testbatch);
             }
           });
-          if (testbatch.length === knownLength) {
-            sanitizedBatch.push(testbatch);
-          }
-        });
-        // eslint-disable-next-line no-await-in-loop
-        await DAL.storeCSV(sanitizedBatch);
-      }
-      setMessage('Url CSV loaded successfully');
-    },
+          // eslint-disable-next-line no-await-in-loop
+          await DAL.storeCSV(sanitizedBatch);
+        }
+        setMessage('Url CSV loaded successfully');
+        resolve('success');
+      },
+      error: (error) => {
+        setMessage(`Error loading URL CSV: ${error}`);
+        reject(error);
+      },
+    });
   });
 }
 

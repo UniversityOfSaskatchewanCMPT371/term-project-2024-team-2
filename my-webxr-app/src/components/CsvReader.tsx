@@ -153,10 +153,13 @@ export function UrlCsvReader({ DAL, reload, triggerReload }: CsvReaderProps): JS
       return;
     }
     try {
-      DAL.resetFlag();
-      await parseAndHandleUrlCsv(url, DAL, setMessage);
-      rollbar.info('URL CSV loaded successfully');
-      triggerReload(!reload);
+      await DAL.resetFlag();
+      await parseAndHandleUrlCsv(url, DAL, setMessage)
+        .then(() => {
+          triggerReload(!reload);
+          setMessage('URL CSV loaded successfully!');
+          rollbar.info('URL CSV loaded successfully!');
+        });
     } catch (e) {
       setMessage(`An error occurred: ${e}`);
       rollbar.error(`An error occurred while loading CSV from URL: ${e}`);
