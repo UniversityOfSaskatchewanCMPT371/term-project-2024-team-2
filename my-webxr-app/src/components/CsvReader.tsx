@@ -55,7 +55,8 @@ export default function LocalCsvReader({
         return count[header] > 1 ? `${header}${count[header]}` : header;
       });
     };
-    const readStream = async () => {
+
+    const readStream = new Promise((resolve, reject) => {
       Papa.parse(selectedFile, {
         dynamicTyping: true, // Convert data to number type if applicable
         step: async (results) => {
@@ -91,20 +92,26 @@ export default function LocalCsvReader({
             // eslint-disable-next-line no-await-in-loop
             await DAL.storeCSV(sanitizedBatch);
           }
-          setMessage('Local CSV loaded successfully');
           await DAL.calculateStatistics();
           await DAL.storeStandardizedData();
           await DAL.storePCA(await DAL.getAvailableFields());
-          rollbar.info('Statistics and PCA calculated successfully');
+          resolve('success');
+        },
+        error: (error) => {
+          reject(error);
         },
       });
-    };
-    (async () => {
-      await readStream();
+    });
+
+    readStream.then(() => {
       triggerReload(!reload);
-      rollbar.info('Local File loaded successfully');
-    })();
-    setMessage('File loaded successfully');
+      setMessage('Local CSV loaded successfully!');
+      rollbar.info('Local CSV loaded successfully!');
+    })
+      .catch((e) => {
+        setMessage(`An error occurred: ${e}`);
+        rollbar.error(`An error occurred while loading CSV from URL: ${e}`);
+      });
   };
 
   return (
