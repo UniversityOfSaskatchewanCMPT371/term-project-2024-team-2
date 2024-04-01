@@ -37,7 +37,7 @@ describe('createGraphingDataPoints', () => {
 
   afterAll(() => MockServer.close());
 
-  test('Check locations of points against hard coded values', async () => {
+  test('Check locations of points against hard coded values and scale value of 2', async () => {
     const batchItems = [
       ['colX', 'colY', 'colZ'],
       [1, 1, 1],
@@ -47,8 +47,6 @@ describe('createGraphingDataPoints', () => {
       [-1, -1, -1],
     ];
     await database.storeCSV(batchItems);
-    await database.calculateStatistics();
-    await database.storeStandardizedData();
 
     vi.mocked(useAxesSelectionContext).mockReturnValue({
       selectedXAxis: 'colX',
@@ -63,7 +61,13 @@ describe('createGraphingDataPoints', () => {
       <Provider config={rollbarConfig}>
         <PointSelectionProvider>
           <XR>
-            <CreateGraphingDataPoints />
+            <CreateGraphingDataPoints
+              scaleFactor={2}
+              startX={0}
+              startY={1.5}
+              startZ={-1.5}
+              database={database}
+            />
           </XR>
         </PointSelectionProvider>
       </Provider>,

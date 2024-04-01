@@ -39,7 +39,7 @@ const createPointPositions = ({
   );
   assert(
     scale !== undefined && scale > 0,
-    'Error in Position.tsx, Scale should never be 0 or less',
+    `Error in Position.tsx, Scale should never be 0 or less, scale: ${scale}`,
   );
   assert(
     maxData[0] >= 0 && maxData[1] >= 0 && maxData[2] >= 0,

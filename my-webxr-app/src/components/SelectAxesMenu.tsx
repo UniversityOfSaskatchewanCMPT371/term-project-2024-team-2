@@ -111,7 +111,14 @@ export default function SelectAxesColumns({ reload, database }: SelectAxesColumn
       <DropDown label="Select X Axis: " id="xAxis" options={AxisOptions} chosenValue={setXAxis} />
       <DropDown label="Select Y Axis: " id="yAxis" options={AxisOptions} chosenValue={setYAxis} />
       <DropDown label="Select Z Axis: " id="zAxis" options={AxisOptions} chosenValue={setZAxis} />
-      <button type="submit" onClick={() => { handleCompleteSelection(setSelectedXAxis, setSelectedYAxis, setSelectedZAxis); }}>Complete Selection</button>
+      <button
+        type="submit"
+        onClick={() => {
+          handleCompleteSelection(setSelectedXAxis, setSelectedYAxis, setSelectedZAxis);
+        }}
+      >
+        Complete Selection
+      </button>
     </div>
   );
 }
