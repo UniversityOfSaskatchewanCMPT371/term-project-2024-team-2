@@ -1,3 +1,4 @@
+[![Linting](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/actions/workflows/lint.yml/badge.svg)](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/actions/workflows/lint.yml)
 
 # High Dimensional Data Visualization
 
