@@ -4,12 +4,12 @@ import { Vector3 } from 'three';
 import { expect } from 'vitest';
 import { Provider } from '@rollbar/react';
 import Dexie from 'dexie';
-import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
 import MockServer from '../MockServer';
 import CreateGraphingDataPoints from '../../src/components/CreateGraphingDataPoints';
 import { rollbarConfig } from '../../src/utils/LoggingUtils';
 import DataAbstractor, { getDatabase } from '../../src/data/DataAbstractor';
 import { useAxesSelectionContext } from '../../src/contexts/AxesSelectionContext';
+import { usePointSelectionContext } from '../../src/contexts/PointSelectionContext';
 
 // TODO: These values are based on the hard-coded values in CreateGraphingDataPoints and will
 //  have to be updated when the hardcoded values are removed.
@@ -21,6 +21,7 @@ const positions = [
   new Vector3(-0.1, 1.4, -1.6),
 ];
 
+vi.mock('../../src/contexts/PointSelectionContext');
 vi.mock('../../src/contexts/AxesSelectionContext');
 
 describe('createGraphingDataPoints', () => {
@@ -48,6 +49,18 @@ describe('createGraphingDataPoints', () => {
     ];
     await database.storeCSV(batchItems);
 
+    vi.mocked(usePointSelectionContext).mockReturnValue({
+      selectedDataPoint: {
+        id: -1,
+        columnX: '',
+        columnY: '',
+        columnZ: '',
+        marker: '',
+        color: '',
+      },
+      setSelectedDataPoint: vi.fn(),
+    });
+
     vi.mocked(useAxesSelectionContext).mockReturnValue({
       selectedXAxis: 'colX',
       setSelectedXAxis: vi.fn(),
@@ -59,17 +72,15 @@ describe('createGraphingDataPoints', () => {
 
     const render = await ReactThreeTestRenderer.create(
       <Provider config={rollbarConfig}>
-        <PointSelectionProvider>
-          <XR>
-            <CreateGraphingDataPoints
-              scaleFactor={2}
-              startX={0}
-              startY={1.5}
-              startZ={-1.5}
-              database={database}
-            />
-          </XR>
-        </PointSelectionProvider>
+        <XR>
+          <CreateGraphingDataPoints
+            scaleFactor={2}
+            startX={0}
+            startY={1.5}
+            startZ={-1.5}
+            database={database}
+          />
+        </XR>
       </Provider>,
     );
 
@@ -80,19 +91,19 @@ describe('createGraphingDataPoints', () => {
 
     // Children 0 is the camera
     // Children 1-5 are the points, check position and name
-    expect(render.scene.children[1].children[1].instance.position.equals(positions[0])).toBe(true);
-    expect(render.scene.children[1].children[1].instance.name).toEqual('point sphere');
+    expect(render.scene.children[1].children[0].instance.position.equals(positions[0])).toBe(true);
+    expect(render.scene.children[1].children[0].instance.type).toEqual('Mesh');
 
-    expect(render.scene.children[2].children[1].instance.position.equals(positions[1])).toBe(true);
-    expect(render.scene.children[2].children[1].instance.name).toEqual('point sphere');
+    expect(render.scene.children[2].children[0].instance.position.equals(positions[1])).toBe(true);
+    expect(render.scene.children[2].children[0].instance.type).toEqual('Mesh');
 
-    expect(render.scene.children[3].children[1].instance.position.equals(positions[2])).toBe(true);
-    expect(render.scene.children[3].children[1].instance.name).toEqual('point sphere');
+    expect(render.scene.children[3].children[0].instance.position.equals(positions[2])).toBe(true);
+    expect(render.scene.children[3].children[0].instance.type).toEqual('Mesh');
 
-    expect(render.scene.children[4].children[1].instance.position.equals(positions[3])).toBe(true);
-    expect(render.scene.children[4].children[1].instance.name).toEqual('point sphere');
+    expect(render.scene.children[4].children[0].instance.position.equals(positions[3])).toBe(true);
+    expect(render.scene.children[4].children[0].instance.type).toEqual('Mesh');
 
-    expect(render.scene.children[5].children[1].instance.position.equals(positions[4])).toBe(true);
-    expect(render.scene.children[5].children[1].instance.name).toEqual('point sphere');
+    expect(render.scene.children[5].children[0].instance.position.equals(positions[4])).toBe(true);
+    expect(render.scene.children[5].children[0].instance.type).toEqual('Mesh');
   });
 });
