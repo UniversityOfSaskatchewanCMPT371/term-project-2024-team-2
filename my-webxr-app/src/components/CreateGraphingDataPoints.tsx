@@ -91,7 +91,7 @@ export default function CreateGraphingDataPoints({
             columnY={selectedYAxis as string}
             columnZ={selectedZAxis as string}
             actualData={[dataPoint.xValue, dataPoint.yValue, dataPoint.zValue]}
-            size={[0.02, 32, 32]}
+            size={[0.02, 0]}
             meshProps={{ position }}
           />
         );
