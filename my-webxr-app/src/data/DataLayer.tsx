@@ -1,11 +1,11 @@
-import * as assert from 'assert';
+import assert from 'node:assert';
 import { Matrix } from 'ml-matrix';
+// eslint-disable-next-line import/no-cycle
 import DataAbstractor from './DataAbstractor';
 import { Repository } from '../repository/Repository';
 import DbRepository from '../repository/DbRepository';
 import Column, {
   TableName,
-  DataRow,
   NumericColumn,
   RawColumn,
   StatsColumn,
@@ -93,13 +93,14 @@ export default class DataLayer implements DataAbstractor {
 
         if (this.isFirstBatch) {
           columnName = String(column[0]); // Type cast numeric field header to string
-          newValues = column.slice(1);
+          // Once we get the header out, the rest of the column should be numeric ot string
+          newValues = column.slice(1) as RawColumn;
           const aColumn = new Column<RawColumn>(columnName, newValues);
           await this.repository.addColumn(aColumn, TableName.RAW);
         } else {
           const columnNames = await this.repository.getCsvColumnNames();
           columnName = columnNames[index];
-          newValues = column;
+          newValues = column as RawColumn;
           const existingColumn = await this.repository.getColumn(columnName, TableName.RAW);
           (existingColumn.values as (string | number)[]).push(...newValues);
           await this.repository.updateColumn(existingColumn, TableName.RAW);
@@ -199,7 +200,7 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * Retrieve the available fields (column headers) from stats data table and pca data table.
+   * Retrieve the available fields (column headers) from raw data table and pca data table.
    * Intended to be used for user to select which fields to plot
    *
    * @pre-condition None
@@ -207,9 +208,9 @@ export default class DataLayer implements DataAbstractor {
    * @returns {Promise<string[]>} A promise that resolves to an array of column names.
    */
   async getAvailableFields(): Promise<string[]> {
-    const statsNames = await this.repository.getStatsColumnNames();
+    const rawNames = await this.repository.getStatsColumnNames();
     const pcaNames = await this.repository.getPcaColumnNames();
-    return [...statsNames, ...pcaNames];
+    return [...rawNames, ...pcaNames];
   }
 
   /**
@@ -422,27 +423,26 @@ export default class DataLayer implements DataAbstractor {
   }
 
   /**
-   * This function retrieves data points from the repository based on the provided column names
-   * and table name.
+   * This function retrieves an array of data points in forms of [x, y ,z] and an array of 3 maximum
+   * absolute values of each x, y, z components of the data points array.
    *
-   * @pre-condition There exists a data column with a key matching hte provided names in the
-   *    data-store
+   * @pre-conditions
+   * - No fields/columns in CSV should be named as PC1, PC2, PC3, ..., PCn.
+   * - Column names are in the table, either RAW or PCA.
    * @post-condition Returns an array of data points associated with the provided column names
-   * @param {string} columnX - The name of the column to be used for the x-axis values.
-   * @param {string} columnY - The name of the column to be used for the y-axis values.
-   * @param {string} columnZ - The name of the column to be used for the z-axis values.
-   * @param {TableName} tableName - The type of the table (RAW or PCA).
-   *
-   * @returns {Promise<DataPoint[]>} A promise that resolves to an array of DataPoint objects.
+   * @param {string | null} columnX - The name of the column to be used for the x-axis values.
+   * @param {string | null} ColumnY - The name of the column to be used for the y-axis values.
+   * @param {string | null} ColumnZ - The name of the column to be used for the z-axis values.
+   * @returns {Promise<[Array<DataPoint>, Array<number>]>} A promise that resolves to an array of
+   * DataPoint objects and an array of maximum values from each column.
    * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
    */
   public async createDataPointsFrom3Columns(
     columnX: string,
-    columnY: string,
-    columnZ: string,
-    tableName: TableName,
-  ): Promise<DataPoint[]> {
-    return this.repository.getPoints(columnX, columnY, columnZ, tableName);
+    ColumnY: string,
+    ColumnZ: string,
+  ): Promise<[Array<DataPoint>, Array<number>]> {
+    return this.repository.getPoints(columnX, ColumnY, ColumnZ);
   }
 
   /**
@@ -463,9 +463,21 @@ export default class DataLayer implements DataAbstractor {
   }
 
   // TODO add function to calculate and store variance explained by each PC? maybe not needed
+
+  /**
+ * Resets the flag to indicate if it is the first batch.
+ * @param {void} - No parameters.
+ * @postcondition - The flag is reset to true.
+ * @returns {Promise<boolean>} - A promise that resolves when the flag is reset.
+ */
+  public async resetFlag(): Promise<boolean> {
+    await this.repository.clearTables();
+    this.isFirstBatch = true;
+    return true;
+  }
 }
 
 /**
  * The BatchedDataStream type is used for streaming in batches of data from CSV parsing.
  */
-export type BatchedDataStream = Array<DataRow>;
+export type BatchedDataStream = Array<Array<string | number>>;

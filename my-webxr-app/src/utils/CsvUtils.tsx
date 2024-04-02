@@ -1,133 +1,95 @@
-import { openDB } from 'idb';
 import Papa from 'papaparse';
 import React from 'react';
-import assert from './Assert';
+import * as assert from 'assert';
+import DataAbstractor from '../data/DataAbstractor';
 
 /**
- * Validates the existence of a database and a store within that database.
- *
- * @pre-condition a database of the given name must exist
- * @post-condition stores data in the database of the given name
- * @param {string} dbName - The name of the database to validate.
- * @param {string} storeName - The name of the store to validate.
- * @throws {Error} Will throw an error if the database does not exist, or if the store does not
- * exist within the
- * database.
- */
-export const validateDbAndStore = async (dbName: string, storeName: string) => {
-  const db = await openDB(dbName, 1);
-  assert(db !== undefined, `Database "${dbName}" does not exist`);
-  const storeExists = db.objectStoreNames.contains(storeName);
-  assert(storeExists, `Store "${storeName}" does not exist in database "${dbName}"`);
-};
-
-/**
- * Handles the parsed CSV data by storing it in the specified IndexedDB database and store.
- * This clears the store before adding new data, i.e, overwriting existing data.
- *
- * @pre-condition a database of the given name must exist
- * @post-condition the provided data is stored in the database via a transaction
- * @param {Array<Array<string | number | null>>} items - The parsed CSV data to be stored.
- * @param {string} dbName - The name of the database where the data should be stored.
- * @param {string} storeName - The name of the store within the database where the data should be
- * stored.
- * @param {number} start - The starting index for the data to be stored.
- */
-export const handleParsedData = async (
-  items: Array<Array<string | number | null>>,
-  dbName: string,
-  storeName: string,
-  start: number,
-) => {
-  const db = await openDB(dbName, 1);
-  const tx = db.transaction(storeName, 'readwrite');
-  const store = tx.objectStore(storeName);
-
-  await store.clear(); // Clean the store before adding new data
-
-  const promises = items.map((item, i) => store.put(item, start + i));
-  await Promise.all(promises);
-
-  await tx.done;
-};
-
-/**
- * Parses a local CSV file and handles the parsed data in batches of 1000 rows.
- *
- * @pre-condition a database of the given name must exist
- * @post-condition the provided data is stored in the database via a transaction
- * @param {File} file - The local CSV file to parse.
- * @param {string} dbName - The name of the database where the data should be stored.
- * @param {string} storeName - The name of the store within the database where the data should be
- * stored.
- * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to
- * set the message.
- */
-export async function parseAndHandleLocalCsv(
-  file: File,
-  dbName: string,
-  storeName: string,
-  setMessage: React.Dispatch<React.SetStateAction<string | null>>,
-) {
-  let i = 0;
-  let batch :Array<Array<string | number | null>> = [];
-  const batchSize = 1000; // # of rows per batch
-  Papa.parse(file, {
-    dynamicTyping: true, // Convert data to number type if applicable
-    step: async (results) => {
-      batch.push(results.data as Array<string | number | null>);
-      if (batch.length >= batchSize) {
-        await handleParsedData(batch, dbName, storeName, i);
-        i += batch.length;
-        batch = [];
-      }
-    },
-    complete: async () => {
-      if (batch.length > 0) {
-        await handleParsedData(batch, dbName, storeName, i);
-      }
-      setMessage('Local CSV loaded successfully');
-    },
-  });
-}
-
-/**
- * Parses a CSV file from a URL and handles the parsed data in batches oif 1000 rows.
+ * Asynchronously parses a CSV file from a URL and handles the parsed data.
+ * Rows with null values are ignored. The parsed data is stored in the `sanitizedBatch` array.
+ * Once the parsing is complete, the data is sent to `DAL.storeCSV` in batches of 1000 rows.
  *
  * @pre-condition a database of the given name must exist
  * @post-condition the provided data is stored in the database via a transaction
  * @param {string} url - The URL of the CSV file to parse.
- * @param {string} dbName - The name of the database where the data should be stored.
- * @param {string} storeName - The name of the store within the database where the data should be
- * stored.
- * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function to call to
- * set the message.
+ * @param {DataAbstractor} DAL - The Data Abstractor instance where the parsed
+ *      CSV data will be stored.
+ * @param {React.Dispatch<React.SetStateAction<string | null>>} setMessage - The function
+ *      to call to set the message state in the parent component.
+ * @returns {Promise<void>} - A promise that resolves when the parsing and handling
+ *      of the CSV file is complete.
  */
-export async function parseAndHandleUrlCsv(
+async function parseAndHandleUrlCsv(
   url: string,
-  dbName: string,
-  storeName: string,
+  DAL: DataAbstractor,
   setMessage: React.Dispatch<React.SetStateAction<string | null>>,
 ) {
-  let i = 0;
-  let batch :Array<Array<string | number | null>> = [];
-  const batchSize = 1000; // # of rows per batch
-  Papa.parse(url, {
-    download: true,
-    dynamicTyping: true, // Convert data to number type if applicable
-    step: async (results) => {
-      batch.push(results.data as Array<string | number | null>);
-      if (batch.length >= batchSize) {
-        await handleParsedData(batch, dbName, storeName, i);
-        i += batch.length;
-        batch = [];
-      }
-    },
-    complete: async () => {
-      if (batch.length > 0) {
-        await handleParsedData(batch, dbName, storeName, i);
-      }
-      setMessage('Url CSV loaded successfully');
-    },
+  const completeData = Array<Array<string | number>>();
+  assert.ok(url !== null || url !== undefined, 'No URL provided');
+  assert.ok(DAL !== null || DAL !== undefined, 'No Data Abstractor provided');
+  assert.ok(setMessage !== null || setMessage !== undefined, 'No setMessage function provided');
+  // Normalize headers by appending a number to duplicate headers, takes in an array of string
+  // headers
+  await DAL.resetFlag();
+  const normalizeHeaders = (headers: string[]) => {
+    const count: Record<string, number> = {};
+    return headers.map((header) => {
+      count[header] = (count[header] || 0) + 1;
+      return count[header] > 1 ? `${header}${count[header]}` : header;
+    });
+  };
+
+  return new Promise((resolve, reject) => {
+    Papa.parse(url, {
+      download: true,
+      dynamicTyping: true, // Convert data to number type if applicable
+      step: async (results) => {
+        const row = results.data as Array<string | number | null>;
+        if (row.every((item) => item !== null && item !== undefined)) {
+          completeData.push(row as (string | number)[]);
+        }
+      },
+      complete: async () => {
+        let knownLength = 0;
+        for (let i = 0; i < completeData.length; i += 1000) {
+          const batch = completeData.slice(i, i + 1000);
+          if (i === 0) {
+            // Normalize (fix duplicate) headers in the first batch
+            const headers = batch[0] as string[];
+            batch[0] = normalizeHeaders(headers);
+            knownLength = headers.length;
+          }
+          const sanitizedBatch: Array<Array<string | number>> = [];
+
+          // eslint-disable-next-line @typescript-eslint/no-loop-func
+          batch.forEach((row) => {
+            const testbatch = Array<string | number>();
+
+            row.forEach((item) => {
+              if (typeof item === 'string') {
+                testbatch.push(item);
+              } else if (typeof item === 'number') {
+                testbatch.push(item);
+              }
+            });
+            if (testbatch.length === knownLength) {
+              sanitizedBatch.push(testbatch);
+            }
+          });
+          // eslint-disable-next-line no-await-in-loop
+          await DAL.storeCSV(sanitizedBatch);
+        }
+        setMessage('Url CSV loaded successfully');
+        await DAL.calculateStatistics();
+        await DAL.storeStandardizedData();
+        await DAL.storePCA(await DAL.getAvailableFields());
+        resolve('success');
+      },
+      error: (error) => {
+        setMessage(`Error loading URL CSV: ${error}`);
+        reject(error);
+      },
+    });
   });
 }
+
+export default parseAndHandleUrlCsv;

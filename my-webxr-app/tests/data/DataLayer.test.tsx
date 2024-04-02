@@ -411,7 +411,6 @@ describe('Validate writeStandardizedData() operation', () => {
       const dataSet = dataSets[i];
       // eslint-disable-next-line no-await-in-loop
       const standardizedColumn = await repository.getColumn(`testColumn${i}`, TableName.STANDARDIZED);
-      // console.log(standardizedColumn);
       // eslint-disable-next-line @typescript-eslint/no-loop-func
       standardizedColumn.values.forEach((value, index) => {
         expect(value).toBeCloseTo(dataSet.expected[index], 3);

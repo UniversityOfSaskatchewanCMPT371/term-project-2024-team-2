@@ -69,7 +69,6 @@ describe('DbRepository Test', () => {
       'test',
       'test',
       'test',
-      TableName.RAW,
     ))
       .rejects
     // confirm that it did throw an assertion error with the correct message
@@ -84,7 +83,6 @@ describe('DbRepository Test', () => {
       'test',
       'nonExistentColumn1',
       'nonExistentColumn2',
-      TableName.RAW,
     ))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
@@ -244,7 +242,7 @@ describe('DbRepository - Test getPoints()', () => {
     const column = new Column<RawColumn>('test', [1, 2]);
     await repository.addColumn(column, TableName.RAW);
 
-    await expect(repository.getPoints('test', 'test', 'test', TableName.RAW))
+    await expect(repository.getPoints('test', 'test', 'test'))
       .rejects
     // confirm that it did throw an assertion error with the correct message
       .toThrow(new assert.AssertionError({ message: 'The three columns must be distinct but got: test,test,test!' }));
@@ -254,7 +252,7 @@ describe('DbRepository - Test getPoints()', () => {
     const column = new Column<RawColumn>('test', [1, 2]);
     await repository.addColumn(column, TableName.RAW);
 
-    await expect(repository.getPoints('test', 'nonExistentColumn1', 'nonExistentColumn2', TableName.RAW))
+    await expect(repository.getPoints('test', 'nonExistentColumn1', 'nonExistentColumn2'))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'Column nonExistentColumn1 does not exist!' }));
   });
@@ -267,25 +265,12 @@ describe('DbRepository - Test getPoints()', () => {
     await repository.addColumn(column2, TableName.RAW);
     await repository.addColumn(column3, TableName.RAW);
 
-    await expect(repository.getPoints('column1', 'column2', 'column3', TableName.RAW))
+    await expect(repository.getPoints('column1', 'column2', 'column3'))
       .rejects
       .toThrow(new assert.AssertionError({ message: 'ColumnY must be numeric!' }));
   });
 
-  test('getPoints - Get points of STANDARDIZED column types - expect Exception', async () => {
-    const column1 = new Column<NumericColumn>('column1', [1.1, 2.2, 3.3]);
-    const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
-    const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
-    await repository.addColumn(column1, TableName.STANDARDIZED);
-    await repository.addColumn(column2, TableName.STANDARDIZED);
-    await repository.addColumn(column3, TableName.STANDARDIZED);
-
-    await expect(repository.getPoints('column1', 'column2', 'column3', TableName.STANDARDIZED))
-      .rejects
-      .toThrow(new assert.AssertionError({ message: 'Invalid column type. Must be either RAW or PCA.' }));
-  });
-
-  test('getPoints - Get points of 3 RAW DATA columns', async () => {
+  test('getPoints - Get points of 3 RAW DATA columns, round off absolute max values to next int', async () => {
     const column1 = new Column<RawColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column<RawColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<RawColumn>('column3', [-1.1, -2.2, -3.3]);
@@ -293,16 +278,19 @@ describe('DbRepository - Test getPoints()', () => {
     await repository.addColumn(column2, TableName.RAW);
     await repository.addColumn(column3, TableName.RAW);
 
-    const result = await repository.getPoints('column1', 'column2', 'column3', TableName.RAW);
-
-    expect(result).toHaveLength(3);
+    const result = await repository.getPoints('column1', 'column2', 'column3');
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
   });
 
-  test('getPoints - Get points of 3 PCA DATA columns', async () => {
+  test('getPoints - Get points of 3 PCA DATA columns, round off absolute max values to next int', async () => {
     const column1 = new Column<NumericColumn>('column1', [1.1, 2.2, 3.3]);
     const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
     const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
@@ -310,12 +298,58 @@ describe('DbRepository - Test getPoints()', () => {
     await repository.addColumn(column2, TableName.PCA);
     await repository.addColumn(column3, TableName.PCA);
 
-    const result = await repository.getPoints('column1', 'column2', 'column3', TableName.PCA);
+    const result = await repository.getPoints('column1', 'column2', 'column3');
 
-    expect(result).toHaveLength(3);
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
     const expected = [new DataPoint(1.1, 0.1, -1.1),
       new DataPoint(2.2, 0.2, -2.2),
       new DataPoint(3.3, 0.3, -3.3)];
-    expect(result).toEqual(expect.arrayContaining(expected));
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
+  });
+
+  test('getPoints - Get points of 2 PCA columns and 1 Raw column, round off absolute max values to next int', async () => {
+    const column1 = new Column<NumericColumn>('PC1', [1.1, 2.2, 3.3]);
+    const column2 = new Column<NumericColumn>('PC2', [0.1, 0.2, 0.3]);
+    const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
+    await repository.addColumn(column1, TableName.PCA);
+    await repository.addColumn(column2, TableName.PCA);
+    await repository.addColumn(column3, TableName.RAW);
+
+    const result = await repository.getPoints('PC1', 'PC2', 'column3');
+
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
+    const expected = [new DataPoint(1.1, 0.1, -1.1),
+      new DataPoint(2.2, 0.2, -2.2),
+      new DataPoint(3.3, 0.3, -3.3)];
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
+  });
+
+  test('getPoints - Get points of 1 PCA column and 2 Raw columns, round off absolute max values to next int', async () => {
+    const column1 = new Column<NumericColumn>('PC1', [1.1, 2.2, 3.3]);
+    const column2 = new Column<NumericColumn>('column2', [0.1, 0.2, 0.3]);
+    const column3 = new Column<NumericColumn>('column3', [-1.1, -2.2, -3.3]);
+    await repository.addColumn(column1, TableName.PCA);
+    await repository.addColumn(column2, TableName.RAW);
+    await repository.addColumn(column3, TableName.RAW);
+
+    const result = await repository.getPoints('PC1', 'column2', 'column3');
+
+    const dataPoints = result[0];
+    const maxValues = result[1];
+    expect(dataPoints).toHaveLength(3);
+    expect(maxValues).toHaveLength(3);
+    const expected = [new DataPoint(1.1, 0.1, -1.1),
+      new DataPoint(2.2, 0.2, -2.2),
+      new DataPoint(3.3, 0.3, -3.3)];
+    expect(dataPoints).toEqual(expect.arrayContaining(expected));
+    expect(maxValues).toEqual([4, 1, 4]);
   });
 });
