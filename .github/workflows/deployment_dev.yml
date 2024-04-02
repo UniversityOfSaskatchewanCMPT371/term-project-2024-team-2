@@ -34,6 +34,7 @@ jobs:
           touch .env
           echo VITE_ROLLBAR_ACCESS_TOKEN=${{ secrets.ROLLBAR_ACCESS_TOKEN }} >> .env
           echo VITE_ROLLBAR_ENVIRONMENT=${{ secrets.ROLLBAR_DEV_STAGING_ENVIRONMENT }} >> .env
+          echo VITE_IS_TESTING=true >> .env
           cat .env
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
@@ -57,6 +58,7 @@ jobs:
           touch .env
           echo VITE_ROLLBAR_ACCESS_TOKEN=${{ secrets.ROLLBAR_ACCESS_TOKEN }} >> .env
           echo VITE_ROLLBAR_ENVIRONMENT=${{ secrets.ROLLBAR_PROD_STAGING_ENVIRONMENT }} >> .env
+          echo VITE_IS_TESTING=true >> .env
           cat .env
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
