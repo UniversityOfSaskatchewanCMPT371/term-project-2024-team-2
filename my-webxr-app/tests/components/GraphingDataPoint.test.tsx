@@ -27,8 +27,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
       </Provider>,
     );
 
-    // Expect the GraphingDataPoint component to be created, along with its two meshes with
-    // default values.
+    // Expect the GraphingDataPoint component to be created, along with its mesh
     expect(renderer.scene.children.length).toEqual(2); // + native camera component = 2
     expect(renderer.scene.children[1].children.length).toEqual(1);
   });
@@ -50,7 +49,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
       </Provider>,
     );
 
-    // Check if the both mesh positions are accurate.
+    // Check if the mesh position is accurate.
     expect(renderer.scene.children[1].children[0].instance.position.equals(
       new Vector3(1, 2, 3),
     )).toBe(true);
@@ -85,7 +84,7 @@ describe('GraphingDataPoint Creation and Interaction', () => {
       </Provider>,
     );
 
-    // Check if the outline mesh exists.
+    // Check if the outline mesh now exists.
     expect(renderer.scene.children[1].children.length).equals(2);
   });
 
