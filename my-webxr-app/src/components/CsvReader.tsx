@@ -4,6 +4,7 @@ import DataAbstractor from '../data/DataAbstractor';
 import parseAndHandleUrlCsv from '../utils/CsvUtils';
 import assert from '../utils/Assert';
 import { rollbar } from '../utils/LoggingUtils';
+import WriteHook from '../smoketest/TestHookWrite';
 
 interface CsvReaderProps {
   DAL: DataAbstractor;
@@ -38,6 +39,8 @@ export default function LocalCsvReader({
 
   assert(DAL !== null || DAL !== undefined, 'Data Abstractor is not initialized');
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    WriteHook('Load CSV from file button visible : ');
+
     const selectedFile = event.target.files?.[0] as File;
 
     assert(selectedFile !== null || selectedFile !== undefined, 'No file selected');
@@ -106,6 +109,7 @@ export default function LocalCsvReader({
     readStream.then(() => {
       triggerReload(!reload);
       setMessage('Local CSV loaded successfully!');
+      WriteHook('Local CSV loaded successfully : ');
       rollbar.info('Local CSV loaded successfully!');
     })
       .catch((e) => {
@@ -148,8 +152,10 @@ export function UrlCsvReader({ DAL, reload, triggerReload }: CsvReaderProps): JS
   };
 
   const handleButtonClick = async () => {
+    WriteHook('Load CSV from URL button visible : ');
     if (!url.endsWith('.csv' || !url.endsWith('.txt'))) {
       setMessage('URL must point to a CSV file or not empty : ');
+      WriteHook('URL not a CSV : ');
       return;
     }
     try {
@@ -158,6 +164,7 @@ export function UrlCsvReader({ DAL, reload, triggerReload }: CsvReaderProps): JS
         .then(() => {
           triggerReload(!reload);
           setMessage('URL CSV loaded successfully!');
+          WriteHook('URL CSV loaded successfully : ');
           rollbar.info('URL CSV loaded successfully!');
         });
     } catch (e) {
