@@ -72,6 +72,7 @@ export default function TestingOptions() {
     content.innerText += JSON.stringify(await db.getAll('pcaColumns'), null, 4);
     content.innerText += '\n';
 
+    db.close();
     return Promise.resolve('DB popup created');
   };
 
