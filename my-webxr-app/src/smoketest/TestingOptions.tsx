@@ -30,10 +30,9 @@ export default function TestingOptions() {
 
   const viewDatabase = async () => {
     const db = await openDB('CsvDataBase');
-    // eslint-disable-next-line no-alert
-    // alert(JSON.stringify(await db.getAll('rawColumns'), null, 2));
-    // console.log(JSON.stringify(await db.getAll('rawColumns'), null, 2));
-    // Hacky "alert" to show everything in the Database
+
+    // Hacky "alert/modal" to show everything in the Database. It has to be created this way in
+    // order to appear in front of everything (we can't just put it in the React component).
     const popup = document.getElementById('root')?.appendChild(document.createElement('div'));
     if (typeof popup === 'undefined') {
       db.close();
