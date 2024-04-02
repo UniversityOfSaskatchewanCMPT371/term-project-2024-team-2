@@ -92,8 +92,6 @@ export default function LocalCsvReader({
             });
             // eslint-disable-next-line no-await-in-loop
             await DAL.storeCSV(sanitizedBatch);
-            console.log(sanitizedBatch);
-
             WriteHook(`Loaded CSV with ${sanitizedBatch.length} rows : `);
           }
           await DAL.calculateStatistics();
