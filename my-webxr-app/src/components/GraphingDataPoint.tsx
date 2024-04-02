@@ -4,6 +4,7 @@ import { BackSide } from 'three';
 import { useRollbar } from '@rollbar/react';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
+import WriteHook from '../smoketest/TestHookWrite';
 
 /**
  * Creates a VR element of an intractable datapoint
@@ -48,6 +49,7 @@ export default function GraphingDataPoint({
 
     rollbar.debug(`GraphingDataPoint #${id}: setting hover count to ${amount}`);
     setHoverCount(amount);
+    WriteHook('Datapoint is hovered : ');
   };
 
   return (
@@ -64,6 +66,7 @@ export default function GraphingDataPoint({
           setSelectedDataPoint({
             id, marker, color, columnX, columnY, columnZ, actualData, meshProps,
           });
+          WriteHook(`${String(actualData)} : `);
         }
       }}
     >
