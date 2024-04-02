@@ -4,6 +4,7 @@ import React, {
 import { useRollbar } from '@rollbar/react';
 import { DataPointProps } from '../types/DataPointTypes';
 import assert from '../utils/Assert';
+import WriteHook from '../smoketest/TestHookWrite';
 
 /**
  * Create an interface for the return state values of the Context.
@@ -43,12 +44,12 @@ export function PointSelectionProvider({
   /* Create the internal selected GraphingDataPoint State */
   const [selectedDataPoint, setSelectedDataPointInternal] = useState<PointSelectionContextType['selectedDataPoint']>(null);
   const rollbar = useRollbar();
-
   const setSelectedDataPoint = (
     newValue: React.SetStateAction<DataPointProps | null>,
   ) => {
     rollbar.debug(`PointSelectionContext: updating selectedDataPoint state to ${newValue ? (newValue as DataPointProps).id : null}`);
     setSelectedDataPointInternal(newValue);
+    WriteHook('Datapoint is selected : ');
   };
 
   /* Cache the value to prevent unnecessary re-renders. */
@@ -73,7 +74,7 @@ export const usePointSelectionContext = (): PointSelectionContextType => {
   // This context will only be null if called from outside a PointSelectionProvider.
   const context = useContext(PointSelectionContext);
   assert(!!context, `Assertion failed: You must use this context within a
-  PointSelectionProvider! context = ${context}`);
+   PointSelectionProvider! context = ${context}`);
 
   // context cannot be null because of the assertion, but TypeScript does not realise that, so
   // we must force cast it to PointSelectionContextType.

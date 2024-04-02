@@ -1,15 +1,23 @@
 import * as Papa from 'papaparse';
+import { expect } from 'vitest';
 import parseAndHandleUrlCsv from '../../src/utils/CsvUtils';
 import DataAbstractor, { getDatabase } from '../../src/data/DataAbstractor';
 
 vi.mock('idb', () => ({
   openDB: vi.fn(),
 }));
-vi.mock('papaparse');
+
+vi.mock('papaparse', () => ({
+  default: {
+    parse: vi.fn().mockImplementation((_url, options) => {
+      options.complete();
+    }),
+  },
+}));
 
 describe('parseAndHandleUrlCsv function', () => {
   it('should call Papa.parse with correctly passed arguments', async () => {
-    const url = 'https://support.staffbase.com/hc/en-us/article_attachments/360009197031/username.csv';
+    const url = 'testURL';
     const DAL = getDatabase() as DataAbstractor;
     const setMessage = () => {};
 
@@ -19,7 +27,9 @@ describe('parseAndHandleUrlCsv function', () => {
     expect((Papa as object).default.parse).toHaveBeenCalledWith(url, expect.objectContaining({
       download: true,
       dynamicTyping: true,
+      step: expect.any(Function),
       complete: expect.any(Function),
+      error: expect.any(Function),
     }));
   });
 });
