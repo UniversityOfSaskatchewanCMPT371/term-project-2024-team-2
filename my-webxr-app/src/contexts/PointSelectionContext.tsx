@@ -4,7 +4,7 @@ import React, {
 import { useRollbar } from '@rollbar/react';
 import { DataPointProps } from '../types/DataPointTypes';
 import assert from '../utils/Assert';
-import WriteHook from '../smoketest/TestHookWrite';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 /**
  * Create an interface for the return state values of the Context.

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRollbar } from '@rollbar/react';
-import WriteHook from '../smoketest/TestHookWrite';
+import WriteHook from '../../smoketests/TestHookWrite';
 import SingleAxis from './SingleAxis';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import DataAbstractor from '../data/DataAbstractor';

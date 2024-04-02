@@ -10,7 +10,7 @@ import ScaleSlider from './components/ScaleSlider';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
 import './styles.css';
-import TestingOptions from './smoketest/TestingOptions';
+import TestingOptions from '../smoketests/TestingOptions';
 import { rollbarConfig } from './utils/LoggingUtils';
 import DataAbstractor, { getDatabase } from './data/DataAbstractor';
 import SelectAxesColumns from './components/SelectAxesMenu';

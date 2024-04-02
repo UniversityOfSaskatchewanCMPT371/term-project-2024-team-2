@@ -4,7 +4,7 @@ import { BackSide } from 'three';
 import { useRollbar } from '@rollbar/react';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
 import { DataPointProps } from '../types/DataPointTypes';
-import WriteHook from '../smoketest/TestHookWrite';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 /**
  * Creates a VR element of an intractable datapoint
