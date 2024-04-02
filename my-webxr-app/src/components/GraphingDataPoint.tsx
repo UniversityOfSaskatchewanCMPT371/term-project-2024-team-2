@@ -76,24 +76,25 @@ export default function GraphingDataPoint({
       >
         {/* Low numbers to try to minimize the number of faces we need to render */}
         {/* There will be a LOT of these present in the simulation */}
-        <sphereGeometry args={size} />
+        <octahedronGeometry args={size} />
         <meshStandardMaterial color="yellow" />
       </mesh>
 
       {/* This second mesh is the outline which works by rendering */}
       {/* only the BackSide of the mesh material */}
+      {(hoverCount !== 0 || selectedDataPoint?.id === id) && (
       <mesh
         name="point sphere"
         {...meshProps}
         scale={outlineScale}
-        visible={hoverCount !== 0 || selectedDataPoint?.id === id}
       >
-        <sphereGeometry args={size} />
+        <octahedronGeometry args={size} />
         <meshStandardMaterial
           color={selectedDataPoint?.id === id ? 'darkorange' : 'purple'}
           side={BackSide}
         />
       </mesh>
+      )}
     </Interactive>
   );
 }

@@ -2,36 +2,51 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
 import { Vector3 } from 'three';
 import { Provider } from '@rollbar/react';
-import { PointSelectionProvider } from '../../src/contexts/PointSelectionContext';
+import {
+  usePointSelectionContext,
+} from '../../src/contexts/PointSelectionContext';
 import GraphingDataPoint from '../../src/components/GraphingDataPoint';
 import { rollbarConfig } from '../../src/utils/LoggingUtils';
+
+vi.mock('../../src/contexts/PointSelectionContext');
 
 describe('GraphingDataPoint Creation and Interaction', () => {
   test('creating a basic GraphingDataPoint with defaults', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <Provider config={rollbarConfig}>
-        <PointSelectionProvider>
-          <XR>
-            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" />
-          </XR>
-        </PointSelectionProvider>
+        <XR>
+          <GraphingDataPoint
+            id={0}
+            marker="circle"
+            color="gray"
+            columnX="John Doe"
+            columnY="cmpt 145"
+            columnZ="97"
+          />
+        </XR>
       </Provider>,
     );
 
     // Expect the GraphingDataPoint component to be created, along with its two meshes with
     // default values.
     expect(renderer.scene.children.length).toEqual(2); // + native camera component = 2
-    expect(renderer.scene.children[1].children.length).toEqual(2);
+    expect(renderer.scene.children[1].children.length).toEqual(1);
   });
 
   test('creating a basic GraphingDataPoint and assign position', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <Provider config={rollbarConfig}>
-        <PointSelectionProvider>
-          <XR>
-            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" meshProps={{ position: [1, 2, 3] }} />
-          </XR>
-        </PointSelectionProvider>
+        <XR>
+          <GraphingDataPoint
+            id={0}
+            marker="circle"
+            color="gray"
+            columnX="John Doe"
+            columnY="cmpt 145"
+            columnZ="97"
+            meshProps={{ position: [1, 2, 3] }}
+          />
+        </XR>
       </Provider>,
     );
 
@@ -41,14 +56,66 @@ describe('GraphingDataPoint Creation and Interaction', () => {
     )).toBe(true);
   });
 
-  test('creating a basic GraphingDataPoint and assign outline scale', async () => {
+  test('creating a basic GraphingDataPoint and fake selection', async () => {
+    // Pretend this point has been selected, so the outline mesh exists.
+    vi.mocked(usePointSelectionContext).mockReturnValue({
+      selectedDataPoint: {
+        id: 0,
+        columnX: 'John Doe',
+        columnY: 'cmpt 145',
+        columnZ: '97',
+        marker: 'circle',
+        color: 'gray',
+      },
+      setSelectedDataPoint: vi.fn(),
+    });
+
     const renderer = await ReactThreeTestRenderer.create(
       <Provider config={rollbarConfig}>
-        <PointSelectionProvider>
-          <XR>
-            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" outlineScale={2} />
-          </XR>
-        </PointSelectionProvider>
+        <XR>
+          <GraphingDataPoint
+            id={0}
+            marker="circle"
+            color="gray"
+            columnX="John Doe"
+            columnY="cmpt 145"
+            columnZ="97"
+          />
+        </XR>
+      </Provider>,
+    );
+
+    // Check if the outline mesh exists.
+    expect(renderer.scene.children[1].children.length).equals(2);
+  });
+
+  test('creating a basic GraphingDataPoint and assign outline scale', async () => {
+    // Pretend this point has been selected, so the outline mesh exists.
+    vi.mocked(usePointSelectionContext).mockReturnValue({
+      selectedDataPoint: {
+        id: 0,
+        columnX: 'John Doe',
+        columnY: 'cmpt 145',
+        columnZ: '97',
+        marker: 'circle',
+        color: 'gray',
+      },
+      setSelectedDataPoint: vi.fn(),
+    });
+
+    const renderer = await ReactThreeTestRenderer.create(
+      <Provider config={rollbarConfig}>
+        <XR>
+          <GraphingDataPoint
+            id={0}
+            marker="circle"
+            color="gray"
+            columnX="John Doe"
+            columnY="cmpt 145"
+            columnZ="97"
+            outlineScale={2}
+          />
+        </XR>
       </Provider>,
     );
 
@@ -60,14 +127,32 @@ describe('GraphingDataPoint Creation and Interaction', () => {
 });
 
 describe('GraphingDataPoint UI Interaction', () => {
+  // This point is not selected
+  vi.mocked(usePointSelectionContext).mockReturnValue({
+    selectedDataPoint: {
+      id: -1,
+      columnX: '',
+      columnY: '',
+      columnZ: '',
+      marker: '',
+      color: '',
+    },
+    setSelectedDataPoint: vi.fn(),
+  });
+
   test('create a basic GraphingDataPoint and check all its fields', async () => {
     const renderer = await ReactThreeTestRenderer.create(
       <Provider config={rollbarConfig}>
-        <PointSelectionProvider>
-          <XR>
-            <GraphingDataPoint id={0} marker="circle" color="gray" columnX="John Doe" columnY="cmpt 145" columnZ="97" />
-          </XR>
-        </PointSelectionProvider>
+        <XR>
+          <GraphingDataPoint
+            id={0}
+            marker="circle"
+            color="gray"
+            columnX="John Doe"
+            columnY="cmpt 145"
+            columnZ="97"
+          />
+        </XR>
       </Provider>,
     );
 
