@@ -1,4 +1,4 @@
-import { SphereGeometryProps } from '@react-three/fiber';
+import { OctahedronGeometryProps } from '@react-three/fiber';
 
 /**
  * Define an interface to require an ID number to differentiate each GraphingDataPoint
@@ -13,6 +13,6 @@ export interface DataPointProps {
   marker: string
   actualData?: number[];
   outlineScale?: number;
-  size?: SphereGeometryProps['args'];
+  size?: OctahedronGeometryProps['args'];
   meshProps?: JSX.IntrinsicElements['mesh'];
 }
