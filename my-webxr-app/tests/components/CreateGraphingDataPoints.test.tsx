@@ -9,7 +9,7 @@ import CreateGraphingDataPoints from '../../src/components/CreateGraphingDataPoi
 import { rollbarConfig } from '../../src/utils/LoggingUtils';
 import DataAbstractor, { getDatabase } from '../../src/data/DataAbstractor';
 import { useAxesSelectionContext } from '../../src/contexts/AxesSelectionContext';
-import { usePointSelectionContext } from '../../src/contexts/PointSelectionContext.tsx';
+import { usePointSelectionContext } from '../../src/contexts/PointSelectionContext';
 
 // TODO: These values are based on the hard-coded values in CreateGraphingDataPoints and will
 //  have to be updated when the hardcoded values are removed.
