@@ -4,6 +4,7 @@ import DataAbstractor from '../data/DataAbstractor';
 import parseAndHandleUrlCsv from '../utils/CsvUtils';
 import assert from '../utils/Assert';
 import { rollbar } from '../utils/LoggingUtils';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 interface CsvReaderProps {
   DAL: DataAbstractor;
@@ -91,6 +92,9 @@ export default function LocalCsvReader({
             });
             // eslint-disable-next-line no-await-in-loop
             await DAL.storeCSV(sanitizedBatch);
+            console.log(sanitizedBatch);
+
+            WriteHook(`Loaded CSV with ${sanitizedBatch.length} rows : `);
           }
           await DAL.calculateStatistics();
           await DAL.storeStandardizedData();

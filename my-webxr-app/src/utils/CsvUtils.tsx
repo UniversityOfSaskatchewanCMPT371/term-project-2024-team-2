@@ -2,6 +2,7 @@ import Papa from 'papaparse';
 import React from 'react';
 import * as assert from 'assert';
 import DataAbstractor from '../data/DataAbstractor';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 /**
  * Asynchronously parses a CSV file from a URL and handles the parsed data.
@@ -77,6 +78,7 @@ async function parseAndHandleUrlCsv(
           });
           // eslint-disable-next-line no-await-in-loop
           await DAL.storeCSV(sanitizedBatch);
+          WriteHook(`Loaded CSV with ${sanitizedBatch.length} rows : `);
         }
         setMessage('Url CSV loaded successfully');
         await DAL.calculateStatistics();
