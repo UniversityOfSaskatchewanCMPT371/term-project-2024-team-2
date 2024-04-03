@@ -10,6 +10,7 @@
     - [Mini-Milestones / Work Cards](#mini-milestones--work-cards)
     - [Pre- and Post-Conditions](#pre--and-post-conditions)
     - [Multi-level Logging](#multi-level-logging)
+    - [Undiagnosed bugs](#undiagnosed-bugs)
     - [Activity Logging](#activity-logging)
     - [New Wiki Documents](#new-wiki-documents)
     - [Artifact Inspections](#artifact-inspections)
@@ -75,6 +76,18 @@ A big push this iteration was geting more extensive docstring and pre- and post-
 
 #### Multi-level Logging
 It was determined that Log4js is incompatible with Vite. A decision was made to switch our logging framework to Rollbar. However, it was not merged in this deliverable as, due to how Vite and Jest reference environment variables, we were not able to get the application working and the tests passing at the same time.
+
+#### Undiagnosed bugs
+Estimation derived using the Capture-Recapture method from:
+1. S. Biffl, . "Evaluating defect estimation models with major defects".Journal of Systems and Software 65, no.1 (2003): 13-29.
+2. Otis, David L., Kenneth P. Burnham, Gary C. White, and David R. Anderson. “Statistical Inference from Capture Data on Closed Animal Populations.” Wildlife Monographs, no. 62 (1978): 3–135. http://www.jstor.org/stable/3830650.
+
+Let the total population of bugs be defined as $N$, the number of bugs found by teams A and B be $n_A$ and $n_B$, respectively, and let the number of bugs found by both teams be $m$. Then, from Otis et al, our total population of bugs would be:
+$$N=\frac{n_An_B}{m}=\frac{3 \times 4}{2}=12$$
+Therefore given the tested scope, we likely have 6 undiagnosed bugs. However, because our PCA calculations are not connected to the UI, they were not included in this testing. The PCA specific sections of the code are approximately 5% of our source code. Therefore, the adjusted number of bugs as of yet undiagnosed is:
+$$N_{total}=120.95=12.6313$$
+$$N_{undiagnosed}=N_{total}-N_{found}=13-6=7$$
+We estimate that there are 7 undiagnosed major and minor bugs remaining in the system.
 
 
 
