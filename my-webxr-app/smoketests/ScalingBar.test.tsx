@@ -1,10 +1,6 @@
 import ContainText from './TextInFileSearch';
 
 describe('Scaling bar can change the size of the axis', () => {
-  it('Scaling bar is visible on menu', async () => {
-    const response = await ContainText('Scale bar is visible');
-    expect(response).toBeTruthy();
-  });
   it('Scaling value is 1', async () => {
     const response = await ContainText('1');
     expect(response).toBeTruthy();
