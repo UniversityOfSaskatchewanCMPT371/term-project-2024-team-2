@@ -5,7 +5,7 @@ import { RefAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { Group } from 'three';
 import { usePointSelectionContext } from '../contexts/PointSelectionContext';
-import WriteHook from '../smoketest/TestHookWrite';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 /**
  * Creates a billboard to display the related information of the data point
