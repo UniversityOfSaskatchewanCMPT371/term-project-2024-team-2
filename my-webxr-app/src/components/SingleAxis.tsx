@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import GenerateTick from './GenerateTick';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 interface SingleAxisProps {
   startX: number;
@@ -75,14 +76,20 @@ export default function SingleAxis({
     color = 'red';
     // creating the cylinder, with correct position and rotation for x-axis
     axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
+    WriteHook(`${String(axisGeometry.parameters.height)} : `);
+
     rotation = new THREE.Euler(0, 0, Math.PI / 2);
   } else if (startY !== endY) {
     color = 'forestgreen';
     axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
+    WriteHook(`${String(axisGeometry.parameters.height)} : `);
+
     rotation = new THREE.Euler(0, 0, 0);
   } else if (startZ !== endZ) {
     color = 'blue';
     axisGeometry = new THREE.CylinderGeometry(radius, radius, scaleFactor, 10);
+    WriteHook(`${String(axisGeometry.parameters.height)} : `);
+
     rotation = new THREE.Euler(Math.PI / 2, 0, 0);
   }
 

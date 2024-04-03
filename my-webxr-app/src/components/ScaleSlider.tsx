@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 type ScaleSliderProps = {
   scale: number;
@@ -10,6 +11,7 @@ type SliderEvent = ChangeEvent<HTMLInputElement>;
 function ScaleSlider({ scale, setScale } : ScaleSliderProps) {
   const handleScaleChange = (event: SliderEvent) => {
     setScale(Number(event.target.value));
+    WriteHook(`${event.target.value} : `);
   };
 
   return (
