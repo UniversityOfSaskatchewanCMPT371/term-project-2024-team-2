@@ -90,7 +90,6 @@ $$N_{undiagnosed}=N_{total}-N_{found}=13-6=7$$
 We estimate that there are 7 undiagnosed major and minor bugs remaining in the system.
 
 
-
 #### Activity Logging
 
 
