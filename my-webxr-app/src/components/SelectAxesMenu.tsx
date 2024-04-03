@@ -3,6 +3,7 @@ import assert from '../utils/Assert';
 import DataAbstractor from '../data/DataAbstractor';
 import { useAxesSelectionContext } from '../contexts/AxesSelectionContext';
 import { rollbar } from '../utils/LoggingUtils';
+import WriteHook from '../../smoketests/TestHookWrite';
 
 interface SelectAxesColumnsProps {
   reload: boolean;
@@ -33,6 +34,7 @@ function DropDown({
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     // gets value from dropdown
     setSelectedValue(event.target.value);
+    WriteHook(`Selected Axis: ${event.target.value} : `);
     // assigns value to chosenValue arg
     chosenValue(event.target.value);
   };
@@ -71,6 +73,9 @@ export default function SelectAxesColumns({ reload, database }: SelectAxesColumn
     async function fetchColumnTitles() {
       try {
         const Axes = await database.getAvailableFields();
+        Axes.forEach((each) => {
+          WriteHook(`${each}, `);
+        });
         setAxisOptions(Axes.map((title: string) => ({ value: title, label: title })));
         rollbar.info('Column titles fetched successfully!');
       } catch (error) {
@@ -100,6 +105,7 @@ export default function SelectAxesColumns({ reload, database }: SelectAxesColumn
       _setSelectedXAxis(xAxis);
       _setSelectedYAxis(yAxis);
       _setSelectedZAxis(zAxis);
+      WriteHook('Complete Selection button clicked : ');
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error setting representing columns:', error);
