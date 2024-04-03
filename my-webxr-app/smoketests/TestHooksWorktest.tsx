@@ -1,4 +1,3 @@
-// eslint-disable-next-line check-file/filename-naming-convention
 import ContainText from './TextInFileSearch';
 
 describe('testing SmokeTestSpike live download', () => {

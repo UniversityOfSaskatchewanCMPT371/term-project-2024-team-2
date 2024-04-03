@@ -16,7 +16,7 @@ const readline = require('readline');
  * @constructor
  */
 export default async function ContainText(text: string): Promise<boolean> {
-  const filePath = 'src/smoketest/testLog.txt';
+  const filePath = 'smoketests/testLog.txt';
 
   const reader = readline.createInterface({
     input: fs.createReadStream(filePath),

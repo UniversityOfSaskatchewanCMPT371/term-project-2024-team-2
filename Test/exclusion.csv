@@ -1,0 +1,4 @@
+type,x,y,z
+complete,1,2,3
+incomplete,1,,3
+complete,1,2,3

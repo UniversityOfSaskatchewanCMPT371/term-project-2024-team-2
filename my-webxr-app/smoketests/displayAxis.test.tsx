@@ -1,4 +1,3 @@
-// eslint-disable-next-line check-file/filename-naming-convention
 import ContainText from './TextInFileSearch';
 
 describe('  This feature verifies the creation and manipulation of 3D axes in WebXr application.', () => {
