@@ -112,7 +112,7 @@ We were able to acomplish both our MPV status and the custom test hooks. All of 
 
 On the QA side, we implemented custom test hooks for human-in-the-loop automated testing and introduced several of such tests. More details can be found in the Test Update doccuments.
 
-The following is a summary of hte work we set our to do in the sprint and their status and estimates. Some cards do no have estimates on them and they are primarily bug cards that arose during the sprint as small fixes.
+The following is a summary of the work we set our to do in the sprint and their status and estimates. Some cards do no have estimates on them and they are primarily bug cards that arose during the sprint as small fixes.
 
 |Title                                                                                                               |URL                                                                                   |Assignees                      |Status  |Labels                              |Linked pull requests                                                                                                                                                                                                                                            |Estimate (hrs)|Actual (hrs)|
 |--------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|-------------------------------|--------|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|------------|
@@ -170,17 +170,37 @@ The following is a summary of hte work we set our to do in the sprint and their 
 A big push this iteration was geting more extensive docstring and pre- and post-conditions. New code required the inclusion of pre- and post-conditions and we went back through old code to update docstrings and add pre- and post-conditions
 
 #### Multi-level Logging
-It was determined that Log4js is incompatible with Vite. A decision was made to switch our logging framework to Rollbar. This iteration we merged in the Rollbar changes and began implementing logging more extensively throughout hte application.
+It was determined that Log4js is incompatible with Vite. A decision was made to switch our logging framework to Rollbar. This iteration we merged in the Rollbar changes and began implementing logging more extensively throughout the application.
 
 #### Activity Logging
 
-
 ##### Actual vs Expected Time
+|Team |Expected Time|Total Time|Total To Est Ratio|
+|-----|-------------|----------|------------------|
+|PM   |20.50        |35.00     |1.707             |
+|Dev  |163.45       |180.70    |1.106             |
+|Test |105.75       |106.20    |1.004             |
+|Total|289.70       |321.90    |1.111             |
+
+
+|Team member       |Expected Time|Total Time|Total To Est Ratio|Relative Time|
+|------------------|-------------|----------|------------------|-------------|
+|Aesha Patel       |44           |25.55     |0.581             |63.50%       |
+|Jesse Haug        |28           |33.25     |1.188             |82.63%       |
+|Matthew Buglass   |20.5         |35        |1.707             |86.98%       |
+|Mitchell Wagner   |24           |27.45     |1.144             |68.22%       |
+|Quan (Tony) Nguyen|55.5         |75.45     |1.359             |187.51%      |
+|Quinn Brown       |32.5         |24        |0.738             |59.65%       |
+|Trang Nguyen      |35.95        |46.45     |1.292             |115.44%      |
+|Zander Rommelaere |49.25        |54.75     |1.112             |136.07%      |
+|Average           |36.21        |40.24     |1.111             |100.00%      |
 
 
 ##### Summary Charts
 
-
+![Work over Time](./imgs/id5_work_over_time.svg)
+![Expected vs. Actual](./imgs/id5_expected_vs_actual_time.svg)
+![Pareto](./imgs/id5_pareto_chart.svg)
 
 #### New Wiki Documents
 - [Update Flow Diagram](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#6-flow-diagram)
