@@ -52,7 +52,7 @@
 
 
 ### Knowledge Sharing and Pairing Sessions
-We have a group shared calendar to book meetings, standups, and pairing sessions. The word "Pair" appears 64 times in our activity log, so we provide an abbridged summary of pairing activities here.
+We have a group shared calendar to book meetings, standups, and pairing sessions. The word "pair" appears 64 times in our activity log, so we provide an abbridged summary of pairing activities here. A full list can be found in the activity log.
 
 ##### Artifact Inspection - Trang
 - Duration: 45 mins
@@ -115,11 +115,11 @@ We have a group shared calendar to book meetings, standups, and pairing sessions
 #### Mini-Milestones / Work Cards
 These are the cards that we committed do and that came up in the sprint. They were estimated using planning poker at our retro meeting. Actual time tracking was done through our activity log.
 
-In ID5, we will be aimed to finish up that vertical slice and implement our custom testing hooks. 
+In ID5, we aimed to finish up the vertical slice MVP of the system and implement our custom testing hooks. 
 
-The biggest issue of note was the changing of our testing framework. Because we could not access environment variables in both Jest and when running under Vite, we decided to pivot our testing framework to Vitest. Fortunately because Vitest uses a Jest=compatible interface, the change was a non-issue.
+The biggest issue of note was the changing of our testing framework. Because we could not access environment variables in both Jest and when running under Vite, we decided to pivot our testing framework to Vitest. Fortunately, because Vitest uses a Jest-compatible interface, the change was a non-issue.
 
-We were able to acomplish both our MPV status and the custom test hooks. All of our discrete pieces were able to come together and be incorporated to form an MVP. More information can be found in the Dev Update documents.
+We were able to acomplish both our MVP status and the custom test hooks. All of our discrete pieces were able to come together and be incorporated to form an MVP. More information can be found in the Dev Update documents.
 
 On the QA side, we implemented custom test hooks for human-in-the-loop automated testing and introduced several of such tests. More details can be found in the Test Update doccuments.
 
@@ -178,7 +178,7 @@ The following is a summary of the work we set our to do in the sprint and their 
 
 
 #### Pre- and Post-Conditions
-A big push this iteration was geting more extensive docstring and pre- and post-conditions. New code required the inclusion of pre- and post-conditions and we went back through old code to update docstrings and add pre- and post-conditions
+A big push this iteration was geting more extensive docstrings and pre- and post-conditions. New code required the inclusion of pre- and post-conditions and we went back through old code to update docstrings and add pre- and post-conditions
 
 #### Multi-level Logging
 It was determined that Log4js is incompatible with Vite. A decision was made to switch our logging framework to Rollbar. This iteration we merged in the Rollbar changes and began implementing logging more extensively throughout the application.
@@ -214,7 +214,7 @@ It was determined that Log4js is incompatible with Vite. A decision was made to 
 ![Pareto](./imgs/id5_pareto_chart.svg)
 
 #### New Wiki Documents
-- [Update Flow Diagram](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#6-flow-diagram)
+- [Updated User Flow Diagram](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Architecture-Design-Records-(ADRs)#6-flow-diagram)
 - [Risk Plan ID5](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/wiki/Risk-Plan-ID5)
 
 
@@ -235,6 +235,7 @@ It was determined that Log4js is incompatible with Vite. A decision was made to 
 - Quinn Brown
 - Zander Rommelaere
 ##### Absent
+- None
 
 #### March 7th, 2024
 ##### In Attendance
@@ -247,6 +248,7 @@ It was determined that Log4js is incompatible with Vite. A decision was made to 
 - Quinn Brown
 - Zander Rommelaere
 ##### Absent
+- None
 
 
 #### March 12th, 2024
@@ -260,6 +262,7 @@ It was determined that Log4js is incompatible with Vite. A decision was made to 
 - Quinn Brown
 - Zander Rommelaere
 ##### Absent
+- None
 
 
 #### March 14th, 2024
@@ -273,28 +276,33 @@ It was determined that Log4js is incompatible with Vite. A decision was made to 
 - Quinn Brown
 - Zander Rommelaere
 ##### Absent
+- None
 
 ## Project Reflection
 ### Undiagnosed bugs
-Estimation derived using the Capture-Recapture method from:
+Our estimation is derived using the Capture-Recapture method described in:
 1. S. Biffl, . "Evaluating defect estimation models with major defects".Journal of Systems and Software 65, no.1 (2003): 13-29.
 2. Otis, David L., Kenneth P. Burnham, Gary C. White, and David R. Anderson. “Statistical Inference from Capture Data on Closed Animal Populations.” Wildlife Monographs, no. 62 (1978): 3–135. http://www.jstor.org/stable/3830650.
 
-Let the total population of bugs be defined as $N$, the number of bugs found by teams A and B be $n_A$ and $n_B$, respectively, and let the number of bugs found by both teams be $m$. Then, from Otis et al, our total population of bugs would be:
+Let the total population of bugs be defined as $N$, the number of bugs found by teams A and B during our bug party to be $n_A$ and $n_B$, respectively, and let the number of bugs found by both teams be $m$. Then, from Otis et al, our total population of bugs would be:
+
 $$N=\frac{n_An_B}{m}=\frac{3 \times 4}{2}=12$$
-Therefore given the tested scope, we likely have 6 undiagnosed bugs. However, because our PCA calculations are not connected to the UI, they were not included in this testing. The PCA specific sections of the code are approximately 5% of our source code. Therefore, the adjusted number of bugs as of yet undiagnosed is:
+
+Therefore given the tested scope, we likely have 6 undiagnosed bugs. However, because not all of our PCA calculation flows are connected to the UI, they were not totaly covered in this testing. The untested PCA specific sections of the code are approximately 5% of our source code. Therefore, the adjusted number of bugs as of yet undiagnosed is:
+
 $$N_{total}=120.95=12.6313$$
 $$N_{undiagnosed}=N_{total}-N_{found}=13-6=7$$
+
 We estimate that there are 7 undiagnosed major and minor bugs remaining in the system.
 
 ### Deprioritized Work
 This section provides a discussion on the work that was originally scoped during the project onset, but was de-prioritized and wasn't completed. A full breakdown of the issues that were de-prioritized can be found [here](https://github.com/orgs/UniversityOfSaskatchewanCMPT371/projects/8/views/8) but this discussion will focus on the issues labled as `High Priority`.
 
-The three features that we had originally planned to have complete, in addition to out current feature set, were:
+The three features that we had originally planned to have complete, in addition to our current feature set, were:
 1. [Change 3D Space Orientation](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/21)
 2. [Implement UI-side PCA interactions](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/23)
 3. [Save a PCA as a data point](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/25)
 
 For the firt card, [Change 3D Space Orientation](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/21), we spiked out some initial implementations but nothing was co-operating that well. We decided to de-prioritize this work in favour of a CSV reader refactor to make it more memory efficent. Additionally, given the ability to scale the virtual space, we felt that it was a modest stop-gap solution as one could walk around the smaller graph. Our plan was to bind panning and rotating of the graph to the joysticks on the VR controllers.
 
-The second and third cards,[Implement UI-side PCA interactions](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/23) and [Save a PCA as a data point](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/25), go together as they would have wrapped up and formalized our PCA implementation. We were having enough work getting data displayed in and efficient manner that it was decided to always calculate PCA on all the numeric columns of the loaded dataset. This renders some PCA functionality, but does not provide the subset analysis or any way for a user to provide custom PCA configurations.
+The second and third cards, [Implement UI-side PCA interactions](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/23) and [Save a PCA as a data point](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/25), go together as they would have wrapped up and formalized our PCA implementation. We were having enough work getting data displayed in an efficient manner that it was decided to always calculate PCA on all the numeric columns of the loaded dataset and save them. This renders some PCA functionality, but does not provide the ability for users to fine-tune their analysis, or run PCA on a subset of the data.
