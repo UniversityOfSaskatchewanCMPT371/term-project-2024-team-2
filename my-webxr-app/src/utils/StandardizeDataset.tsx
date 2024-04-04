@@ -8,6 +8,10 @@ import assert from './Assert';
  * independently.
  * If the standard deviation of a feature is zero, that feature is left unchanged.
  *
+ * @pre-condition
+ *    - dataSetMatrix has at least two rows and two columns
+ *    - dataSetMatrix is numeric
+ * @post-condition returns the standardized transformation fo hte matrix
  * @param {Matrix} dataSetMatrix - The dataset to standardize, represented as a Matrix.
  * @returns {Matrix}The standardized matrix of dataset.
  */

@@ -1,19 +1,25 @@
 export default class DataPoint {
-  hasMissingData: boolean;
+  xValue: number;
 
-  xValue: number | string | null;
+  yValue: number;
 
-  yValue: number | string | null;
+  zValue: number;
 
-  zValue: number | string | null;
-
+  /**
+   * Represents a 3-dimensional data point abstraction
+   *
+   * @param {number} xValue A value associated with the x axis to be displayed.
+   * @param {number} yValue A value associated with the y axis to be displayed.
+   * @param {number} zValue A value associated with the z axis to be displayed.
+   * @pre-condition hasMissingData correctly declares whether any of the values are undefined and
+   *      xValue, yValue, zValue are all numbers, strings, or undefined
+   * @post-condition The returned object defined element-wise operations on the data set
+   */
   constructor(
-    hasMissingData: boolean,
-    xValue: number | string | null,
-    yValue: number | string | null,
-    zValue: number | string | null,
+    xValue: number,
+    yValue: number,
+    zValue: number,
   ) {
-    this.hasMissingData = hasMissingData;
     this.xValue = xValue;
     this.yValue = yValue;
     this.zValue = zValue;
