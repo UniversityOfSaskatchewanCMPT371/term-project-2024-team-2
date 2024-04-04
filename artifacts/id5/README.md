@@ -20,7 +20,7 @@
     - [March 14th, 2024](#march-14th-2024)
 - [Project Reflection](#project-reflection)
   - [Undiagnosed bugs](#undiagnosed-bugs)
-  - [Uncomplete Work](#uncomplete-work)
+  - [Deprioritized Work](#deprioritized-work)
 
 
 
@@ -41,23 +41,62 @@
 
 
 ### Knowledge Sharing and Pairing Sessions
-We have a group shared calendar to book meetings, standups, and pairing sessions.
+We have a group shared calendar to book meetings, standups, and pairing sessions. The word "Pair" appears 64 times in our activity log, so we provide an abbridged summary of pairing activities here.
 
-##### Artifact Inspection - 
-- Duration: 
-- Attended by: 
-- Inspected 
+##### Artifact Inspection - Trang
+- Duration: 45 mins
+- Attended by: Trang, Tony, Jesse, Matthew
+- Inspected Trang's Drei fix
 
-##### Artifact Inspection -
-- Duration:
-- Attended by: 
-- Inspected 
+##### Artifact Inspection - Quinn
+- Duration: 30 mins
+- Attended by: Quinn, Jesse, Matthew, Mitchell
+- Inspected Quinn's smoke test
 
-##### Item
-- Duration:
-- Attended by:
-- 
+##### PM Pairing
+- Duration: 1 hr
+- Attended by: Matthew, Trang
+- Discussed project wrap up and post-mortem structure
 
+##### Planning Poker
+- Duration: 45mins
+- Attended by: Matthew, Jesse, Aesha, Trang, Tony, Mitchell, Zander, Quinn
+- Met with the team to plan and estimate cards
+
+##### Bug Party
+- Duration: 1.5 hrs
+- Attended by: Mitchell, Zander, Quinn, Trang, Tony, Aesha, Matthew
+- Split into two teams, one with the Quest 2 and the other with the Quest 3 to find bugs in the system.
+
+##### Test Pairing 
+- Duration: 2 hrs
+- Attended by: Matthew, Mitchell
+- Met to discuss path testing and estimating undiagnosed bugs.
+
+##### DAL Pairing
+- Duration: 1
+- Attended by: Jesse, TrRang, Tony, Aesha
+- Dev team met to pair on the implementation of the DAL
+
+##### CSV Reader pairing
+- Duration: 11 hrs (cumulative)
+- Attended by: Jesse, Tony
+- Met over several sessions to work on the CSV readers
+
+##### Merge Party
+- Duration: 3
+- Attended by: Jesse, Aesha, Tony, Trang
+- Dev team met to coordinate and solve merge conflicts
+
+##### Smoke test pairing
+- Duration: 4 hrs
+- Attended by: Zander, Quinn
+- Test team met to go over and build human-in-the-loop smoke tests.
+
+##### Axes Selction pairing
+- Duration: 13.5 hrs (cumulative)
+- Attended by: Trang, Quinn, Tony, Zander, Aesha
+- Cross-sub-team collaboration on incoporating data selection
 
 
 ### Card and Work Summary
@@ -217,5 +256,14 @@ $$N_{total}=120.95=12.6313$$
 $$N_{undiagnosed}=N_{total}-N_{found}=13-6=7$$
 We estimate that there are 7 undiagnosed major and minor bugs remaining in the system.
 
-### Uncomplete Work
-This section provides a discussion on the work that was originally scoped during the project onset, but was de-prioritized and wasn't completed.
+### Deprioritized Work
+This section provides a discussion on the work that was originally scoped during the project onset, but was de-prioritized and wasn't completed. A full breakdown of the issues that were de-prioritized can be found [here](https://github.com/orgs/UniversityOfSaskatchewanCMPT371/projects/8/views/8) but this discussion will focus on the issues labled as `High Priority`.
+
+The three features that we had originally planned to have complete, in addition to out current feature set, were:
+1. [Change 3D Space Orientation](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/21)
+2. [Implement UI-side PCA interactions](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/23)
+3. [Save a PCA as a data point](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/25)
+
+For the firt card, [Change 3D Space Orientation](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/21), we spiked out some initial implementations but nothing was co-operating that well. We decided to de-prioritize this work in favour of a CSV reader refactor to make it more memory efficent. Additionally, given the ability to scale the virtual space, we felt that it was a modest stop-gap solution as one could walk around the smaller graph. Our plan was to bind panning and rotating of the graph to the joysticks on the VR controllers.
+
+The second and third cards,[Implement UI-side PCA interactions](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/23) and [Save a PCA as a data point](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-2/issues/25), go together as they would have wrapped up and formalized our PCA implementation. We were having enough work getting data displayed in and efficient manner that it was decided to always calculate PCA on all the numeric columns of the loaded dataset. This renders some PCA functionality, but does not provide the subset analysis or any way for a user to provide custom PCA configurations.
