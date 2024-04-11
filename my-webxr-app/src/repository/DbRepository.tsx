@@ -225,8 +225,9 @@ export default class DbRepository extends Dexie implements Repository {
 
   /**
    * Retrieves the x, y, and z values from the specified columns and the absolute max values of each
-   * selects columns in the database; and returns them as an array of DataPoint objects and an array
-   * of three non-negative integer maximum values.
+   * selects columns in the database, along with any optional value selected from optional data
+   * values, and returns them as an array of DataPoint objects and an array
+   * of three non-negative integer maximum values for x, y and z.
    *
    * @pre-condition
    * - The columns must exist in the database. Either in the 'RAW' table or the 'PCA' table.
@@ -237,23 +238,36 @@ export default class DbRepository extends Dexie implements Repository {
    * @post-condition - A set of data points that can be plotted and each of column absolute max int
    * value.
    *
-   * @param {string | null} columnXName - Column names to use for the x values of the DataPoint.
-   * @param {string | null} columnYName - Column names to use for the y values of the DataPoint.
-   * @param {string | null} columnZName - Column names to use for the z values of the DataPoint.
+   * @param {string | null} columnXName - Column name to use for the x values of the DataPoint.
+   * @param {string | null} columnYName - Column name to use for the y values of the DataPoint.
+   * @param {string | null} columnZName - Column name to use for the z values of the DataPoint.
+   * @param optionalColumn1Name - Optional column name to be display value on data menu if selected
+   * @param optionalColumn2Name - Optional column name to be display value on data menu if selected
+   * @param optionalColumn3Name - Optional column name to be display value on data menu if selected
+   * @param optionalColumn4Name - Optional column name to be display value on data menu if selected
+   * @param optionalColumn5Name - Optional column name to be display value on data menu if selected
+   * @param optionalColumn6Name - Optional column name to be display value on data menu if selected
+   * @param optionalColumn7Name - Optional column name to be display value on data menu if selected
    * @returns {Promise<[Array<DataPoint>, Array<number>]>} A promise that resolves to an array of
-   * DataPoint objects and an array of maximum values from each column.
+   * DataPoint objects and an array of maximum values from each x, y znd z column.
    * @throws {Error} If violates preconditions.
    */
   async getPoints(
     columnXName: string,
     columnYName: string,
     columnZName: string,
+    optionalColumn1Name?: string,
+    optionalColumn2Name?: string,
+    optionalColumn3Name?: string,
+    optionalColumn4Name?: string,
+    optionalColumn5Name?: string,
+    optionalColumn6Name?: string,
+    optionalColumn7Name?: string,
   ): Promise<[Array<DataPoint>, Array<number>]> {
     // do nothing if null column entries selected
     if (columnXName == null || columnYName == null || columnZName == null) {
       return [[], []];
     }
-
     // verify the three columns are distinct
     assert.equal(
       (new Set([columnXName, columnYName, columnZName])).size,
@@ -271,11 +285,69 @@ export default class DbRepository extends Dexie implements Repository {
     let columnX = await this.getColumn(columnXName, TableName.RAW).catch(() => null);
     let columnY = await this.getColumn(columnYName, TableName.RAW).catch(() => null);
     let columnZ = await this.getColumn(columnZName, TableName.RAW).catch(() => null);
+    // Only query columns only if their names are provided
+    let optionalColumn1 = optionalColumn1Name ? await this.getColumn(
+      optionalColumn1Name,
+      TableName.RAW,
+    ).catch(() => null) : null;
+    let optionalColumn2 = optionalColumn2Name ? await this.getColumn(
+      optionalColumn2Name,
+      TableName.RAW,
+    ).catch(() => null) : null;
+    let optionalColumn3 = optionalColumn3Name ? await this.getColumn(
+      optionalColumn3Name,
+      TableName.RAW,
+    ).catch(() => null) : null;
+    let optionalColumn4 = optionalColumn4Name ? await this.getColumn(
+      optionalColumn4Name,
+      TableName.RAW,
+    ).catch(() => null) : null;
+    let optionalColumn5 = optionalColumn5Name ? await this.getColumn(
+      optionalColumn5Name,
+      TableName.RAW,
+    ).catch(() => null) : null;
+    let optionalColumn6 = optionalColumn6Name ? await this.getColumn(
+      optionalColumn6Name,
+      TableName.RAW,
+    ).catch(() => null) : null;
+    let optionalColumn7 = optionalColumn7Name ? await this.getColumn(
+      optionalColumn7Name,
+      TableName.RAW,
+    ).catch(() => null) : null;
 
     // If any of the columns do not exist in the 'RAW' table (null), check the 'PCA' table
     columnX = columnX || await this.getColumn(columnXName, TableName.PCA);
     columnY = columnY || await this.getColumn(columnYName, TableName.PCA);
     columnZ = columnZ || await this.getColumn(columnZName, TableName.PCA);
+    // Only query columns if their names are provided, and they are not found in the 'RAW' table
+    optionalColumn1 = optionalColumn1Name && optionalColumn1 === null ? await this.getColumn(
+      optionalColumn1Name,
+      TableName.PCA,
+    ) : optionalColumn1;
+    optionalColumn2 = optionalColumn2Name && optionalColumn2 === null ? await this.getColumn(
+      optionalColumn2Name,
+      TableName.PCA,
+    ) : optionalColumn2;
+    optionalColumn3 = optionalColumn3Name && optionalColumn3 === null ? await this.getColumn(
+      optionalColumn3Name,
+      TableName.PCA,
+    ) : optionalColumn3;
+    optionalColumn4 = optionalColumn4Name && optionalColumn4 === null ? await this.getColumn(
+      optionalColumn4Name,
+      TableName.PCA,
+    ) : optionalColumn4;
+    optionalColumn5 = optionalColumn5Name && optionalColumn5 === null ? await this.getColumn(
+      optionalColumn5Name,
+      TableName.PCA,
+    ) : optionalColumn5;
+    optionalColumn6 = optionalColumn6Name && optionalColumn6 === null ? await this.getColumn(
+      optionalColumn6Name,
+      TableName.PCA,
+    ) : optionalColumn6;
+    optionalColumn7 = optionalColumn7Name && optionalColumn7 === null ? await this.getColumn(
+      optionalColumn7Name,
+      TableName.PCA,
+    ) : optionalColumn7;
 
     assert.ok(typeof columnX.values[0] === 'number', 'ColumnX must be numeric!');
     assert.ok(typeof columnY.values[0] === 'number', 'ColumnY must be numeric!');
@@ -286,10 +358,14 @@ export default class DbRepository extends Dexie implements Repository {
       columnY.values.length,
       columnZ.values.length,
     ]);
-    assert.equal(sameLength.size, 1, 'The number of values in the given columns must be the same, but '
+    assert.equal(
+      sameLength.size,
+      1,
+      'The number of values in the given columns must be the same, but '
         + `column ${columnXName} has ${columnX.values.length} values, `
         + `column ${columnYName} has ${columnY.values.length} values, and `
-        + `column ${columnZName} has ${columnZ.values.length} values!`);
+        + `column ${columnZName} has ${columnZ.values.length} values!`,
+    );
 
     // Get the absolute max values of each column, and round of to the next integer
     const absValues = [
@@ -303,6 +379,13 @@ export default class DbRepository extends Dexie implements Repository {
       columnX as Column<NumericColumn>,
       columnY as Column<NumericColumn>,
       columnZ as Column<NumericColumn>,
+      optionalColumn1 as Column<NumericColumn>,
+      optionalColumn2 as Column<NumericColumn>,
+      optionalColumn3 as Column<NumericColumn>,
+      optionalColumn4 as Column<NumericColumn>,
+      optionalColumn5 as Column<NumericColumn>,
+      optionalColumn6 as Column<NumericColumn>,
+      optionalColumn7 as Column<NumericColumn>,
     );
     return Promise.resolve([dataPoints, maxValues]);
   }
@@ -317,12 +400,26 @@ export default class DbRepository extends Dexie implements Repository {
    * @param {Column} columnX the column to be used as the x-axis
    * @param {Column} columnY the column to be used as the y-axis
    * @param {Column} columnZ the column to be used as the z-axis
+   * @param optionalColumn1 the column to be used as the first optional column
+   * @param optionalColumn2 the column to be used as the second optional column
+   * @param optionalColumn3 the column to be used as the third optional column
+   * @param optionalColumn4 the column to be used as the fourth optional column
+   * @param optionalColumn5 the column to be used as the fifth optional column
+   * @param optionalColumn6 the column to be used as the sixth optional column
+   * @param optionalColumn7 the column to be used as the seventh optional column
    * @return Array<DataPoint>
    */
   static convertColumnsIntoDataPoints(
     columnX: Column<NumericColumn>,
     columnY: Column<NumericColumn>,
     columnZ: Column<NumericColumn>,
+    optionalColumn1?: Column<NumericColumn>,
+    optionalColumn2?: Column<NumericColumn>,
+    optionalColumn3?: Column<NumericColumn>,
+    optionalColumn4?: Column<NumericColumn>,
+    optionalColumn5?: Column<NumericColumn>,
+    optionalColumn6?: Column<NumericColumn>,
+    optionalColumn7?: Column<NumericColumn>,
   ): Array<DataPoint> {
     // assert that all columns have the same length
     assert.equal(
@@ -344,7 +441,25 @@ export default class DbRepository extends Dexie implements Repository {
       const xValue = (columnX.values[i]);
       const yValue = (columnY.values[i]);
       const zValue = (columnZ.values[i]);
-      dataPoints.push(new DataPoint(xValue, yValue, zValue));
+      const optionalCol1Value = optionalColumn1 ? optionalColumn1.values[i] : undefined;
+      const optionalCol2Value = optionalColumn2 ? optionalColumn2.values[i] : undefined;
+      const optionalCol3Value = optionalColumn3 ? optionalColumn3.values[i] : undefined;
+      const optionalCol4Value = optionalColumn4 ? optionalColumn4.values[i] : undefined;
+      const optionalCol5Value = optionalColumn5 ? optionalColumn5.values[i] : undefined;
+      const optionalCol6Value = optionalColumn6 ? optionalColumn6.values[i] : undefined;
+      const optionalCol7Value = optionalColumn7 ? optionalColumn7.values[i] : undefined;
+      dataPoints.push(new DataPoint(
+        xValue,
+        yValue,
+        zValue,
+        optionalCol1Value,
+        optionalCol2Value,
+        optionalCol3Value,
+        optionalCol4Value,
+        optionalCol5Value,
+        optionalCol6Value,
+        optionalCol7Value,
+      ));
     }
     return dataPoints;
   }
