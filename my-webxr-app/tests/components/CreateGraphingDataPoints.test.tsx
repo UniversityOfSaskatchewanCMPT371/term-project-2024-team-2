@@ -68,6 +68,20 @@ describe('createGraphingDataPoints', () => {
       setSelectedYAxis: vi.fn(),
       selectedZAxis: 'colZ',
       setSelectedZAxis: vi.fn(),
+      selectedOptionalColumn1: '',
+      setSelectedOptionalColumn1: vi.fn(),
+      selectedOptionalColumn2: '',
+      setSelectedOptionalColumn2: vi.fn(),
+      selectedOptionalColumn3: '',
+      setSelectedOptionalColumn3: vi.fn(),
+      selectedOptionalColumn4: '',
+      setSelectedOptionalColumn4: vi.fn(),
+      selectedOptionalColumn5: '',
+      setSelectedOptionalColumn5: vi.fn(),
+      selectedOptionalColumn6: '',
+      setSelectedOptionalColumn6: vi.fn(),
+      selectedOptionalColumn7: '',
+      setSelectedOptionalColumn7: vi.fn(),
     });
 
     const render = await ReactThreeTestRenderer.create(
