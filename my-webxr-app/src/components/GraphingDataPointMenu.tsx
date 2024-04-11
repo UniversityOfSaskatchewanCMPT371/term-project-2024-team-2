@@ -58,16 +58,16 @@ export default function GraphingDataPointMenu(
           {WriteHook(`${String(selectedDataPoint?.color)} : `)}
 
           {`(x-axis) ${selectedDataPoint?.columnX ?? '-'}: ${
-            selectedDataPoint?.actualData
-              ? `${selectedDataPoint.actualData[0]}` : '_'}\n`}
+            selectedDataPoint?.actualXYZData
+              ? `${selectedDataPoint.actualXYZData[0]}` : '_'}\n`}
 
           {`(y-axis) ${selectedDataPoint?.columnY ?? '-'}: ${
-            selectedDataPoint?.actualData
-              ? `${selectedDataPoint.actualData[1]}` : '_'}\n`}
+            selectedDataPoint?.actualXYZData
+              ? `${selectedDataPoint.actualXYZData[1]}` : '_'}\n`}
 
           {`(z-axis) ${selectedDataPoint?.columnZ ?? '-'}: ${
-            selectedDataPoint?.actualData
-              ? `${selectedDataPoint.actualData[2]}` : '_'}\n`}
+            selectedDataPoint?.actualXYZData
+              ? `${selectedDataPoint.actualXYZData[2]}` : '_'}\n`}
 
         </Text>
       </Plane>
