@@ -42,17 +42,19 @@ describe('SelectAxesColumns Component Tests', () => {
 
     // check that the dropdowns and options are rendered
     const dropdowns = await queryAllByRole('combobox');
-    expect(dropdowns).toHaveLength(3);
+    // 3 axes + 7 optional columns
+    expect(dropdowns).toHaveLength(10);
 
     const options = await queryAllByRole('option');
-    expect(options).toHaveLength(12);
+    // 4 options each field x 10 fields = 40 options
+    expect(options).toHaveLength(40);
 
     const selectOptions = await queryAllByText('Select an option');
-    expect(selectOptions).toHaveLength(3);
+    expect(selectOptions).toHaveLength(10);
 
     ['field1', 'field2', 'field3'].forEach((field) => {
       const fieldOptions = queryAllByText(field);
-      expect(fieldOptions).toHaveLength(3);
+      expect(fieldOptions).toHaveLength(10);
     });
   });
 });
