@@ -52,24 +52,23 @@ export default function GraphingDataPointMenu(
         <meshBasicMaterial color="gray" />
         {/* A negative depth offset brings the object closer to the viewer */}
         <Text fontSize={0.075} color="black" depthOffset={-4}>
-          {`Here are data point # ${selectedDataPoint?.id ?? '-'} properties!\n\n`}
+          {`Data point #${selectedDataPoint?.id ?? '-'} properties!\n\n`}
           {WriteHook(`| ${String(selectedDataPoint?.id)} : `)}
-          {`Marker: ${selectedDataPoint?.marker ?? '-'}\n`}
-          {WriteHook(`${String(selectedDataPoint?.marker)} : `)}
           {`Color: ${selectedDataPoint?.color ?? '-'}\n`}
           {WriteHook(`${String(selectedDataPoint?.color)} : `)}
-          {`x, y, z: ${
+
+          {`(x-axis) ${selectedDataPoint?.columnX ?? '-'}: ${
             selectedDataPoint?.actualData
-              ? `${selectedDataPoint.actualData[0]}, ${selectedDataPoint.actualData[1]}, ${selectedDataPoint.actualData[2]}`
-              : '0, 0, 0'
-          }\n`}
-          {WriteHook(`${String(selectedDataPoint?.actualData)} : `)}
-          {`Column X: ${selectedDataPoint?.columnX ?? '-'}\n`}
-          {WriteHook(`${String(selectedDataPoint?.columnX)} : `)}
-          {`Column Y: ${selectedDataPoint?.columnY ?? '-'}\n`}
-          {WriteHook(`${String(selectedDataPoint?.columnY)} : `)}
-          {`Column Z: ${selectedDataPoint?.columnZ ?? '-'}`}
-          {WriteHook(`${String(selectedDataPoint?.columnZ)} |`)}
+              ? `${selectedDataPoint.actualData[0]}` : '_'}\n`}
+
+          {`(y-axis) ${selectedDataPoint?.columnY ?? '-'}: ${
+            selectedDataPoint?.actualData
+              ? `${selectedDataPoint.actualData[1]}` : '_'}\n`}
+
+          {`(z-axis) ${selectedDataPoint?.columnZ ?? '-'}: ${
+            selectedDataPoint?.actualData
+              ? `${selectedDataPoint.actualData[2]}` : '_'}\n`}
+
         </Text>
       </Plane>
     </Billboard>
