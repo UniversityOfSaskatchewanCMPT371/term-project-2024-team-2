@@ -17,6 +17,13 @@ export default interface DataAbstractor {
     columnX: string,
     ColumnY: string,
     ColumnZ: string,
+    OptionalColumn1?: string,
+    OptionalColumn2?: string,
+    OptionalColumn3?: string,
+    OptionalColumn4?: string,
+    OptionalColumn5?: string,
+    OptionalColumn6?: string,
+    OptionalColumn7?: string,
   ) => Promise<[Array<DataPoint>, Array<number>]>,
   resetFlag: () => Promise<boolean>;
   storeStandardizedData:() => Promise<boolean>;
