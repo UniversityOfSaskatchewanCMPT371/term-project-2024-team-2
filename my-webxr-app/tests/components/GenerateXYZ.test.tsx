@@ -1,6 +1,7 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import { XR } from '@react-three/xr';
-import { ReactThreeTestInstance } from '@react-three/test-renderer/dist/declarations/src/createTestInstance';
+import { ReactThreeTestInstance } from
+  '@react-three/test-renderer/dist/declarations/src/createTestInstance';
 import { expect } from 'vitest';
 import Dexie from 'dexie';
 import { Provider } from '@rollbar/react';
@@ -30,6 +31,20 @@ describe('Generate XYZ axes', () => {
       setSelectedYAxis: vi.fn(),
       selectedZAxis: 'colZ',
       setSelectedZAxis: vi.fn(),
+      selectedOptionalColumn1: '',
+      setSelectedOptionalColumn1: vi.fn(),
+      selectedOptionalColumn2: '',
+      setSelectedOptionalColumn2: vi.fn(),
+      selectedOptionalColumn3: '',
+      setSelectedOptionalColumn3: vi.fn(),
+      selectedOptionalColumn4: '',
+      setSelectedOptionalColumn4: vi.fn(),
+      selectedOptionalColumn5: '',
+      setSelectedOptionalColumn5: vi.fn(),
+      selectedOptionalColumn6: '',
+      setSelectedOptionalColumn6: vi.fn(),
+      selectedOptionalColumn7: '',
+      setSelectedOptionalColumn7: vi.fn(),
     });
   });
 

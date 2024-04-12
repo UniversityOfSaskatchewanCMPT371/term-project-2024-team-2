@@ -9,9 +9,11 @@ export interface DataPointProps {
   columnX: string;
   columnY: string;
   columnZ: string;
+  optionalColumns?: string[];
   color: string
   marker: string
-  actualData?: number[];
+  actualXYZData?: Array<number | undefined>;
+  optionalColumnData?: Array<string>;
   outlineScale?: number;
   size?: OctahedronGeometryProps['args'];
   meshProps?: JSX.IntrinsicElements['mesh'];

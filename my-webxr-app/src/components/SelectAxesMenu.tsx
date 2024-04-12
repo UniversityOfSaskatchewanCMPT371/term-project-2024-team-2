@@ -17,7 +17,8 @@ interface DropDownProps {
 }
 
 /*
-  this function creates the dropdowns that will be used to choose the axes for XYZ
+  this function creates the dropdowns that will be used to choose a column for the x,y,z axes or
+  the optional columns
   @param label: the label of the dropdown (the text beside it)
   @param id: the id of the dropdown (to classify x, y, or z)
   @param options: this will be the choices that can fill the dropdowns
@@ -55,7 +56,7 @@ function DropDown({
 }
 
 /*
-  this function will allow the user to choose their axis values
+  this function will allow the user to choose their axis columns and optional columns
   @param dbName: the name of the database to get the data from
   @pre-condition: dB name cannot be empty, relies on database
   @post-condition: setting the proper x,y,z coordinates for the data point
@@ -64,10 +65,28 @@ function DropDown({
 export default function SelectAxesColumns({ reload, database }: SelectAxesColumnsProps) {
   assert(database != null, 'Database name cannot be null');
   const [AxisOptions, setAxisOptions] = useState<{ value: string; label: string }[]>([]);
-  const { setSelectedXAxis, setSelectedYAxis, setSelectedZAxis } = useAxesSelectionContext();
+  const {
+    setSelectedXAxis,
+    setSelectedYAxis,
+    setSelectedZAxis,
+    setSelectedOptionalColumn1,
+    setSelectedOptionalColumn2,
+    setSelectedOptionalColumn3,
+    setSelectedOptionalColumn4,
+    setSelectedOptionalColumn5,
+    setSelectedOptionalColumn6,
+    setSelectedOptionalColumn7,
+  } = useAxesSelectionContext();
   const [xAxis, setXAxis] = useState('');
   const [yAxis, setYAxis] = useState('');
   const [zAxis, setZAxis] = useState('');
+  const [optionalColumn1, setOptionalColumn1] = useState('');
+  const [optionalColumn2, setOptionalColumn2] = useState('');
+  const [optionalColumn3, setOptionalColumn3] = useState('');
+  const [optionalColumn4, setOptionalColumn4] = useState('');
+  const [optionalColumn5, setOptionalColumn5] = useState('');
+  const [optionalColumn6, setOptionalColumn6] = useState('');
+  const [optionalColumn7, setOptionalColumn7] = useState('');
 
   useEffect(() => {
     async function fetchColumnTitles() {
@@ -100,11 +119,25 @@ export default function SelectAxesColumns({ reload, database }: SelectAxesColumn
     _setSelectedXAxis: React.Dispatch<React.SetStateAction<string | null>>,
     _setSelectedYAxis: React.Dispatch<React.SetStateAction<string | null>>,
     _setSelectedZAxis: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedOptionalColumn1: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedOptionalColumn2: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedOptionalColumn3: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedOptionalColumn4: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedOptionalColumn5: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedOptionalColumn6: React.Dispatch<React.SetStateAction<string | null>>,
+    _setSelectedOptionalColumn7: React.Dispatch<React.SetStateAction<string | null>>,
   ) => {
     try {
       _setSelectedXAxis(xAxis);
       _setSelectedYAxis(yAxis);
       _setSelectedZAxis(zAxis);
+      _setSelectedOptionalColumn1(optionalColumn1);
+      _setSelectedOptionalColumn2(optionalColumn2);
+      _setSelectedOptionalColumn3(optionalColumn3);
+      _setSelectedOptionalColumn4(optionalColumn4);
+      _setSelectedOptionalColumn5(optionalColumn5);
+      _setSelectedOptionalColumn6(optionalColumn6);
+      _setSelectedOptionalColumn7(optionalColumn7);
       WriteHook('Complete Selection button clicked : ');
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -117,10 +150,66 @@ export default function SelectAxesColumns({ reload, database }: SelectAxesColumn
       <DropDown label="Select X Axis: " id="xAxis" options={AxisOptions} chosenValue={setXAxis} />
       <DropDown label="Select Y Axis: " id="yAxis" options={AxisOptions} chosenValue={setYAxis} />
       <DropDown label="Select Z Axis: " id="zAxis" options={AxisOptions} chosenValue={setZAxis} />
+      <br />
+      <br />
+      <DropDown
+        label="Optional Col 1: "
+        id="optionalColumn1"
+        options={AxisOptions}
+        chosenValue={setOptionalColumn1}
+      />
+      <DropDown
+        label="Optional Col 2: "
+        id="optionalColumn2"
+        options={AxisOptions}
+        chosenValue={setOptionalColumn2}
+      />
+      <DropDown
+        label="Optional Col 3: "
+        id="optionalColumn3"
+        options={AxisOptions}
+        chosenValue={setOptionalColumn3}
+      />
+      <DropDown
+        label="Optional Col 4: "
+        id="optionalColumn4"
+        options={AxisOptions}
+        chosenValue={setOptionalColumn4}
+      />
+      <DropDown
+        label="Optional Col 5: "
+        id="optionalColumn5"
+        options={AxisOptions}
+        chosenValue={setOptionalColumn5}
+      />
+      <DropDown
+        label="Optional Col 6: "
+        id="optionalColumn6"
+        options={AxisOptions}
+        chosenValue={setOptionalColumn6}
+      />
+      <DropDown
+        label="Optional Col 7: "
+        id="optionalColumn7"
+        options={AxisOptions}
+        chosenValue={setOptionalColumn7}
+      />
+      <br />
       <button
         type="submit"
         onClick={() => {
-          handleCompleteSelection(setSelectedXAxis, setSelectedYAxis, setSelectedZAxis);
+          handleCompleteSelection(
+            setSelectedXAxis,
+            setSelectedYAxis,
+            setSelectedZAxis,
+            setSelectedOptionalColumn1,
+            setSelectedOptionalColumn2,
+            setSelectedOptionalColumn3,
+            setSelectedOptionalColumn4,
+            setSelectedOptionalColumn5,
+            setSelectedOptionalColumn6,
+            setSelectedOptionalColumn7,
+          );
         }}
       >
         Complete Selection
