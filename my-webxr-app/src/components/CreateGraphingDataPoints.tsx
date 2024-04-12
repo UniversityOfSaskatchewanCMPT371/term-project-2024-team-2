@@ -49,7 +49,18 @@ export default function CreateGraphingDataPoints({
   database,
 }: CreateGraphingDataPointsProps): JSX.Element {
   const rollbar = useRollbar();
-  const { selectedXAxis, selectedYAxis, selectedZAxis } = useAxesSelectionContext();
+  const {
+    selectedXAxis,
+    selectedYAxis,
+    selectedZAxis,
+    selectedOptionalColumn1,
+    selectedOptionalColumn2,
+    selectedOptionalColumn3,
+    selectedOptionalColumn4,
+    selectedOptionalColumn5,
+    selectedOptionalColumn6,
+    selectedOptionalColumn7,
+  } = useAxesSelectionContext();
   const [dataPoints, setDataPoints] = useState([]);
   const [maxValues, setMaxValues] = useState([]);
   useEffect(() => {
@@ -58,6 +69,13 @@ export default function CreateGraphingDataPoints({
         selectedXAxis as string,
         selectedYAxis as string,
         selectedZAxis as string,
+        selectedOptionalColumn1 as string,
+        selectedOptionalColumn2 as string,
+        selectedOptionalColumn3 as string,
+        selectedOptionalColumn4 as string,
+        selectedOptionalColumn5 as string,
+        selectedOptionalColumn6 as string,
+        selectedOptionalColumn7 as string,
       ).then((result) => {
         const [dataPointsArray, maxValuesArray] = result;
         setDataPoints(dataPointsArray as never);
@@ -68,7 +86,18 @@ export default function CreateGraphingDataPoints({
       });
     };
     fetchData();
-  }, [selectedXAxis, selectedYAxis, selectedZAxis]);
+  }, [
+    selectedXAxis,
+    selectedYAxis,
+    selectedZAxis,
+    selectedOptionalColumn1,
+    selectedOptionalColumn2,
+    selectedOptionalColumn3,
+    selectedOptionalColumn4,
+    selectedOptionalColumn5,
+    selectedOptionalColumn6,
+    selectedOptionalColumn7,
+  ]);
   return (
     <>
       { (dataPoints as DataPoint[]).map((dataPoint, index) => {
@@ -90,7 +119,25 @@ export default function CreateGraphingDataPoints({
             columnX={selectedXAxis as string}
             columnY={selectedYAxis as string}
             columnZ={selectedZAxis as string}
+            optionalColumns={[
+              selectedOptionalColumn1 ?? '',
+              selectedOptionalColumn2 ?? '',
+              selectedOptionalColumn3 ?? '',
+              selectedOptionalColumn4 ?? '',
+              selectedOptionalColumn5 ?? '',
+              selectedOptionalColumn6 ?? '',
+              selectedOptionalColumn7 ?? '',
+            ]}
             actualXYZData={[dataPoint.xValue, dataPoint.yValue, dataPoint.zValue]}
+            optionalColumnData={[
+              dataPoint.optionalCol1Value as unknown as string ?? '',
+              dataPoint.optionalCol2Value as unknown as string ?? '',
+              dataPoint.optionalCol3Value as unknown as string ?? '',
+              dataPoint.optionalCol4Value as unknown as string ?? '',
+              dataPoint.optionalCol5Value as unknown as string ?? '',
+              dataPoint.optionalCol6Value as unknown as string ?? '',
+              dataPoint.optionalCol7Value as unknown as string ?? '',
+            ]}
             size={[0.02, 0]}
             meshProps={{ position }}
           />

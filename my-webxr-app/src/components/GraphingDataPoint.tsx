@@ -17,9 +17,10 @@ import WriteHook from '../../smoketests/TestHookWrite';
  * @param {string} columnY the name of the y-axis data column
  * @param {string} columnZ the name of the z-axis data column
  * @param {string[]} optionalColumns the names of the optional data columns
- * @param {number[] | undefined} actualXYZData the data to assign to the datapoint
+ * @param {number[] | undefined} actualXYZData the x, y ,z data to assign to the datapoint
  * @param {number | undefined} outlineScale the amount of outline to put around a hovered
  *    data element
+ * @param optionalColumnData the optional data to assign to the datapoint
  * @param {[radius: number | undefined, widthSegments: number | undefined,
  *    heightSegments: number | undefined, phiStart: number | undefined,
  *    phiLength: number | undefined, thetaStart: number | undefined,
@@ -82,6 +83,7 @@ export default function GraphingDataPoint({
             columnX,
             columnY,
             columnZ,
+            optionalColumns,
             actualXYZData,
             optionalColumnData,
             meshProps,
