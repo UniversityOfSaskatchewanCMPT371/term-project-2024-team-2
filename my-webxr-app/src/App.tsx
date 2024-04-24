@@ -5,7 +5,6 @@ import { Provider } from '@rollbar/react';
 import Dexie from 'dexie';
 import { useState } from 'react';
 import LocalCsvReader, { UrlCsvReader } from './components/CsvReader';
-import Floor from './components/Floor';
 import ScaleSlider from './components/ScaleSlider';
 import GraphingDataPointMenu from './components/GraphingDataPointMenu';
 import { PointSelectionProvider } from './contexts/PointSelectionContext';
@@ -54,7 +53,6 @@ export default function App() {
             <XR>
               <CameraMovement />
               <Sky sunPosition={[0.5, 0, 0.5]} />
-              <Floor />
               <ambientLight />
               <pointLight position={[5, 5, 5]} />
               <Controllers />
