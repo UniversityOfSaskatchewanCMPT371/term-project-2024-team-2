@@ -17,6 +17,7 @@ import SelectAxesColumns from './components/SelectAxesMenu';
 import { AxesSelectionProvider } from './contexts/AxesSelectionContext';
 import CreateGraphingDataPoints from './components/CreateGraphingDataPoints';
 import GenerateXYZ from './components/GenerateXYZ';
+import CameraMovement from './components/CameraMovement';
 
 // labelOffset is the offset the axis ticks and labels will have
 const labelOffset: number = 1;
@@ -51,10 +52,11 @@ export default function App() {
         <PointSelectionProvider>
           <Canvas>
             <XR>
+              <CameraMovement />
               <Sky sunPosition={[0.5, 0, 0.5]} />
               <Floor />
               <ambientLight />
-              <pointLight position={[10, 10, 10]} />
+              <pointLight position={[5, 5, 5]} />
               <Controllers />
               <GenerateXYZ
                 scaleFactor={scaleFactor}
