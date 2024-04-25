@@ -433,6 +433,20 @@ export default class DataLayer implements DataAbstractor {
    * @param {string | null} columnX - The name of the column to be used for the x-axis values.
    * @param {string | null} ColumnY - The name of the column to be used for the y-axis values.
    * @param {string | null} ColumnZ - The name of the column to be used for the z-axis values.
+   * @param {string | undefined} OptionalColumn1 - Optional column name to have value display in
+   * data point menu
+   * @param {string | undefined} OptionalColumn2 - Optional column name to have value display in
+   * data point menu
+   * @param {string | undefined} OptionalColumn3 - Optional column name to have value display in
+   * data point menu
+   * @param {string | undefined} OptionalColumn4 - Optional column name to have value display in
+   * data point menu
+   * @param {string | undefined} OptionalColumn5 - Optional column name to have value display in
+   * data point menu
+   * @param {string | undefined} OptionalColumn6 - Optional column name to have value display in
+   * data point menu
+   * @param {string | undefined} OptionalColumn7 - Optional column name to have value display in
+   * data point menu
    * @returns {Promise<[Array<DataPoint>, Array<number>]>} A promise that resolves to an array of
    * DataPoint objects and an array of maximum values from each column.
    * Each DataPoint object represents a point in a 3D space with x, y, and z coordinates.
@@ -441,8 +455,26 @@ export default class DataLayer implements DataAbstractor {
     columnX: string,
     ColumnY: string,
     ColumnZ: string,
+    OptionalColumn1?: string,
+    OptionalColumn2?: string,
+    OptionalColumn3?: string,
+    OptionalColumn4?: string,
+    OptionalColumn5?: string,
+    OptionalColumn6?: string,
+    OptionalColumn7?: string,
   ): Promise<[Array<DataPoint>, Array<number>]> {
-    return this.repository.getPoints(columnX, ColumnY, ColumnZ);
+    return this.repository.getPoints(
+      columnX,
+      ColumnY,
+      ColumnZ,
+      OptionalColumn1,
+      OptionalColumn2,
+      OptionalColumn3,
+      OptionalColumn4,
+      OptionalColumn5,
+      OptionalColumn6,
+      OptionalColumn7,
+    );
   }
 
   /**

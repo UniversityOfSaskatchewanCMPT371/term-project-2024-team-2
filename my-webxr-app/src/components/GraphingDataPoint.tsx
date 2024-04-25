@@ -16,9 +16,11 @@ import WriteHook from '../../smoketests/TestHookWrite';
  * @param {string} columnX the name of the x-axis data column
  * @param {string} columnY the name of the y-axis data column
  * @param {string} columnZ the name of the z-axis data column
+ * @param {string[]} optionalColumns the names of the optional data columns
+ * @param {number[] | undefined} actualXYZData the x, y ,z data to assign to the datapoint
  * @param {number | undefined} outlineScale the amount of outline to put around a hovered
  *    data element
- * @param {number[] | undefined} actualData the data to assign to the datapoint
+ * @param optionalColumnData the optional data to assign to the datapoint
  * @param {[radius: number | undefined, widthSegments: number | undefined,
  *    heightSegments: number | undefined, phiStart: number | undefined,
  *    phiLength: number | undefined, thetaStart: number | undefined,
@@ -32,7 +34,18 @@ import WriteHook from '../../smoketests/TestHookWrite';
  * @constructor
  */
 export default function GraphingDataPoint({
-  id, marker, color, columnX, columnY, columnZ, outlineScale, actualData, size, meshProps,
+  id,
+  marker,
+  color,
+  columnX,
+  columnY,
+  columnZ,
+  optionalColumns,
+  outlineScale,
+  actualXYZData,
+  optionalColumnData,
+  size,
+  meshProps,
 }: DataPointProps): JSX.Element {
   /* State for the count of controllers hovering over the GraphingDataPoint */
   const [hoverCount, setHoverCount] = useState(0);
@@ -64,16 +77,33 @@ export default function GraphingDataPoint({
         // Update point to be selected and set its fields
         } else {
           setSelectedDataPoint({
-            id, marker, color, columnX, columnY, columnZ, actualData, meshProps,
+            id,
+            marker,
+            color,
+            columnX,
+            columnY,
+            columnZ,
+            optionalColumns,
+            actualXYZData,
+            optionalColumnData,
+            meshProps,
           });
-          WriteHook(`${String(actualData)} : `);
+          WriteHook(`${String(actualXYZData)} : `);
         }
       }}
     >
       {/* This first mesh stores custom data about the GraphingDataPoint */}
       <mesh
         userData={{
-          id, columnX, columnY, columnZ, marker, actualData, color,
+          id,
+          columnX,
+          columnY,
+          columnZ,
+          optionalColumns,
+          marker,
+          actualXYZData,
+          optionalColumnData,
+          color,
         }}
         {...meshProps}
       >

@@ -11,6 +11,13 @@ export interface Repository {
     columnXName: string,
     columnYName: string,
     columnZName: string,
+    optionalColumn1Name?: string,
+    optionalColumn2Name?: string,
+    optionalColumn3Name?: string,
+    optionalColumn4Name?: string,
+    optionalColumn5Name?: string,
+    optionalColumn6Name?: string,
+    optionalColumn7Name?: string,
   ) => Promise<[Array<DataPoint>, Array<number>]>;
   addColumn: (column: Column<RawColumn | StatsColumn | NumericColumn>,
     columnType: TableName) => Promise<string>;
